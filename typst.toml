@@ -2,7 +2,7 @@
 name = "folio"
 version = "0.0.1"
 compiler = "0.14.2"
-entrypoint = "lib.typ"
+entrypoint = "src/lib.typ"
 authors = ["Fernando Bryan Reza Campos <https://github.com/Yrrrrrf>"]
 license = "MIT"
 description = "A universal project management document generator based on a single source of truth."
