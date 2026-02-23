@@ -1,0 +1,13 @@
+[package]
+name = "loom"
+version = "0.0.1"
+entrypoint = "lib.typ"
+authors = ["Fernando Bryan Reza Campos <yrrrrrf@example.com>"]
+license = "MIT"
+description = "A universal project management document generator based on a single source of truth."
+repository = "https://github.com/yrrrrrf/loom"
+keywords = ["project management", "charter", "gantt", "budget"]
+
+[template]
+path = "template"
+entrypoint = "main.typ"
