@@ -29,7 +29,7 @@
 ### Via [Typst Universe](https://typst.app/universe/package/folio)
 
 ```typ
-#import "@preview/folio:0.1.0": *
+#import "@preview/folio:0.0.1": *
 ```
 
 ## Quick Start
