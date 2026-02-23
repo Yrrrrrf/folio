@@ -32,20 +32,6 @@
 #import "@preview/folio:0.1.0": *
 ```
 
-### Local development
-
-```bash
-# Clone the repo into your Typst local package directory
-git clone https://github.com/Yrrrrrf/folio \
-  ~/.local/share/typst/packages/local/folio/0.1.0
-```
-
-Then import locally:
-
-```typ
-#import "@local/folio:0.1.0": *
-```
-
 ## Quick Start
 
 Get a full project management document suite running in two files.
