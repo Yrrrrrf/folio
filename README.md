@@ -1,37 +1,71 @@
-# Folio v0.0.1 (Reborn)
+# Folio
+
+[![Typst Package](https://img.shields.io/badge/typst-package-239DAD.svg)](https://typst.app/universe/package/folio)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Folio is a declarative, state-driven project management report generator built entirely in Typst. 
 
-Features a six-layer architecture designed to render automated templates reliably without manually wiring styles, avoiding `#v`, `text(size: ...)` or parameter-threading in business logic.
+Features a six-layer architecture designed to render automated templates reliably without manually wiring styles, avoiding manual spacing, sizing, or parameter-threading in business logic. Write your project data once, and generate PMBOK® 7 and PRINCE2® 7 compliant documents dynamically.
 
-## Quickstart
+[**📖 Read the full Manual PDF here**](docs/manual.pdf)
 
-Configure your business document using deep nested data and standard PMBOK concepts, and pass it directly to one of the defined organisms.
+## Architecture at a glance
+
+Folio maps standard project management concepts into a strict six-namespace data contract, then uses that single source of truth to render different "organisms" (documents).
+
+```text
+┌──────────────────────┐
+│  dt.typ (Data)       │
+│  - metadata          │
+│  - initiation        │
+│  - baselines         │
+│  - registers         │
+│  - governance        │
+│  - closure           │
+└──────────┬───────────┘
+           │
+           ├────────────────────────┐
+           ▼                        ▼
+┌────────────────────┐   ┌────────────────────┐
+│ #charter(project)  │   │ #status-report(...)│
+└────────────────────┘   └────────────────────┘
+```
+
+## Quick Start
+
+Initialize your project dictionary and pass it to an organism. Here is a minimal Charter:
 
 ```typst
-#import "@local/folio:0.0.1": charter-doc
+#import "@preview/folio:0.0.1": charter
 
 #let my-project = (
-  metadata: (name: "Aurora Project", confidentiality: "Internal"),
+  metadata: (
+    name: "Aurora Project", 
+    confidentiality: "Internal",
+    tags: ("Cloud", "Migration")
+  ),
   initiation: (
-    pitch: (problem: "...", solution: "...", value: "...")
+    pitch: (
+      problem: "Legacy infra is slow.", 
+      solution: "Migrate to cloud.", 
+      value: "Increase agility."
+    )
   )
 )
 
-#show: charter-doc(my-project)
+#show: charter(my-project)
 ```
 
-## Running Examples Locally
+## Supported Organisms & Standards
 
-To exercise the standard implementations, explore the `examples` directory:
+| Organism | PMBOK® 7 Ref | PRINCE2® 7 Theme | Consumes Namespaces | Status |
+|----------|--------------|------------------|---------------------|--------|
+| `charter` | Project Charter | Business Case | `metadata`, `initiation`, `baselines` | Stable |
+| `status-report` | Communications | Risk/Issue, Progress | `metadata`, `registers`, `governance` | Stable |
+| *(planned)* `closure-doc` | Close Project | End Project Report | *closure* | Roadmap |
 
-```bash
-# Render a comprehensive Project Charter
-typst compile --root . examples/01-minimal-charter/main.typ
+## Documentation
 
-# Render a concise Executive Status Report showing multi-kind section reuse
-typst compile --root . examples/02-status-report/main.typ
+The full documentation is structured as a Typst-native book demonstrating the six-namespace architecture. It culminates in live-rendered examples of the charter and status report using a shared full-scale PM fixture.
 
-# Verify gracefully degraded draft stamping on missing dependencies
-typst compile --root . examples/03-degraded/main.typ
-```
+👉 [**Download the Manual (docs/manual.pdf)**](docs/manual.pdf)
