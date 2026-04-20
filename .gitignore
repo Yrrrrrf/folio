@@ -1,3 +1,7 @@
+# all that start with a dot except .gitignore
+.*
+!.gitignore
+
 # generated files
 *.pdf
 

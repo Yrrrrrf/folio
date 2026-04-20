@@ -1,67 +1,37 @@
-<h1 align="center">
-  <img src="https://avatars.githubusercontent.com/u/67595261" alt="Folio Icon" width="128" height="128">
-  <div align="center">Folio</div>
-</h1>
+# Folio v0.0.1 (Reborn)
 
-<div align="center">
+Folio is a declarative, state-driven project management report generator built entirely in Typst. 
 
-[![Typst Universe](https://img.shields.io/badge/typst--universe-folio-239DAD?&logo=typst)](https://typst.app/universe/package/folio)
-[![GitHub](https://img.shields.io/badge/GitHub-Yrrrrrf%2Ffolio-blue)](https://github.com/Yrrrrrf/folio)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://choosealicense.com/licenses/mit/)
+Features a six-layer architecture designed to render automated templates reliably without manually wiring styles, avoiding `#v`, `text(size: ...)` or parameter-threading in business logic.
 
-</div>
+## Quickstart
 
-**Folio** is a universal project management document generator for **Typst**.
-Define your entire project once in a single data file and generate a complete,
-professionally styled suite of PM documents — charter, Gantt chart, risk matrix,
-budget, stakeholder map, and more — all from one source of truth.
+Configure your business document using deep nested data and standard PMBOK concepts, and pass it directly to one of the defined organisms.
 
-See the [Overview](docs/overview.md) for a comprehensive guide, feature list,
-and data structure documentation, or check out the [Manual](docs/manual.typ) for
-full details.
+```typst
+#import "@local/folio:0.0.1": charter-doc
 
-## Installation
-
-### Via [Typst Universe](https://typst.app/universe/package/folio)
-
-```typ
-#import "@preview/folio:0.0.1": *
-```
-
-## Quick Start
-
-Get a full project management document suite running in two files.
-
-**`dt.typ` — your project data (the single source of truth):**
-
-```typ
-#let project = (
-  name: "My Project",
-  version: "1.0.0",
-  status: "En Progreso",
-  // ... risks, budget, stakeholders, phases, milestones, etc.
+#let my-project = (
+  metadata: (name: "Aurora Project", confidentiality: "Internal"),
+  initiation: (
+    pitch: (problem: "...", solution: "...", value: "...")
+  )
 )
+
+#show: charter-doc(my-project)
 ```
 
-**`main.typ` — pick the documents you need:**
+## Running Examples Locally
 
-```typ
-#import "@preview/folio:0.0.1": *
-#import "dt.typ": project
-
-#charter(project)
-#gantt(project)
-```
-
-Then compile:
+To exercise the standard implementations, explore the `examples` directory:
 
 ```bash
-typst compile main.typ
+# Render a comprehensive Project Charter
+typst compile --root . examples/01-minimal-charter/main.typ
+
+# Render a concise Executive Status Report showing multi-kind section reuse
+typst compile --root . examples/02-status-report/main.typ
+
+# Verify gracefully degraded draft stamping on missing dependencies
+typst compile --root . examples/03-degraded/main.typ
 ```
-
-For the full list of available documents and project data structure, see
-[docs/overview.md](docs/overview.md).
-
-## License
-
-MIT License — See [LICENSE](LICENSE) for details.
