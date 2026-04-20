@@ -39,3 +39,4 @@
 #include "chapters/ch05-the-execution.typ"
 #include "chapters/ch06-closure.typ"
 #include "chapters/ch07-reference.typ"
+#include "chapters/ch08-creating-an-organism.typ"
