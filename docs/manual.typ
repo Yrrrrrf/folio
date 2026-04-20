@@ -3,25 +3,24 @@
 
 #let project = (
   metadata: (
+    id: "FOL-MANUAL-01",
     name: "Folio v0.0.1",
     client_name: "Documentation & Reference Manual",
     version: "0.0.1",
     created_at: "2026-04-20",
     confidentiality: "Public",
-    client_logo: none
-  )
+    client_logo: none,
+  ),
 )
 
 #show: doc => {
   set-state(locale: "en-US", data: project)
-  set page(paper: "us-letter", margin: 1in)
-  set text(size: 10pt)
-  
+
   cover-page()
   toc(title: "Table of Contents", depth: 3)
-  
+
   pagebreak()
-  
+
   [
     = Preface
 
@@ -29,7 +28,7 @@
   ]
   pagebreak()
 
-  doc
+  project-page(doc)
 }
 
 #include "chapters/ch01-getting-started.typ"

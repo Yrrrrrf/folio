@@ -10,4 +10,4 @@ repository = "https://github.com/Yrrrrrf/folio"
 # homepage = "https://github.com/Yrrrrrf/folio"
 keywords = ["project management", "generator", "document"]
 categories = ["utility"]
-exclude = ["examples/**", "*.pdf"]
+exclude = ["docs/**", "examples/**", "*.pdf"]

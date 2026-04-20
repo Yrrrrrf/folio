@@ -1,8 +1,13 @@
+#import "../_helpers/crosswalk.typ": crosswalk
+
 // intentionally does not need the fixture
 = Closure
 
 The closure pillar ensures proper formal termination of a project.
-*PMBOK® 7 reference: Close Project* / *PRINCE2® 7 theme: End Project Report*
+#crosswalk(
+  pmbok: "Close Project", 
+  prince2: "End Project Report"
+)
 
 == Acceptance & Lessons Learned
 The `closure` namespace incorporates handover deliverables, lessons learned, and formal client acceptance dates.

@@ -1,4 +1,4 @@
-#let folio-version = "0.0.1"
+#let folio-version = "0.0.2"
 
 #import "util/mod.typ": *
 #import "contract/mod.typ": *

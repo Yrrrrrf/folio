@@ -1,11 +1,16 @@
+#import "../_helpers/schema-table.typ": render-schema-table, render-crosswalk-matrix, render-glossary
+
 // intentionally does not need the fixture
 = Reference
 
-== Schema Table
+== Schema Reference
 The full project namespace mapping:
-- `metadata`: ID, Name, Client, Level
-- `initiation`: Pitch, ROI
-- `baselines`: WBS, Budget
-- `registers`: Risk, Issue
-- `governance`: RACI, Status
-- `closure`: Signatures
+#render-schema-table()
+
+#pagebreak()
+== Namespace ↔ Standards Matrix
+#render-crosswalk-matrix()
+
+#pagebreak()
+== Glossary
+#render-glossary()

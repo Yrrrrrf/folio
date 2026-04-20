@@ -48,15 +48,20 @@
   registers: (
     assumptions_log: (
       (id: "A1", description: "Existing network bandwidth is sufficient."),
+      (id: "A2", description: "AWS credits will cover initial 3 months."),
     ),
     risk_register: (
       (description: "API Downtime", probability: "Medium", impact: "High", mitigation: "Blue/Green deployment"),
+      (description: "Data loss during transfer", probability: "Low", impact: "High", mitigation: "Daily backups"),
+      (description: "Delayed approval", probability: "Medium", impact: "Medium", mitigation: "Early escalations"),
     ),
     issue_log: (
       (description: "AWS account limit reached", status: "Resolved", owner: "DevOps", severity: "High"),
+      (description: "Security compliance gap", status: "Open", owner: "SecOps", severity: "High")
     ),
     change_log: (
       (description: "Add auto-scaling group", status: "Approved", owner: "Architect", impact: "Medium"),
+      (description: "Switch to managed Kubernetes", status: "Pending", owner: "Lead Eng", impact: "High")
     )
   ),
   governance: (

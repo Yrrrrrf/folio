@@ -7,7 +7,7 @@ Welcome to Folio. In this chapter, we will walk through the minimum viable setup
 Folio operates on a single declarative project dictionary. Let's create a minimal `project` dictionary with just metadata and initiation information. 
 
 ```typst
-#import "@preview/folio:0.0.1": charter-doc
+#import "@preview/folio:0.0.2": charter-doc
 
 #let my-project = (
   metadata: (id: "P1", name: "Alpha Launch", confidentiality: "Internal"),
