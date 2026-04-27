@@ -1,26 +1,22 @@
-#import "../theme/mod.typ": presets
-#import "../util/state.typ": get-state
+#import "../core/state.typ": folio-state
+#import "../theme/resolver.typ": resolve-token, resolve-spacing
 
-#let badge(label, tone: "neutral") = context {
-  let pr = presets.at(get-state().theme-preset, default: presets.formal)
+#let badge(body, intent: "neutral") = context {
+  let st = folio-state.get()
   
-  let variants = (
-    red: (bg: pr.palette.intent.danger, fg: pr.palette.text.inverse),
-    amber: (bg: pr.palette.intent.warn, fg: pr.palette.text.inverse),
-    green: (bg: pr.palette.intent.success, fg: pr.palette.text.inverse),
-    info: (bg: pr.palette.intent.info, fg: pr.palette.text.inverse),
-    warn: (bg: pr.palette.intent.warn, fg: pr.palette.text.inverse),
-    danger: (bg: pr.palette.intent.danger, fg: pr.palette.text.inverse),
-    success: (bg: pr.palette.intent.success, fg: pr.palette.text.inverse),
-    neutral: (bg: pr.palette.surface.card, fg: pr.palette.text.secondary)
-  )
+  let base-color = resolve-token(st, "palette.intent." + intent)
+  let bg-color = base-color.lighten(85%)
   
-  let v = variants.at(tone, default: variants.neutral)
+  let pad-h = resolve-spacing(st, multiplier: 0.5)
+  let pad-v = resolve-spacing(st, multiplier: 0.25)
+  let rad = resolve-token(st, "geometry.radius.sm")
   
-  box(
-    fill: v.bg,
-    inset: (x: 0.5em, y: 0.25em),
-    radius: pr.palette.radius.md,
-    text(fill: v.fg, size: 0.85em, weight: "medium", label)
+  rect(
+    fill: bg-color,
+    stroke: 0.5pt + base-color,
+    radius: rad,
+    inset: (x: pad-h, y: pad-v),
+    outset: 0pt,
+    text(fill: base-color.darken(20%), weight: "bold", size: resolve-token(st, "typography.size.sm"))[#body]
   )
 }

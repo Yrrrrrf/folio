@@ -1,23 +1,26 @@
-#import "../theme/mod.typ": presets
-#import "../util/state.typ": get-state
+#import "../core/state.typ": folio-state
+#import "../theme/resolver.typ": resolve-token, resolve-spacing
 
-#let card(content, emphasis: "default") = context {
-  let pr = presets.at(get-state().theme-preset, default: presets.formal)
+#let card(body, title: none) = context {
+  let st = folio-state.get()
   
-  let fill-color = if emphasis == "muted" {
-    pr.palette.surface.page
-  } else if emphasis == "accent" {
-    pr.palette.intent.info.lighten(95%)
-  } else {
-    pr.palette.surface.card
-  }
+  let bg = resolve-token(st, "palette.surface.card")
+  let border = resolve-token(st, "palette.surface.border")
+  let pad = resolve-spacing(st, multiplier: 1.0)
+  let rad = resolve-token(st, "geometry.radius.lg")
   
-  block(
-    fill: fill-color,
-    inset: 1.25em,
-    radius: pr.palette.radius.lg,
-    stroke: 0.5pt + pr.palette.border.default,
+  rect(
+    fill: bg,
+    stroke: 1pt + border,
+    radius: rad,
+    inset: pad,
     width: 100%,
-    content
+    {
+      if title != none {
+        text(weight: "bold", size: resolve-token(st, "typography.size.lg"))[#title]
+        v(resolve-spacing(st, multiplier: 0.5))
+      }
+      body
+    }
   )
 }
