@@ -14,7 +14,7 @@
   let h = resolve-spacing(st, multiplier: 0.5)
   let rad = resolve-token(st, "geometry.radius.sm")
   
-  let p = calc.max(0, calc.min(100, float(percentage)))
+  let p = calc.max(0, calc.min(100, float(str(percentage).replace("%", ""))))
   
   block(
     width: 100%,

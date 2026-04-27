@@ -3,14 +3,14 @@
 #import "../primitives/data_table.typ": data-table
 #import "../primitives/badge.typ": badge
 #import "../core/state.typ": folio-state
+#import "../core/resolve.typ": _resolve
 
 #let cover() = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   
-  let proj = data.at("project", default: (:))
-  let name = proj.at("name", default: "[Project Name Missing]")
-  let desc = proj.at("description", default: "[Project Description Missing]")
+  let name = _resolve(data, "project.name")
+  let desc = _resolve(data, "project.description")
   
   align(center + horizon)[
     #text(size: 3em, weight: "bold")[#name]

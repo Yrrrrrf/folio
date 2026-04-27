@@ -25,7 +25,7 @@
     if type(current) == dictionary and p in current {
       current = current.at(p)
     } else {
-      panic("Token not found: " + path)
+      return rgb("#ff00ff") // Fail Gracefully
     }
   }
   return current
