@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.2": compose
+#import "@local/folio:0.0.1": compose
 
 #let smoke-manifest = (
   id: "smoke",

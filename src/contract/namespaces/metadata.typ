@@ -13,5 +13,5 @@
   client_logo: none,
   doc_control: (revisions: (), approvers: (), distribution_list: ()),
   glossary: (),
-  references: ()
+  references: (),
 )

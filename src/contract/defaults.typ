@@ -11,5 +11,5 @@
   baselines: baselines-defaults,
   registers: registers-defaults,
   governance: governance-defaults,
-  closure: closure-defaults
+  closure: closure-defaults,
 )

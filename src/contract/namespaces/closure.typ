@@ -4,5 +4,5 @@
   lessons_learned: (),
   warranty: (period_months: 0, coverage: "", sla: (:)),
   sign_off_matrix: (),
-  signatures: (sponsor: "", pm: "", client: "")
+  signatures: (sponsor: "", pm: "", client: ""),
 )

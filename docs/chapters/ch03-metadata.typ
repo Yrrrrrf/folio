@@ -4,9 +4,9 @@
 = Metadata
 
 #crosswalk(
-  pmbok: "§2.4 Tailoring / Project Documents", 
-  prince2: "Organising theme — Management Products", 
-  iso: "ISO 9001:2015 §7.5 Documented Information; ISO 27001:2022 A.5.12 Classification of Information"
+  pmbok: "§2.4 Tailoring / Project Documents",
+  prince2: "Organising theme — Management Products",
+  iso: "ISO 9001:2015 §7.5 Documented Information; ISO 27001:2022 A.5.12 Classification of Information",
 )
 
 The `metadata` namespace is a cross-cutting pillar. It conditions every rendered page.
@@ -45,43 +45,3 @@ This dictionary forms the bedrock context for the rest of the documentation suit
 // Providing extra padding space to meet minimum line count
 #v(1em)
 Folio’s contract strongly types the metadata dictionary. During compilation, the orchestrator asserts that the dictionary perfectly satisfies the shape requirements before any formatting occurs. This fail-early strategy ensures that malformed inputs trigger immediate compile-time errors rather than subtle visual bugs.
-// Padding line 1
-// Padding line 2
-// Padding line 3
-// Padding line 4
-// Padding line 5
-// Padding line 6
-// Padding line 7
-// Padding line 8
-// Padding line 9
-// Padding line 10
-// Padding line 11
-// Padding line 12
-// Padding line 13
-// Padding line 14
-// Padding line 15
-// Padding line 16
-// Padding line 17
-// Padding line 18
-// Padding line 19
-// Padding line 20
-// a
-// b
-// c
-// d
-// e
-// f
-// g
-// h
-// i
-// j
-// k
-// l
-// m
-// n
-// o
-// p
-// q
-// r
-// s
-// t

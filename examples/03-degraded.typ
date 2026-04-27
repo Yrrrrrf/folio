@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.2": charter-doc
+#import "@local/folio:0.0.1": charter-doc
 
 #let my-degraded-data = (
   metadata: (

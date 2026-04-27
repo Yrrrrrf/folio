@@ -1,5 +1,6 @@
 #let initiation-defaults = (
   pitch: (problem: "", solution: "", value: ""),
+  notes: (),
   objectives: (),
   business_case: (benefits: (), strategic_alignment: ""),
   feasibility: (
@@ -10,7 +11,7 @@
     schedule: (narrative: ""),
     environmental: (narrative: ""),
     ethical_cultural: (narrative: ""),
-    market: (narrative: "")
+    market: (narrative: ""),
   ),
-  recommendation: (status: "", justification: "", overall_text: "")
+  recommendation: (status: "", justification: "", overall_text: ""),
 )

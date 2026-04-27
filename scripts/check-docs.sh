@@ -59,8 +59,8 @@ if [ -f "docs/_helpers/schema-table.typ" ] && ! grep -q "Phase 3 pending" "docs/
 fi
 
 # F10: Version string consistency
-if ! grep -q '0.0.2' typst.toml || ! grep -q '0.0.2' src/lib.typ; then
-    echo "F10 Failed: Version 0.0.2 mismatch"
+if ! grep -q '0.0.1' typst.toml || ! grep -q '0.0.1' src/lib.typ; then
+    echo "F10 Failed: Version 0.0.1 mismatch"
     exit 1
 fi
 
@@ -87,3 +87,32 @@ done
 
 echo "check-docs.sh passed!"
 exit 0
+
+# --- Phase 7 Architecture Fitness Functions ---
+
+echo "Running Phase 7 Fitness Functions..."
+
+# Fitness 1 — primitives must not call get-state
+if grep -rE 'get-state\(' src/primitives/ ; then
+    echo "Architecture Violation: primitives must not call get-state."
+    exit 1
+fi
+
+# Fitness 2 — every registered section in mod.typ has a corresponding file
+for sec in $(grep -oE '"[a-z-]+":' src/sections/mod.typ | tr -d '":'); do
+    # Skip standard keys that might match the pattern but aren't files if any
+    find src/sections -name "${sec}.typ" -print | grep -q . || { echo "Architecture Violation: missing section file for registered section '$sec'"; exit 1; }
+done
+
+# Fitness 3 — every kind exports manifest dict and *-doc fn
+for k in src/kinds/*.typ; do
+    base=$(basename "$k")
+    [ "$base" = "_manifest.typ" ] && continue
+    [ "$base" = "mod.typ" ] && continue
+    if ! (grep -qE '#let [a-z-]+ = \(' "$k" && grep -qE '#let [a-z-]+-doc' "$k"); then
+        echo "Architecture Violation: kind '$base' must export manifest dict and *-doc fn."
+        exit 1
+    fi
+done
+
+echo "Phase 7 Fitness Functions passed!"

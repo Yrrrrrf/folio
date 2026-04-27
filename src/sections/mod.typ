@@ -5,9 +5,12 @@
 #import "initiation/business-case.typ": business-case
 #import "baselines/scope/boundaries.typ": boundaries
 #import "baselines/schedule/milestones.typ": milestones
+#import "baselines/schedule/gantt.typ": gantt-section
 #import "baselines/financials/budget.typ": budget
+#import "baselines/financials/budget-detailed.typ": budget-detailed
 #import "registers/assumptions-log.typ": assumptions-log
 #import "registers/risks.typ": risks
+#import "registers/risk-matrix.typ": risk-matrix-section
 #import "registers/issues-log.typ": issues-log
 #import "registers/change-log.typ": change-log
 #import "governance/team.typ": team
@@ -22,9 +25,12 @@
   "business-case": business-case,
   "boundaries": boundaries,
   "milestones": milestones,
+  "gantt": gantt-section,
   "budget": budget,
+  "budget-detailed": budget-detailed,
   "assumptions-log": assumptions-log,
   "risks": risks,
+  "risk-matrix": risk-matrix-section,
   "issues-log": issues-log,
   "change-log": change-log,
   "team": team,

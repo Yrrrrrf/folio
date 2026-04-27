@@ -5,11 +5,11 @@
 = The Contract
 
 #crosswalk(
-  pmbok: "§2.4 Planning / Initiating", 
-  prince2: "Business Case theme; Plans theme"
+  pmbok: "§2.4 Planning / Initiating",
+  prince2: "Business Case theme; Plans theme",
 )
 
-The static pillars define the project's foundation. 
+The static pillars define the project's foundation.
 
 Folio organizes the earliest stages of a project lifecycle into a strict data format, allowing cross-functional teams to align on scope, budget, and justification without ambiguity. This contract guarantees a unified understanding of what exactly is being built and why. It is conceptually split into two distinct namespaces: `initiation` for the "why" and `baselines` for the "what" and "how".
 
@@ -48,70 +48,3 @@ Below is the rendered charter for the Aurora project:
 
 #v(2em)
 #charter-doc(project)
-
-// Pad lines to surpass 100 limit minimum
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// Pad lines
-// a
-// b
-// c
-// d
-// e
-// f
-// g
-// h
-// i
-// j
-// k
-// l
-// m
-// n
-// o
-// p
-// q
-// r
-// s
-// t

@@ -5,8 +5,8 @@
 = The Execution
 
 #crosswalk(
-  pmbok: "§2.6 Delivery Performance Domain; §2.7 Measurement", 
-  prince2: "Risk theme; Issues theme; Progress theme"
+  pmbok: "§2.6 Delivery Performance Domain; §2.7 Measurement",
+  prince2: "Risk theme; Issues theme; Progress theme",
 )
 
 The dynamic pillars run the project week-by-week.
@@ -38,73 +38,3 @@ Below is the identical Aurora project evaluated as a Week 4 Status Report:
 
 #v(2em)
 #status-report-doc(project)
-
-// Padding to achieve exactly or above 100 lines count
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// Padding
-// a
-// b
-// c
-// d
-// e
-// f
-// g
-// h
-// i
-// j
-// k
-// l
-// m
-// n
-// o
-// p
-// q
-// r
-// s
-// t

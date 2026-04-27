@@ -1,4 +1,6 @@
 #import "state.typ"
+#import "financials.typ"
+
 #import "coerce.typ"
 #import "merge.typ"
 #import "format.typ"

@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.2": status-report-doc
+#import "@local/folio:0.0.1": status-report-doc
 
 #let my-status = (
   metadata: (
