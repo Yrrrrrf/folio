@@ -1,80 +1,66 @@
-# Folio
+# Folio v0.0.1
 
-[![Typst Package](https://img.shields.io/badge/typst-package-239DAD.svg)](https://typst.app/universe/package/folio)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+Folio is a Typst package for generating PMBOK-aligned project documentation from simple data dictionaries. It is built entirely around a single entry point, `project-doc()`, which produces a publication-grade, zero-crash PDF regardless of which data fields are present. Missing data gracefully falls back to explicit diagnostic placeholders, and an optional architectural audit dashboard can visualize your project's completeness against the PMBOK standard.
 
-Folio is a declarative, state-driven project management report generator built
-entirely in Typst.
-
-Features a six-layer architecture designed to render automated templates
-reliably without manually wiring styles, avoiding manual spacing, sizing, or
-parameter-threading in business logic. Write your project data once, and
-generate PMBOK® 7 and PRINCE2® 7 compliant documents dynamically.
-
-[**📖 Read the full Manual PDF here**](docs/manual.pdf)
-
-## Architecture at a glance
-
-Folio maps standard project management concepts into a strict six-namespace data
-contract, then uses that single source of truth to render different "organisms"
-(documents).
-
-```text
-┌──────────────────────┐
-│  dt.typ (Data)       │
-│  - metadata          │
-│  - initiation        │
-│  - baselines         │
-│  - registers         │
-│  - governance        │
-│  - closure           │
-└──────────┬───────────┘
-           │
-           ├────────────────────────┐
-           ▼                        ▼
-┌────────────────────┐   ┌────────────────────┐
-│ #charter(project)  │   │ #status-report(...)│
-└────────────────────┘   └────────────────────┘
-```
-
-## Quick Start
-
-Initialize your project dictionary and pass it to an organism. Here is a minimal
-Charter:
+## Quickstart
 
 ```typst
-#import "@preview/folio:0.0.2": charter
+#import "@local/folio:0.0.1": project-doc
 
 #let my-project = (
-  metadata: (
-    name: "Aurora Project", 
-    confidentiality: "Internal",
-    tags: ("Cloud", "Migration")
-  ),
-  initiation: (
-    pitch: (
-      problem: "Legacy infra is slow.", 
-      solution: "Migrate to cloud.", 
-      value: "Increase agility."
+  metadata: (name: "Project Zero"),
+  initiation: (pitch: "This is my project pitch.")
+)
+
+#show: project-doc(my-project, config: (audit: true))
+
+// Any custom content appended here
+```
+
+## Examples
+
+The best way to understand Folio is to explore the example files:
+- **[examples/full-project.typ](examples/full-project.typ)**: The canonical, end-to-end demo representing a comprehensive real-world project.
+- **`examples/components/`**: 15 distinct Typst files showcasing every single Folio section function in pure isolation.
+- **`examples/phases/`**: Check out `01-initiation.typ` or `02-planning.typ` for isolated demonstrations of standard PMBOK phases.
+
+## Standard Sections
+
+Folio enforces standard PMBOK order. The orchestrated pipeline covers 15 sections:
+
+1. **Cover**
+2. **Initiation**: Pitch, Business Case, Objectives
+3. **Planning**: Boundaries, Milestones, Budget, Gantt, Team
+4. **Execution**: Status Report, Risk Matrix, Issue Log, Change Log
+5. **Closure**: Lessons Learned, Sign-Off
+
+## Configuration Knobs
+
+The `project-doc` function accepts a `config` dictionary with the following toggles:
+- `audit` (bool): Toggles the generation of the pre-flight PMBOK completion dashboard on the very first page. Default is `false`.
+- `cover` (bool|auto): Whether to show the standard document cover. Default is `auto`.
+- `toc` (bool): (Reserved for future Table of Contents generation support).
+- `sections` (dict): Opt-in or opt-out of specific sections. Pass a boolean for any section ID (e.g. `gantt: false` will entirely omit the Gantt block). Default is `auto` for all sections (meaning "render if data exists").
+
+## Branding
+
+You can override any specific piece of Folio's design tokens by supplying a `brand` dictionary. Any missing fields elegantly fall back to default token values.
+
+```typst
+#show: project-doc(
+  my-project,
+  brand: (
+    palette: (
+      primary: rgb("#ff0000"),       // Red highlights
+      surface: (card: rgb("#fafafa"))// Custom card background
+    ),
+    typography: (
+      font-family: "Inter"
     )
   )
 )
-
-#show: charter(my-project)
 ```
 
-## Supported Organisms & Standards
+## Known Issues
 
-| Organism                  | PMBOK® 7 Ref    | PRINCE2® 7 Theme     | Consumes Namespaces                   | Status  |
-| ------------------------- | --------------- | -------------------- | ------------------------------------- | ------- |
-| `charter`                 | Project Charter | Business Case        | `metadata`, `initiation`, `baselines` | Stable  |
-| `status-report`           | Communications  | Risk/Issue, Progress | `metadata`, `registers`, `governance` | Stable  |
-| _(planned)_ `closure-doc` | Close Project   | End Project Report   | _closure_                             | Roadmap |
-
-## Documentation
-
-The full documentation is structured as a Typst-native book demonstrating the
-six-namespace architecture. It culminates in live-rendered examples of the
-charter and status report using a shared full-scale PM fixture.
-
-👉 [**Download the Manual (docs/manual.pdf)**](docs/manual.pdf)
+Please refer to [CONCERNS.md](CONCERNS.md) for architectural limitations and known issues.

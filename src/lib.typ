@@ -1,8 +1,9 @@
-/// Folio v2.0 - Public API
+/// Folio v0.0.1 - Public API
 
 // 1. Initialization
 /// Initializes the global state and standardizes document variables.
 #import "core/state.typ": folio-init
+#import "core/orchestrator.typ": project-doc
 
 // 2. Lifecycle Modules
 #import "phases/inicio.typ": pitch, business_case, objectives, cover
@@ -22,5 +23,7 @@
 #import "core/state.typ": folio-state
 #import "theme/resolver.typ": resolve-token, resolve-spacing
 #import "core/fallback.typ": _missing
-#import "core/resolve.typ": _resolve
+#import "core/resolve.typ": _resolve, nonempty, get-title
 #import "utils/formatters.typ": _money, _date
+#import "core/audit.typ": data-audit, pmbok-registry
+#import "core/refs.typ": task-label, milestone-label, risk-label, issue-label, change-label, link-to-task, link-to-milestone, link-to-risk, link-to-issue, link-to-change

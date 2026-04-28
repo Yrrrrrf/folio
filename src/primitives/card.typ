@@ -1,24 +1,22 @@
-#import "../core/state.typ": folio-state
-#import "../theme/resolver.typ": resolve-token, resolve-spacing
-
-#let card(body, title: none) = context {
-  let st = folio-state.get()
-  
-  let bg = resolve-token(st, "palette.surface.card")
-  let border = resolve-token(st, "palette.surface.border")
-  let pad = resolve-spacing(st, multiplier: 1.0)
-  let rad = resolve-token(st, "geometry.radius.lg")
-  
+#let card(
+  body, 
+  title: none,
+  bg: white,
+  border-color: luma(200),
+  pad: 1em,
+  rad: 8pt,
+  title-size: 1.2em
+) = {
   rect(
     fill: bg,
-    stroke: 1pt + border,
+    stroke: 1pt + border-color,
     radius: rad,
     inset: pad,
     width: 100%,
     {
       if title != none {
-        text(weight: "bold", size: resolve-token(st, "typography.size.lg"))[#title]
-        v(resolve-spacing(st, multiplier: 0.5))
+        text(weight: "bold", size: title-size)[#title]
+        v(pad * 0.5)
       }
       body
     }

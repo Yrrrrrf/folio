@@ -1,9 +1,7 @@
-#import "../core/guard.typ": section-guard
-#import "../primitives/card.typ": card
-#import "../primitives/data_table.typ": data-table
-#import "../primitives/badge.typ": badge
+#import "../core/guard.typ"
+#import "../theme/ui.typ": card, data-table, badge
 #import "../core/state.typ": folio-state
-#import "../core/resolve.typ": _resolve
+#import "../core/resolve.typ": _resolve, get-title
 
 #let cover() = context {
   let st = folio-state.get()
@@ -20,22 +18,37 @@
   pagebreak()
 }
 
-#let pitch() = section-guard("Elevator Pitch", "initiation.pitch", pitch => {
-  card[#pitch]
-})
+#let pitch() = context {
+  let st = folio-state.get()
+  let data = st.at("data", default: (:))
+  heading(level: 2)[#get-title(data, "initiation.pitch", "Elevator Pitch")]
+  card[#_resolve(data, "initiation.pitch")]
+}
 
-#let business_case() = section-guard("Business Case", "initiation.business_case", bc => {
-  card[#bc]
-})
+#let business_case() = context {
+  let st = folio-state.get()
+  let data = st.at("data", default: (:))
+  heading(level: 2)[#get-title(data, "initiation.business_case", "Business Case")]
+  card[#_resolve(data, "initiation.business_case")]
+}
 
-#let objectives() = section-guard("Project Objectives", "initiation.objectives", obj-list => {
-  data-table(
-    columns: (auto, 1fr, auto),
-    headers: ("ID", "Objective", "Priority"),
-    rows: obj-list.map(o => (
-      o.at("id", default: "-"),
-      o.at("description", default: "-"),
-      badge(o.at("priority", default: "neutral"), intent: if o.at("priority", default: "") == "high" { "danger" } else { "neutral" })
-    )).flatten()
-  )
-})
+#let objectives() = context {
+  let st = folio-state.get()
+  let data = st.at("data", default: (:))
+  heading(level: 2)[#get-title(data, "initiation.objectives", "Project Objectives")]
+  
+  let obj-list = _resolve(data, "initiation.objectives")
+  if type(obj-list) == array {
+    data-table(
+      columns: (auto, 1fr, auto),
+      headers: ("ID", "Objective", "Priority"),
+      rows: obj-list.map(o => (
+        o.at("id", default: "-"),
+        o.at("description", default: "-"),
+        badge(o.at("priority", default: "neutral"), intent: if o.at("priority", default: "") == "high" { "danger" } else { "neutral" })
+      )).flatten()
+    )
+  } else {
+    obj-list
+  }
+}

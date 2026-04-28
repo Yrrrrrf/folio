@@ -3,7 +3,6 @@
 
 #let _money(amount) = context {
   let st = folio-state.get()
-  let loc = st.at("locale", default: "en-US")
   
   if type(amount) != int and type(amount) != float {
     return _missing("Invalid Money: " + str(amount))
@@ -15,8 +14,8 @@
   let dec-part = if parts.len() > 1 { parts.at(1) } else { "00" }
   if dec-part.len() == 1 { dec-part += "0" }
   
-  let sep = if loc.starts-with("en") { "," } else { "." }
-  let dec = if loc.starts-with("en") { "." } else { "," }
+  let sep = ","
+  let dec = "."
   
   let res = ""
   let count = 0
@@ -29,14 +28,13 @@
     count += 1
   }
   
-  let currency-symbol = if loc.starts-with("en") { "$" } else { "€" }
+  let currency-symbol = "$"
   
   return currency-symbol + res + dec + dec-part
 }
 
 #let _date(date-str) = context {
   let st = folio-state.get()
-  let loc = st.at("locale", default: "en-US")
   
   if type(date-str) != str {
     return _missing("Invalid Date: " + str(date-str))
@@ -50,18 +48,13 @@
   let (y, m, d) = parts
   
   let months-en = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-  let months-es = ("Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic")
   
   let m-idx = int(m) - 1
   if m-idx < 0 or m-idx > 11 {
     return _missing("Invalid Month: " + m)
   }
   
-  let month-name = if loc.starts-with("es") { months-es.at(m-idx) } else { months-en.at(m-idx) }
+  let month-name = months-en.at(m-idx)
   
-  if loc.starts-with("en") {
-    return month-name + " " + d + ", " + y
-  } else {
-    return d + " de " + month-name + ", " + y
-  }
+  return month-name + " " + d + ", " + y
 }

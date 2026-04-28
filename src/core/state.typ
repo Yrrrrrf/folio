@@ -1,20 +1,15 @@
 #let folio-state = state("folio-state", (
   data: (:),
-  locale: "en-US",
-  brand: (:)
+  config: (:),
+  brand: (:),
 ))
 
-#let folio-init(
-  data: (:),
-  locale: "en-US",
-  brand: (:),
-  body
-) = {
+#let folio-init(data: (:), config: (:), brand: (:), body) = {
   folio-state.update(old => {
     (
       data: data,
-      locale: locale,
-      brand: brand
+      config: config,
+      brand: brand,
     )
   })
 

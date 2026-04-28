@@ -1,23 +1,18 @@
-#import "../core/state.typ": folio-state
-#import "../theme/resolver.typ": resolve-token, resolve-spacing
-
-#let metric(label, value, intent: none) = context {
-  let st = folio-state.get()
-  
-  let val-color = if intent != none {
-    resolve-token(st, "palette.intent." + intent)
-  } else {
-    black
-  }
-  
-  let pad = resolve-spacing(st, multiplier: 0.5)
-  
+#let metric(
+  label, 
+  value, 
+  val-color: black,
+  pad: 0.5em,
+  label-size: 0.8em,
+  label-color: luma(100),
+  val-size: 1.5em
+) = {
   block(
     stack(
       dir: ttb,
       spacing: pad,
-      text(size: resolve-token(st, "typography.size.sm"), fill: resolve-token(st, "palette.intent.neutral"))[#label],
-      text(size: resolve-token(st, "typography.size.xl"), weight: "bold", fill: val-color)[#value]
+      text(size: label-size, fill: label-color)[#label],
+      text(size: val-size, weight: "bold", fill: val-color)[#value]
     )
   )
 }
