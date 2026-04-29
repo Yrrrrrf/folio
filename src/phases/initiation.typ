@@ -1,14 +1,14 @@
 #import "../core/guard.typ"
 #import "../theme/ui.typ": card, data-table, badge
 #import "../core/state.typ": folio-state
-#import "../core/resolve.typ": _resolve, get-title
+#import "../core/resolve.typ": resolve, get-title
 
 #let cover() = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   
-  let name = _resolve(data, "project.name")
-  let desc = _resolve(data, "project.description")
+  let name = resolve(data, "project.name")
+  let desc = resolve(data, "project.description")
   
   align(center + horizon)[
     #text(size: 3em, weight: "bold")[#name]
@@ -22,14 +22,14 @@
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   heading(level: 2)[#get-title(data, "initiation.pitch", "Elevator Pitch")]
-  card[#_resolve(data, "initiation.pitch")]
+  card[#resolve(data, "initiation.pitch")]
 }
 
-#let business_case() = context {
+#let business-case() = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   heading(level: 2)[#get-title(data, "initiation.business_case", "Business Case")]
-  card[#_resolve(data, "initiation.business_case")]
+  card[#resolve(data, "initiation.business_case")]
 }
 
 #let objectives() = context {
@@ -37,7 +37,7 @@
   let data = st.at("data", default: (:))
   heading(level: 2)[#get-title(data, "initiation.objectives", "Project Objectives")]
   
-  let obj-list = _resolve(data, "initiation.objectives")
+  let obj-list = resolve(data, "initiation.objectives")
   if type(obj-list) == array {
     data-table(
       columns: (auto, 1fr, auto),

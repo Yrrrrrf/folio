@@ -1,12 +1,12 @@
-#import "@local/folio:0.0.1": sign_off, folio-init
+#import "@local/folio:0.0.1": folio-init, sign-off
 
 #show: body => folio-init(
   data: (
-    closure: (sign_off: ((name: "Demo Signer", role: "Demo Role"),))
+    closure: (sign-off: ((name: "Demo Signer", role: "Demo Role"),)),
   ),
-  body
+  body,
 )
 
-#sign_off()
+#sign-off()
 
-This is a demonstration of the `sign_off` component. It renders completely independently based solely on the data provided to the `folio-init` state container.
+This is a demonstration of the `sign-off` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

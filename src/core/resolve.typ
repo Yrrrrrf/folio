@@ -1,6 +1,6 @@
-#import "fallback.typ": _missing
+#import "fallback.typ": missing
 
-#let _resolve(data, path, fallback-name: none) = {
+#let resolve(data, path, fallback-name: none) = {
   let current = data
   let parts = path.split(".")
   let found = true
@@ -19,7 +19,7 @@
     if name == none {
       name = path
     }
-    return _missing(name)
+    return missing(name)
   }
   
   return current

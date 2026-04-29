@@ -1,7 +1,7 @@
 #import "../theme/resolver.typ": resolve-token, resolve-spacing
 #import "../core/state.typ": folio-state
 
-#let _missing(field-name) = context {
+#let missing(field-name) = context {
   let st = folio-state.get()
   let danger-color = resolve-token(st, "palette.intent.danger")
   let bg-color = danger-color.lighten(80%)

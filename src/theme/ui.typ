@@ -1,9 +1,9 @@
 #import "../primitives/card.typ": card as p-card
-#import "../primitives/data_table.typ": data-table as p-data-table
+#import "../primitives/data-table.typ": data-table as p-data-table
 #import "../primitives/badge.typ": badge as p-badge
 #import "../primitives/metric.typ": metric as p-metric
 #import "../core/state.typ": folio-state
-#import "resolver.typ": resolve-token, resolve-spacing
+#import "resolver.typ": resolve-spacing, resolve-token
 
 #let card(body, title: none) = context {
   let st = folio-state.get()
@@ -14,7 +14,7 @@
     border-color: resolve-token(st, "palette.surface.border"),
     pad: resolve-spacing(st, multiplier: 1.0),
     rad: resolve-token(st, "geometry.radius.lg"),
-    title-size: resolve-token(st, "typography.size.lg")
+    title-size: resolve-token(st, "typography.size.lg"),
   )
 }
 
@@ -27,7 +27,7 @@
     border-color: resolve-token(st, "palette.surface.border"),
     bg-header: resolve-token(st, "palette.surface.card"),
     pad: resolve-spacing(st, multiplier: 0.75),
-    header-size: resolve-token(st, "typography.size.sm")
+    header-size: resolve-token(st, "typography.size.sm"),
   )
 }
 
@@ -41,7 +41,7 @@
     pad-h: resolve-spacing(st, multiplier: 0.5),
     pad-v: resolve-spacing(st, multiplier: 0.25),
     rad: resolve-token(st, "geometry.radius.sm"),
-    text-size: resolve-token(st, "typography.size.sm")
+    text-size: resolve-token(st, "typography.size.sm"),
   )
 }
 
@@ -59,6 +59,17 @@
     pad: resolve-spacing(st, multiplier: 0.5),
     label-size: resolve-token(st, "typography.size.sm"),
     label-color: resolve-token(st, "palette.intent.neutral"),
-    val-size: resolve-token(st, "typography.size.xl")
+    val-size: resolve-token(st, "typography.size.xl"),
+  )
+}
+
+#let progress-bar(percentage, intent: "primary") = context {
+  let st = folio-state.get()
+  p-progress-bar(
+    percentage,
+    fill-color: resolve-token(st, "palette.intent." + intent),
+    bg-color: resolve-token(st, "palette.surface.border"),
+    h: resolve-spacing(st, multiplier: 0.5),
+    rad: resolve-token(st, "geometry.radius.sm"),
   )
 }

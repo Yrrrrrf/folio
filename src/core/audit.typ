@@ -2,25 +2,7 @@
 #import "resolve.typ": nonempty
 #import "../theme/ui.typ": badge, data-table
 #import "../theme/resolver.typ": resolve-token
-
-#let pmbok-registry = (
-  (path: "project.name", severity: "critical", phase: "meta"),
-  (path: "project.description", severity: "important", phase: "meta"),
-  (path: "initiation.pitch", severity: "critical", phase: "initiation"),
-  (path: "initiation.business_case", severity: "important", phase: "initiation"),
-  (path: "initiation.objectives", severity: "recommended", phase: "initiation"),
-  (path: "baselines.scope", severity: "important", phase: "planning"),
-  (path: "baselines.schedule.milestones", severity: "recommended", phase: "planning"),
-  (path: "baselines.financials.budget", severity: "important", phase: "planning"),
-  (path: "baselines.schedule.gantt", severity: "important", phase: "planning"),
-  (path: "governance.team", severity: "important", phase: "meta"),
-  (path: "execution.status", severity: "recommended", phase: "execution"),
-  (path: "registers.risk_register", severity: "important", phase: "execution"),
-  (path: "registers.issue_log", severity: "recommended", phase: "execution"),
-  (path: "registers.change_log", severity: "recommended", phase: "execution"),
-  (path: "closure.lessons_learned", severity: "recommended", phase: "closure"),
-  (path: "closure.sign_off", severity: "important", phase: "closure"),
-)
+#import "schema.typ": folio-schema
 
 #let data-audit() = context {
   let st = folio-state.get()
@@ -52,7 +34,7 @@
   }
 
   let render-group(sev, title) = {
-    let items = pmbok-registry.filter(r => r.severity == sev)
+    let items = folio-schema.filter(r => r.severity == sev)
     if items.len() == 0 { return none }
     
     let rows = items.map(r => {

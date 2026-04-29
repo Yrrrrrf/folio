@@ -1,11 +1,11 @@
 #import "../core/state.typ": folio-state
-#import "../core/fallback.typ": _missing
+#import "../core/fallback.typ": missing
 
-#let _money(amount) = context {
+#let format-money(amount) = context {
   let st = folio-state.get()
   
   if type(amount) != int and type(amount) != float {
-    return _missing("Invalid Money: " + str(amount))
+    return missing("Invalid Money: " + str(amount))
   }
   
   let amount-str = str(calc.round(float(amount), digits: 2))
@@ -33,16 +33,16 @@
   return currency-symbol + res + dec + dec-part
 }
 
-#let _date(date-str) = context {
+#let format-date(date-str) = context {
   let st = folio-state.get()
   
   if type(date-str) != str {
-    return _missing("Invalid Date: " + str(date-str))
+    return missing("Invalid Date: " + str(date-str))
   }
   
   let parts = date-str.split("-")
   if parts.len() != 3 {
-    return _missing("Invalid Date Format: " + date-str)
+    return missing("Invalid Date Format: " + date-str)
   }
   
   let (y, m, d) = parts
@@ -51,7 +51,7 @@
   
   let m-idx = int(m) - 1
   if m-idx < 0 or m-idx > 11 {
-    return _missing("Invalid Month: " + m)
+    return missing("Invalid Month: " + m)
   }
   
   let month-name = months-en.at(m-idx)

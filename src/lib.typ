@@ -1,29 +1,39 @@
 /// Folio v0.0.1 - Public API
 
-// 1. Initialization
-/// Initializes the global state and standardizes document variables.
-#import "core/state.typ": folio-init
+// 1. Orchestration
+#import "core/state.typ": folio-init, folio-state
 #import "core/orchestrator.typ": project-doc
 
-// 2. Lifecycle Modules
-#import "phases/inicio.typ": pitch, business_case, objectives, cover
-#import "phases/planificacion.typ": boundaries, milestones, budget, gantt, team
-#import "phases/ejecucion.typ": status_report, risk_matrix, issue_log, change_log
-#import "phases/cierre.typ": lessons_learned, sign_off
+// 2. Phase fns & Section fns
+#import "phases/initiation.typ": business-case, cover, objectives, pitch
+#import "phases/planning.typ": boundaries, budget, gantt, milestones, team
+#import "phases/execution.typ": change-log, issue-log, risk-matrix, status-report
+#import "phases/closure.typ": lessons-learned, sign-off
 
-// 3. UI Primitives (For advanced layout building)
-#import "primitives/card.typ": card
-#import "primitives/badge.typ": badge
-#import "primitives/data_table.typ": data-table
-#import "primitives/metric.typ": metric
-#import "primitives/progress_bar.typ": progress-bar
+// 3. Audit
+#import "core/audit.typ": data-audit
 
-// 4. Core & Formatters (For debugging and custom Guards)
+// 4. UI adapters
+#import "theme/ui.typ": badge, card, data-table, metric, progress-bar
+
+// 5. Primitives (advanced)
+#import "primitives/card.typ": card as raw-card
+#import "primitives/badge.typ": badge as raw-badge
+#import "primitives/data-table.typ": data-table as raw-data-table
+#import "primitives/metric.typ": metric as raw-metric
+#import "primitives/progress-bar.typ": progress-bar as raw-progress-bar
+
+// 6. Formatters
+#import "utils/formatters.typ": format-date, format-money
+
+// 7. Refs
+#import "core/refs.typ": (
+  change-label, issue-label, link-to-change, link-to-issue, link-to-milestone, link-to-risk, link-to-task,
+  milestone-label, risk-label, task-label,
+)
+
+// 8. Resolution helpers
+#import "core/resolve.typ": nonempty, resolve
+#import "core/fallback.typ": missing
 #import "core/guard.typ": section-guard
-#import "core/state.typ": folio-state
-#import "theme/resolver.typ": resolve-token, resolve-spacing
-#import "core/fallback.typ": _missing
-#import "core/resolve.typ": _resolve, nonempty, get-title
-#import "utils/formatters.typ": _money, _date
-#import "core/audit.typ": data-audit, pmbok-registry
-#import "core/refs.typ": task-label, milestone-label, risk-label, issue-label, change-label, link-to-task, link-to-milestone, link-to-risk, link-to-issue, link-to-change
+#import "theme/resolver.typ": resolve-spacing, resolve-token

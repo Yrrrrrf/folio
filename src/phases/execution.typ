@@ -2,14 +2,14 @@
 #import "../theme/ui.typ": card, data-table, badge, metric
 #import "../core/refs.typ": risk-label, issue-label, change-label, link-to-task, link-to-milestone, link-to-risk
 #import "../core/state.typ": folio-state
-#import "../core/resolve.typ": _resolve, get-title
+#import "../core/resolve.typ": resolve, get-title
 
-#let status_report() = context {
+#let status-report() = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   heading(level: 2)[#get-title(data, "execution.status", "Status Report")]
   
-  let status = _resolve(data, "execution.status")
+  let status = resolve(data, "execution.status")
   if type(status) == dictionary {
     stack(
       dir: ltr,
@@ -27,12 +27,12 @@
   }
 }
 
-#let risk_matrix() = context {
+#let risk-matrix() = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   heading(level: 2)[#get-title(data, "registers.risk_register", "Risk Matrix")]
   
-  let risks = _resolve(data, "registers.risk_register")
+  let risks = resolve(data, "registers.risk_register")
   if type(risks) == array {
     data-table(
       columns: (auto, 1fr, 1fr, auto, auto, auto),
@@ -69,12 +69,12 @@
   }
 }
 
-#let issue_log() = context {
+#let issue-log() = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   heading(level: 2)[#get-title(data, "registers.issue_log", "Issue Log")]
   
-  let issues = _resolve(data, "registers.issue_log")
+  let issues = resolve(data, "registers.issue_log")
   if type(issues) == array {
     data-table(
       columns: (auto, 1fr, auto, auto),
@@ -109,12 +109,12 @@
   }
 }
 
-#let change_log() = context {
+#let change-log() = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   heading(level: 2)[#get-title(data, "registers.change_log", "Change Log")]
   
-  let changes = _resolve(data, "registers.change_log")
+  let changes = resolve(data, "registers.change_log")
   if type(changes) == array {
     data-table(
       columns: (auto, 1fr, auto),
