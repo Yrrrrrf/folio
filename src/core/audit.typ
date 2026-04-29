@@ -3,13 +3,24 @@
 #import "../theme/ui.typ": badge, data-table
 #import "../theme/resolver.typ": resolve-token
 #import "schema.typ": folio-schema
+#import "refs.typ": folio-orphans
 
-#let data-audit() = context {
+#let data-audit-header() = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   let danger = resolve-token(st, "palette.intent.danger")
   let neutral = resolve-token(st, "palette.intent.neutral")
   
+  // Merge extra checks from config
+  let extra-checks = st.config.at("extra-checks", default: ())
+  for check in extra-checks {
+    let valid-severities = ("critical", "important", "recommended")
+    if check.at("severity", default: "") not in valid-severities {
+      panic("Invalid severity in extra-checks: " + check.at("severity", default: "") + ". Must be one of " + str(valid-severities))
+    }
+  }
+  let full-schema = folio-schema + extra-checks
+
   let check-path(p) = {
     let current = data
     let parts = p.split(".")
@@ -34,7 +45,7 @@
   }
 
   let render-group(sev, title) = {
-    let items = folio-schema.filter(r => r.severity == sev)
+    let items = full-schema.filter(r => r.severity == sev)
     if items.len() == 0 { return none }
     
     let rows = items.map(r => {
@@ -46,7 +57,7 @@
       } else {
         badge("Missing", intent: "danger")
       }
-      (r.path, b, r.phase)
+      (r.path, b, r.at("phase", default: "custom"))
     }).flatten()
     
     v(1em)
@@ -75,4 +86,29 @@
     #render-group("important", "Important Data")
     #render-group("recommended", "Recommended Data")
   ]
+}
+
+#let data-audit-orphans() = context {
+  let orphans = folio-orphans.get()
+  
+  heading(level: 2)[Orphan References]
+  
+  if orphans.len() == 0 {
+    [No orphan references detected.]
+  } else {
+    data-table(
+      columns: (1fr, 1fr),
+      headers: ("Target Label", "Fallback Text"),
+      rows: orphans.map(o => (
+        str(o.target),
+        o.fallback
+      )).flatten()
+    )
+    v(1em)
+    text(style: "italic", size: 0.8em)[Note: Orphan detection may require a second compile pass to be fully accurate.]
+  }
+}
+
+#let data-audit() = {
+  data-audit-header()
 }

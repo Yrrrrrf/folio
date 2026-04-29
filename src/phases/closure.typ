@@ -1,47 +1,19 @@
-#import "../core/guard.typ"
-#import "../theme/ui.typ": card, data-table
-#import "../utils/formatters.typ": format-date
+#import "../core/pipeline.typ": pmbok-pipeline
+#import "../core/guard.typ": section-guard
 #import "../core/state.typ": folio-state
-#import "../core/resolve.typ": resolve, get-title
+#import "../core/resolve.typ": get-title
+#import "../components/closure.typ": lessons-learned, sign-off
 
-#let lessons-learned() = context {
+#let closure(pipeline: pmbok-pipeline) = context {
   let st = folio-state.get()
-  let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, "closure.lessons_learned", "Lessons Learned")]
+  let current-pipeline = pipeline
   
-  let lessons = resolve(data, "closure.lessons_learned")
-  if type(lessons) == array {
-    data-table(
-      columns: (auto, 1fr, 1fr),
-      headers: ("Category", "What went wrong", "Recommendation"),
-      rows: lessons.map(l => (
-        l.at("category", default: "-"),
-        l.at("issue", default: "-"),
-        l.at("recommendation", default: "-")
-      )).flatten()
-    )
-  } else {
-    lessons
-  }
-}
-
-#let sign-off() = context {
-  let st = folio-state.get()
-  let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, "closure.sign_off", "Formal Sign-Off")]
+  heading(level: 1)[Phase 5: #get-title(st.at("data", default: (:)), "phases.closure.title", "Closure")]
   
-  let stakeholders = resolve(data, "closure.sign_off")
-  if type(stakeholders) == array {
-    data-table(
-      columns: (1fr, 1fr, 1fr),
-      headers: ("Stakeholder", "Role", "Date/Signature"),
-      rows: stakeholders.map(s => (
-        s.at("name", default: "-"),
-        s.at("role", default: "-"),
-        "___________________"
-      )).flatten()
-    )
-  } else {
-    stakeholders
+  for (phase, section_id, data_path, render_fn) in current-pipeline {
+    if phase == "closure" {
+      let resolved-toggle = st.config.sections.at(section_id, default: auto)
+      section-guard(resolved-toggle, data_path, render_fn)
+    }
   }
 }

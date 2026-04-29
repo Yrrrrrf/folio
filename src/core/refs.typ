@@ -8,10 +8,13 @@
 #let issue-label(id) = label("issue-" + slugify(id))
 #let change-label(id) = label("change-" + slugify(id))
 
+#let folio-orphans = state("folio-orphans", ())
+
 #let safe-link(lbl, fallback-text) = context {
   if query(lbl).len() > 0 {
     link(lbl)[#fallback-text]
   } else {
+    folio-orphans.update(prev => prev + ((target: lbl, fallback: fallback-text),))
     [#fallback-text?]
   }
 }

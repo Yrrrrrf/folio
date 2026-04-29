@@ -5,13 +5,14 @@
 #import "core/orchestrator.typ": project-doc
 
 // 2. Phase fns & Section fns
-#import "phases/initiation.typ": business-case, cover, objectives, pitch
-#import "phases/planning.typ": boundaries, budget, gantt, milestones, team
-#import "phases/execution.typ": change-log, issue-log, risk-matrix, status-report
-#import "phases/closure.typ": lessons-learned, sign-off
+#import "phases/initiation.typ": business-case, cover, objectives, pitch, initiation
+#import "phases/planning.typ": boundaries, budget, gantt, milestones, team, planning
+#import "phases/execution.typ": change-log, issue-log, risk-matrix, status-report, execution
+#import "phases/closure.typ": lessons-learned, sign-off, closure
+#import "phases/custom.typ": custom
 
 // 3. Audit
-#import "core/audit.typ": data-audit
+#import "core/audit.typ": data-audit, data-audit-header, data-audit-orphans
 
 // 4. UI adapters
 #import "theme/ui.typ": badge, card, data-table, metric, progress-bar

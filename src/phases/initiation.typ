@@ -1,54 +1,19 @@
-#import "../core/guard.typ"
-#import "../theme/ui.typ": card, data-table, badge
+#import "../core/pipeline.typ": pmbok-pipeline
+#import "../core/guard.typ": section-guard
 #import "../core/state.typ": folio-state
-#import "../core/resolve.typ": resolve, get-title
+#import "../core/resolve.typ": get-title
+#import "../components/initiation.typ": business-case, cover, objectives, pitch
 
-#let cover() = context {
+#let initiation(pipeline: pmbok-pipeline) = context {
   let st = folio-state.get()
-  let data = st.at("data", default: (:))
+  let current-pipeline = pipeline
   
-  let name = resolve(data, "project.name")
-  let desc = resolve(data, "project.description")
+  heading(level: 1)[Phase 2: #get-title(st.at("data", default: (:)), "phases.initiation.title", "Initiation")]
   
-  align(center + horizon)[
-    #text(size: 3em, weight: "bold")[#name]
-    #v(1em)
-    #text(size: 1.5em, style: "italic")[#desc]
-  ]
-  pagebreak()
-}
-
-#let pitch() = context {
-  let st = folio-state.get()
-  let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, "initiation.pitch", "Elevator Pitch")]
-  card[#resolve(data, "initiation.pitch")]
-}
-
-#let business-case() = context {
-  let st = folio-state.get()
-  let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, "initiation.business_case", "Business Case")]
-  card[#resolve(data, "initiation.business_case")]
-}
-
-#let objectives() = context {
-  let st = folio-state.get()
-  let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, "initiation.objectives", "Project Objectives")]
-  
-  let obj-list = resolve(data, "initiation.objectives")
-  if type(obj-list) == array {
-    data-table(
-      columns: (auto, 1fr, auto),
-      headers: ("ID", "Objective", "Priority"),
-      rows: obj-list.map(o => (
-        o.at("id", default: "-"),
-        o.at("description", default: "-"),
-        badge(o.at("priority", default: "neutral"), intent: if o.at("priority", default: "") == "high" { "danger" } else { "neutral" })
-      )).flatten()
-    )
-  } else {
-    obj-list
+  for (phase, section_id, data_path, render_fn) in current-pipeline {
+    if phase == "initiation" {
+      let resolved-toggle = st.config.sections.at(section_id, default: auto)
+      section-guard(resolved-toggle, data_path, render_fn)
+    }
   }
 }

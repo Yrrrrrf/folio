@@ -1,7 +1,8 @@
 #let default-tokens = (
   typography: (
-    font-family: ("Inter", "sans-serif"),
+    family: ("Inter", "sans-serif"),
     size: (
+      body: 10pt,
       sm: 0.85em,
       md: 1em,
       lg: 1.25em,
@@ -28,7 +29,9 @@
       md: 4pt,
       lg: 8pt,
       "none": 0pt
-    )
+    ),
+    page-margin: 2.5cm,
+    paper: "a4"
   ),
   spacing: (
     base: 1em,

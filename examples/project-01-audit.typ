@@ -4,7 +4,7 @@
 #show: project-doc(
   data: project-data,
   config: (
-    audit: false, // true is default
-    // toc: false, // true is default
-  ),
+    audit: true,
+    toc: true
+  )
 )

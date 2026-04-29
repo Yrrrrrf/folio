@@ -12,13 +12,13 @@
   let data = st.at("data", default: (:))
   
   if toggle == true {
-    render()
+    render(path)
   } else if toggle == auto {
     if nonempty(data, path) {
-      render()
+      render(path)
     }
   } else {
-    // Legacy support for phase 1
+    // Legacy support for phase 1 - titles as strings
     let title = toggle
     let is-empty = not nonempty(data, path)
     
@@ -29,16 +29,7 @@
         #text(fill: resolve-token(st, "palette.intent.danger"), style: "italic")[Requiere datos en: `#path`]
       ]
     } else {
-      let current = data
-      for p in path.split(".") {
-        if type(current) == dictionary and p in current {
-          current = current.at(p)
-        } else {
-          current = none
-          break
-        }
-      }
-      render(current)
+      render(path)
     }
     
     v(resolve-spacing(st, multiplier: 2.0))

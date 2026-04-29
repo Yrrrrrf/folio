@@ -1,53 +1,90 @@
 #import "state.typ": folio-init, folio-state
 #import "guard.typ": section-guard
-#import "audit.typ": data-audit
+#import "audit.typ": data-audit-header, data-audit-orphans
 #import "resolve.typ": nonempty
 
-#import "../phases/initiation.typ": business-case, cover, objectives, pitch
-#import "../phases/planning.typ": boundaries, budget, gantt, milestones, team
-#import "../phases/execution.typ": change-log, issue-log, risk-matrix, status-report
-#import "../phases/closure.typ": lessons-learned, sign-off
-
-#let pmbok-pipeline = (
-  (phase: "initiation", section_id: "pitch", data_path: "initiation.pitch", render_fn: pitch),
-  (phase: "initiation", section_id: "business_case", data_path: "initiation.business_case", render_fn: business-case),
-  (phase: "initiation", section_id: "objectives", data_path: "initiation.objectives", render_fn: objectives),
-  (phase: "planning", section_id: "boundaries", data_path: "baselines.scope", render_fn: boundaries),
-  (phase: "planning", section_id: "milestones", data_path: "baselines.schedule.milestones", render_fn: milestones),
-  (phase: "planning", section_id: "budget", data_path: "baselines.financials.budget", render_fn: budget),
-  (phase: "planning", section_id: "gantt", data_path: "baselines.schedule.gantt", render_fn: gantt),
-  (phase: "planning", section_id: "team", data_path: "governance.team", render_fn: team),
-  (phase: "execution", section_id: "status_report", data_path: "execution.status", render_fn: status-report),
-  (phase: "execution", section_id: "risk_matrix", data_path: "registers.risk_register", render_fn: risk-matrix),
-  (phase: "execution", section_id: "issue_log", data_path: "registers.issue_log", render_fn: issue-log),
-  (phase: "execution", section_id: "change_log", data_path: "registers.change_log", render_fn: change-log),
-  (phase: "closure", section_id: "lessons_learned", data_path: "closure.lessons_learned", render_fn: lessons-learned),
-  (phase: "closure", section_id: "sign_off", data_path: "closure.sign_off", render_fn: sign-off),
-)
+#import "../phases/initiation.typ": initiation
+#import "../phases/planning.typ": planning
+#import "../phases/execution.typ": execution
+#import "../phases/closure.typ": closure
+#import "../phases/custom.typ": custom
+#import "../components/initiation.typ": cover
+#import "pipeline.typ": pmbok-pipeline
 
 #let project-doc(data: (:), config: (:), brand: (:)) = body => {
   let resolved-config = (
     audit: config.at("audit", default: false),
     cover: config.at("cover", default: auto),
+    toc: config.at("toc", default: true),
     sections: config.at("sections", default: (:)),
+    extra-sections: config.at("extra-sections", default: ()),
+    extra-checks: config.at("extra-checks", default: ()),
   )
 
   show: rest => folio-init(data: data, config: resolved-config, brand: brand, rest)
 
   context {
     let st = folio-state.get()
+    
+    // Process extra-sections
+    let current-pipeline = pmbok-pipeline
+    let extra-sections = st.config.at("extra-sections", default: ())
+    
+    for extra in extra-sections {
+      let id = extra.at("id")
+      let phase = extra.at("phase")
+      let data-path = extra.at("data-path")
+      let render = extra.at("render")
+      let before = extra.at("before", default: none)
+      let after = extra.at("after", default: none)
+      
+      // Check for ID collision
+      if current-pipeline.any(p => p.section_id == id) {
+        panic("Section ID collision in extra-sections: " + id)
+      }
+      
+      let new-record = (phase: phase, section_id: id, data_path: data-path, render_fn: render)
+      
+      if before != none {
+        let idx = current-pipeline.position(p => p.section_id == before)
+        if idx == none { panic("Anchor section_id not found for 'before': " + before) }
+        current-pipeline.insert(idx, new-record)
+      } else if after != none {
+        let idx = current-pipeline.position(p => p.section_id == after)
+        if idx == none { panic("Anchor section_id not found for 'after': " + after) }
+        current-pipeline.insert(idx + 1, new-record)
+      } else {
+        // Append to the end of its phase if no anchor
+        let last-in-phase = current-pipeline.enumerate().filter(e => e.at(1).phase == phase).last()
+        if last-in-phase != none {
+          current-pipeline.insert(last-in-phase.at(0) + 1, new-record)
+        } else {
+          current-pipeline.push(new-record)
+        }
+      }
+    }
 
     if st.config.audit == true {
-      data-audit()
+      data-audit-header()
     }
 
     if st.config.cover == true or (st.config.cover == auto and nonempty(st.data, "project.name")) {
       cover()
+      pagebreak()
     }
 
-    for (phase, section_id, data_path, render_fn) in pmbok-pipeline {
-      let resolved-toggle = st.config.sections.at(section_id, default: auto)
-      section-guard(resolved-toggle, data_path, render_fn)
+    if st.config.toc == true {
+      outline(title: "Table of Contents", indent: auto, depth: 3)
+    }
+
+    initiation(pipeline: current-pipeline)
+    planning(pipeline: current-pipeline)
+    execution(pipeline: current-pipeline)
+    closure(pipeline: current-pipeline)
+    custom(pipeline: current-pipeline)
+
+    if st.config.audit == true {
+      data-audit-orphans()
     }
 
     body

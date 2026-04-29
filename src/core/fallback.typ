@@ -12,7 +12,7 @@
     radius: resolve-token(st, "geometry.radius.sm"),
     inset: resolve-spacing(st, multiplier: 0.5),
     text(fill: danger-color, style: "italic", size: resolve-token(st, "typography.size.sm"))[
-      [Missing: #field-name]
+      Missing: #field-name
     ]
   )
 }

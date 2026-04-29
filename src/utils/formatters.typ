@@ -1,8 +1,16 @@
 #import "../core/state.typ": folio-state
 #import "../core/fallback.typ": missing
 
+/// Formatter for currency values.
+/// Signature: format-money(amount: int|float) -> content
 #let format-money(amount) = context {
   let st = folio-state.get()
+  
+  // Try override from config
+  let override = st.config.at("format-money", default: none)
+  if type(override) == function {
+    return override(amount)
+  }
   
   if type(amount) != int and type(amount) != float {
     return missing("Invalid Money: " + str(amount))
@@ -33,8 +41,16 @@
   return currency-symbol + res + dec + dec-part
 }
 
+/// Formatter for ISO date strings (YYYY-MM-DD).
+/// Signature: format-date(date-str: str) -> content
 #let format-date(date-str) = context {
   let st = folio-state.get()
+  
+  // Try override from config
+  let override = st.config.at("format-date", default: none)
+  if type(override) == function {
+    return override(date-str)
+  }
   
   if type(date-str) != str {
     return missing("Invalid Date: " + str(date-str))
