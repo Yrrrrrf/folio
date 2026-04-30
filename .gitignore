@@ -2,5 +2,8 @@
 .*
 !.gitignore
 
+# ignore lockfiles
+*.lock
+
 # generated files
 *.pdf
