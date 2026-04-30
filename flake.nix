@@ -28,9 +28,9 @@
           ];
 
           shellHook = ''
-            echo "📄 folio — typst $(typst --version)"
-            echo "   just $(just --version)"
-            echo "   fd $(fd --version)"
+            echo "    $(typst --version)"
+            echo "    $(just --version)"
+            echo "    $(fd --version)"
           '';
         };
       }
