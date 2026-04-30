@@ -4,6 +4,3 @@
 
 # generated files
 *.pdf
-
-# just commands
-justfile
