@@ -5,10 +5,10 @@
 #import "core/orchestrator.typ": project-doc
 
 // 2. Phase fns & Section fns
-#import "phases/initiation.typ": business-case, cover, objectives, pitch, initiation
-#import "phases/planning.typ": boundaries, budget, gantt, milestones, team, planning
-#import "phases/execution.typ": change-log, issue-log, risk-matrix, status-report, execution
-#import "phases/closure.typ": lessons-learned, sign-off, closure
+#import "phases/initiation.typ": business-case, cover, objectives, pitch, success-criteria, stakeholders, assumptions-log, initiation
+#import "phases/planning.typ": boundaries, budget, gantt, milestones, team, requirements, quality, communication, risk-strategy, compliance, planning
+#import "phases/execution.typ": change-log, issue-log, risk-matrix, status-report, decision-log, deliverables-register, execution
+#import "phases/closure.typ": lessons-learned, sign-off, acceptance, benefits-review, handover, financial-closure, closure
 #import "phases/custom.typ": custom
 
 // 3. Audit
@@ -27,10 +27,15 @@
 // 6. Formatters
 #import "utils/formatters.typ": format-date, format-money
 
-// 7. Refs
+// 7. Refs — existing
 #import "core/refs.typ": (
   change-label, issue-label, link-to-change, link-to-issue, link-to-milestone, link-to-risk, link-to-task,
   milestone-label, risk-label, task-label,
+)
+// 7b. Refs — new label families (Phase 1 expansion)
+#import "core/refs.typ": (
+  req-label, deliverable-label, assumption-label, decision-label, stakeholder-label, objective-label,
+  link-to-req, link-to-deliverable, link-to-assumption, link-to-decision, link-to-stakeholder, link-to-objective,
 )
 
 // 8. Resolution helpers

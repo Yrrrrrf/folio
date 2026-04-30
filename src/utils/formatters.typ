@@ -56,15 +56,16 @@
     return missing("Invalid Date: " + str(date-str))
   }
   
-  let parts = date-str.split("-")
-  if parts.len() != 3 {
+  // Validate ISO format YYYY-MM-DD with a regex before parsing
+  if date-str.match(regex("^\d{4}-\d{2}-\d{2}$")) == none {
     return missing("Invalid Date Format: " + date-str)
   }
-  
+
+  let parts = date-str.split("-")
   let (y, m, d) = parts
-  
+
   let months-en = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-  
+
   let m-idx = int(m) - 1
   if m-idx < 0 or m-idx > 11 {
     return missing("Invalid Month: " + m)

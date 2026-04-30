@@ -14,11 +14,12 @@ test: clean compile list
 list:
     fd -uu -e pdf -t f
 
-[doc("Remove all PDF files")]
+[doc("Remove all PDF files (examples + tests)")]
 [group('CI')]
 clean:
     @# Uses -uu to bypass .gitignore, and -X to batch-delete them all at once
     fd -uu -e pdf -t f -X rm -f
+    fd -uu -e pdf -t f . tests/ -X rm -f
 
 [doc("Compile all examples")]
 [group('CI')]
@@ -26,7 +27,8 @@ compile:
     @# -e typ: look for typ files
     @# -E data.typ: exclude the shared data file
     @# -x: run the command individually for EVERY match (typst only accepts 1 file at a time)
-    fd -e typ -E data.typ . examples/  -x typst compile {}
+    fd -e typ -E data.typ . examples/ -x typst compile {}
+    fd -e typ -E data.typ . tests/ -x typst compile {}
 
 # Copy folio repository content to local packages
 [group('dev')]
