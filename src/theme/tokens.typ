@@ -1,6 +1,6 @@
 #let default-tokens = (
   typography: (
-    family: ("Inter", "sans-serif"),
+    family: ("Liberation Sans", "DejaVu Sans"),
     size: (
       body: 10pt,
       sm: 0.85em,
