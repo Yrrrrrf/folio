@@ -3,24 +3,24 @@
 LOCAL := env('HOME') / ".local/share/typst/packages/local"
 VERSION := `rg version typst.toml | cut -d'"' -f2`
 
-[doc("Run a test build")]
+[doc("Clean, compile & list all PDF files")]
 [group('Dev')]
 test: clean compile list
     @echo "✓ Test completed"
     @fd -uu -e pdf -t f -X rm -f
 
-[doc("List all PDF files in the current directory")]
+[doc("List all PDF files")]
 [group('CI')]
 list:
     fd -uu -e pdf -t f
 
-[doc("Remove all PDF files from the current directory")]
+[doc("Remove all PDF files")]
 [group('CI')]
 clean:
     @# Uses -uu to bypass .gitignore, and -X to batch-delete them all at once
     fd -uu -e pdf -t f -X rm -f
 
-[doc("Run a typst build of all examples in the `examples/` directory.")]
+[doc("Compile all examples")]
 [group('CI')]
 compile:
     @# -e typ: look for typ files
