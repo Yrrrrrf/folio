@@ -7,6 +7,6 @@
   body
 )
 
-#team()
+#team("governance.team")
 
 This is a demonstration of the `team` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

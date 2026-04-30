@@ -7,6 +7,6 @@
   body
 )
 
-#objectives()
+#objectives("initiation.objectives")
 
 This is a demonstration of the `objectives` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

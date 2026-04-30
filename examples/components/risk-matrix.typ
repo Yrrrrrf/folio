@@ -19,6 +19,6 @@
   body,
 )
 
-#risk-matrix()
+#risk-matrix("registers.risk_register")
 
 This is a demonstration of the `risk-matrix` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

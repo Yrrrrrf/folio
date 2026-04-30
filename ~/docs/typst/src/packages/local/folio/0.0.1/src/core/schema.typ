@@ -1,0 +1,18 @@
+#let folio-schema = (
+  (path: "project.name", severity: "critical", phase: "meta", kind: "string"),
+  (path: "project.description", severity: "important", phase: "meta", kind: "string"),
+  (path: "initiation.pitch", severity: "critical", phase: "initiation", kind: "string"),
+  (path: "initiation.business_case", severity: "important", phase: "initiation", kind: "string"),
+  (path: "initiation.objectives", severity: "recommended", phase: "initiation", kind: "array"),
+  (path: "baselines.scope", severity: "important", phase: "planning", kind: "dict"),
+  (path: "baselines.schedule.milestones", severity: "recommended", phase: "planning", kind: "array"),
+  (path: "baselines.financials.budget", severity: "important", phase: "planning", kind: "array"),
+  (path: "baselines.schedule.gantt", severity: "important", phase: "planning", kind: "array"),
+  (path: "governance.team", severity: "important", phase: "meta", kind: "array"),
+  (path: "execution.status", severity: "recommended", phase: "execution", kind: "dict"),
+  (path: "registers.risk_register", severity: "important", phase: "execution", kind: "array"),
+  (path: "registers.issue_log", severity: "recommended", phase: "execution", kind: "array"),
+  (path: "registers.change_log", severity: "recommended", phase: "execution", kind: "array"),
+  (path: "closure.lessons_learned", severity: "recommended", phase: "closure", kind: "array"),
+  (path: "closure.sign_off", severity: "important", phase: "closure", kind: "array"),
+)

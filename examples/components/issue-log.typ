@@ -18,6 +18,6 @@
   body,
 )
 
-#issue-log()
+#issue-log("registers.issue_log")
 
 This is a demonstration of the `issue-log` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

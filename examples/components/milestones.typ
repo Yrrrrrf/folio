@@ -7,6 +7,6 @@
   body
 )
 
-#milestones()
+#milestones("baselines.schedule.milestones")
 
 This is a demonstration of the `milestones` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

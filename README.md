@@ -13,11 +13,22 @@
 )
 
 #show: project-doc(
-  project,
+  data: project,
   config: (audit: true, toc: true),
   brand: (palette: (primary: rgb("#003e7e"))),
 )
 ```
+
+## What's in v0.0.1
+
+Folio v0.0.1 covers 14 PMBOK-aligned sections across 4 phases:
+
+- **Phase 1: Initiation**: Business Case, Project Objectives, Project Pitch.
+- **Phase 2: Planning**: Project Boundaries, Budget, Gantt, Milestones, Team.
+- **Phase 3: Execution**: Change Log, Issue Log, Risk Matrix, Status Report.
+- **Phase 4: Closure**: Lessons Learned, Sign-off.
+
+Plus support for **Custom Sections** at any insertion point.
 
 ## Features
 

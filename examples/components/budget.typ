@@ -7,6 +7,6 @@
   body
 )
 
-#budget()
+#budget("baselines.financials.budget")
 
 This is a demonstration of the `budget` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

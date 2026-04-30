@@ -7,6 +7,6 @@
   body
 )
 
-#pitch()
+#pitch("initiation.pitch")
 
 This is a demonstration of the `pitch` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

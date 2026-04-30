@@ -7,6 +7,6 @@
   body
 )
 
-#gantt()
+#gantt("baselines.schedule.gantt")
 
 This is a demonstration of the `gantt` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

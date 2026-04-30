@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": change_log, folio-init
+#import "@local/folio:0.0.1": change-log, folio-init
 
 #show: body => folio-init(
   data: (
@@ -7,6 +7,6 @@
   body
 )
 
-#change_log()
+#change-log("registers.change_log")
 
 This is a demonstration of the `change_log` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

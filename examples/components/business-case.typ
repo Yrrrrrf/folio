@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": business_case, folio-init
+#import "@local/folio:0.0.1": business-case, folio-init
 
 #show: body => folio-init(
   data: (
@@ -7,6 +7,6 @@
   body
 )
 
-#business_case()
+#business-case("initiation.business_case")
 
 This is a demonstration of the `business_case` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

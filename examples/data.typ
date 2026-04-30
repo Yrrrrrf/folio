@@ -1,3 +1,7 @@
+// Shared data dictionary for folio examples.
+// This file centralizes project metadata, milestones, risks, and other PMBOK-aligned fields
+// used across multiple example documents (project-01, rfp, etc).
+
 #let project-data = (
   project: (
     name: "Chimera Urban Infrastructure",

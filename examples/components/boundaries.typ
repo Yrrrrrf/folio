@@ -7,6 +7,6 @@
   body
 )
 
-#boundaries()
+#boundaries("baselines.scope")
 
 This is a demonstration of the `boundaries` component. It renders completely independently based solely on the data provided to the `folio-init` state container.

@@ -7,6 +7,6 @@
   body,
 )
 
-#sign-off()
+#sign-off("closure.sign_off")
 
 This is a demonstration of the `sign-off` component. It renders completely independently based solely on the data provided to the `folio-init` state container.
