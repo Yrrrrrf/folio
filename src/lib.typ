@@ -34,8 +34,8 @@
 )
 // 7b. Refs — new label families (Phase 1 expansion)
 #import "core/refs.typ": (
-  req-label, deliverable-label, assumption-label, decision-label, stakeholder-label, objective-label,
-  link-to-req, link-to-deliverable, link-to-assumption, link-to-decision, link-to-stakeholder, link-to-objective,
+  req-label, deliverable-label, assumption-label, decision-label, stakeholder-label, objective-label, compliance-label,
+  link-to-req, link-to-deliverable, link-to-assumption, link-to-decision, link-to-stakeholder, link-to-objective, link-to-compliance,
 )
 
 // 8. Resolution helpers

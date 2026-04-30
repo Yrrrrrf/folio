@@ -6,11 +6,12 @@
       issue_log: (
         (
           id: "I1",
-          description: "Demo Issue",
-          owner: "Demo Owner",
-          status: "Open",
+          description: "API Authentication Failure",
+          owner: "Lead Dev",
+          status: "In-Progress",
           affects_risk: ("R1",),
           blocks_milestone: ("M1",),
+          blocks_deliverable: ("D1",),
         ),
       ),
     ),
@@ -20,4 +21,4 @@
 
 #issue-log("registers.issue_log")
 
-This is a demonstration of the `issue-log` component. It renders completely independently based solely on the data provided to the `folio-init` state container.
+This is a demonstration of the `issue-log` component, showcasing enhanced cross-references to risks, milestones, and deliverables.

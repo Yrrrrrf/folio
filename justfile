@@ -30,6 +30,16 @@ compile:
     fd -e typ -E data.typ . examples/ -x typst compile {}
     fd -e typ -E data.typ . tests/ -x typst compile {}
 
+[doc("Compile integration showcase only")]
+[group('Dev')]
+test-full:
+    typst compile examples/full-standards.typ
+
+[doc("Compile every component fixture individually")]
+[group('Dev')]
+test-components:
+    fd -e typ . examples/components/ -x typst compile {}
+
 # Copy folio repository content to local packages
 [group('dev')]
 local:

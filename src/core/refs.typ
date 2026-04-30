@@ -16,6 +16,7 @@
 #let decision-label(id) = label("decision-" + slugify(id))
 #let stakeholder-label(id) = label("stakeholder-" + slugify(id))
 #let objective-label(id) = label("objective-" + slugify(id))
+#let compliance-label(id) = label("compliance-" + slugify(id))
 
 #let folio-orphans = state("folio-orphans", ())
 
@@ -42,3 +43,4 @@
 #let link-to-decision(id) = safe-link(decision-label(id), id)
 #let link-to-stakeholder(id) = safe-link(stakeholder-label(id), id)
 #let link-to-objective(id) = safe-link(objective-label(id), id)
+#let link-to-compliance(id) = safe-link(compliance-label(id), id)

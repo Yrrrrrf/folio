@@ -1,764 +1,433 @@
-# folio v0.0.1 — Architectural Implementation Plan
+# folio v0.0.1 — Gap-Closing Implementation Plan
+
+> Companion to `IMPLEMENTATION-PLAN.md` and `SCHEMA-MAP.md`. The original plan landed at ~90% — this document closes the remaining 10%. Architecture is unchanged. Work is purely additive: one feature integration, one label family, two justfile targets, fifteen new fixture files.
 
 ---
 
 ## 0. Executive Summary
 
-folio is a Typst package that turns a single data dictionary into a publication-grade, PMBOK-aligned project management document. This plan expands folio from 14 sections to 28 — covering all four PM phases across PMBOK 7, ISO 21500, and PRINCE2 7 — while adding a cross-referencing system that links requirements to budgets, risks to tasks, deliverables to acceptance records, and objectives to benefits reviews. The architecture is already sound (pipeline-driven orchestration, schema-based audit, token theming, graceful fallbacks). This plan adds data and components without changing the engine. The only new external dependency is `gantty` for visual Gantt rendering.
+The first plan executed cleanly: schema, pipeline, refs, components, and tests all align with the architecture. Five gaps remain, ordered by risk: (1) `gantty` integration is the only behavioral gap — the gantt component renders tables instead of a visual chart. (2) `compliance-label` is missing from refs. (3) Justfile lacks two CI targets. (4) Fourteen standalone component fixtures are missing from `examples/components/`. (5) The integration showcase `examples/full-standards.typ` does not exist. This plan delivers all five in four phases; phase A is a spike, phases B–D are mechanical.
 
 ---
 
 ## 1. Context & Constraints
 
-**Project Context:** Existing Typst package, ~57 files, ~26.8k tokens. Modular architecture with clear separation: `core/` (engine), `components/` (section renderers), `phases/` (phase orchestrators), `primitives/` (UI atoms), `theme/` (tokens + resolver), `utils/` (formatters). Nix flake for reproducible dev environment.
+**What's done (verified against `IMPLEMENTATION-PLAN.md`):**
+- 30/30 schema paths in `src/core/schema.typ`
+- 28/28 pipeline entries in `src/core/pipeline.typ`
+- 10/11 label families in `src/core/refs.typ` (compliance missing)
+- All 14 new component functions implemented with cross-references
+- Backward-compat shape detection for `budget` and `gantt`
+- 3 test fixtures in `tests/` exercising cross-refs, formatters, and new sections
+- `lib.typ` exports complete
 
-**Goals:**
-1. Cover the full PM standards skeleton (30 schema paths, 28 pipeline sections)
-2. Add ID-based cross-referencing across all referenceable entities
-3. Add visual Gantt rendering via `gantty`
-4. Enrich budget component with line items, categories, extra costs
-5. Add `baselines.requirements` as a new core component
-6. Maintain backward compatibility with existing examples
-7. Every phase shippable and testable via CLI (`typst compile`)
+**What's left:**
+- `gantty` not declared in `typst.toml`; gantt component renders nested data as tables, not a visual chart
+- `compliance-label` + `link-to-compliance` not in `refs.typ`
+- Justfile missing `test-full` and `test-components` targets
+- 14 missing fixtures in `examples/components/`
+- 1 missing fixture: `examples/full-standards.typ`
 
-**Team & Scale:** Solo developer. Package consumers are individuals generating project documents. No server, no API, no concurrency concerns.
+**Out of scope (still):** computed rollups, i18n, `project.sponsor` / `code` / `version`, breaking the old gantt shape.
 
-**Architectural Rules:**
-- Zero-crash guarantee: any data dict compiles, even `(:)`
-- Pipeline is the single ordering mechanism
-- Public API through `src/lib.typ` only
-- Theming via token resolver, never hardcoded colors/sizes
-- Cross-references via Typst labels + `safe-link` (orphan-safe)
-- `section-guard` controls visibility (auto/true/false)
-- No i18n — locale handled via `format-money`, `format-date`, `get-title` overrides
-
-**Out of Scope:**
-- Computed rollups (v0.1.0)
-- Tailoring / methodology profiles
-- i18n locale system
-- `project.sponsor`, `project.code`, `project.version`
-- Interactive PDF elements
-- Importing `01`'s bespoke implementations
-
-[ASSUMPTION] `gantty:0.5.1` API is stable and its input shape won't change before folio ships.
-[ASSUMPTION] Typst 0.14.2's conditional `context` blocks and `state` API remain stable.
-[ASSUMPTION] All existing examples (`minimal.typ`, `project-01.typ`, `project-01-audit.typ`, `rfp.typ`, `thesis.typ`, and all `components/*.typ`) must compile without modification after each phase.
+[ASSUMPTION] `gantty:0.5.1` API matches what was used in the user's `01` project. The drawer pattern (`default-*-drawer.with(...)`) is the integration surface.
+[ASSUMPTION] Existing tests/fixtures continue to pass with no changes after each phase.
 
 ---
 
 ## 2. Architecture Overview
 
-folio's architecture doesn't change. The expansion is purely additive: new components, new pipeline entries, new schema paths, new label families. The engine (orchestrator, pipeline, state, resolve, guard, audit, refs) gets extended but not restructured.
+No engine changes. The expansion in this plan touches:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Consumer File                            │
-│  #import "@local/folio:0.0.1": project-doc                     │
-│  #show: project-doc(data: ..., config: ..., brand: ...)        │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │
-                    ┌──────────▼──────────┐
-                    │    orchestrator     │  Reads config, initializes state,
-                    │                     │  iterates pipeline, renders phases
-                    └──────────┬──────────┘
-                               │
-              ┌────────────────┼────────────────┐
-              │                │                │
-    ┌─────────▼──────┐ ┌──────▼───────┐ ┌──────▼───────┐
-    │    pipeline     │ │    state     │ │    audit     │
-    │  28 records     │ │  data/config │ │  30 paths    │
-    │  (phase,id,     │ │  /brand in   │ │  + orphan    │
-    │   path,render)  │ │  Typst state │ │  detection   │
-    └─────────┬───────┘ └──────────────┘ └──────────────┘
-              │
-    ┌─────────▼──────────────────────────────────────────┐
-    │              Phase Orchestrators (×5)               │
-    │  initiation │ planning │ execution │ closure │ custom │
-    │  Each filters pipeline by phase, applies            │
-    │  section-guard, calls render_fn                      │
-    └─────────┬──────────────────────────────────────────┘
-              │
-    ┌─────────▼──────────────────────────────────────────┐
-    │              Components (×28)                       │
-    │  Each: reads state → resolves data path →           │
-    │  renders via themed UI primitives →                  │
-    │  emits labels for cross-references                   │
-    └─────────┬──────────────────────────────────────────┘
-              │
-    ┌─────────▼──────────────────────────────────────────┐
-    │              UI Primitives                           │
-    │  card │ data-table │ badge │ metric │ progress-bar  │
-    │  All themed via resolve-token(st, "path")           │
-    └─────────┬──────────────────────────────────────────┘
-              │
-    ┌─────────▼──────────────────────────────────────────┐
-    │              Theme Layer                             │
-    │  tokens.typ (defaults) → resolver.typ (brand merge) │
-    └────────────────────────────────────────────────────┘
+typst.toml                    [+1 dependency declaration]
+src/core/refs.typ             [+1 label family + 1 link function]
+src/components/planning.typ   [gantt() rewrite — drawer construction + gantty call]
+                              [+ compliance() emits compliance-label]
+src/lib.typ                   [+2 exports: compliance-label, link-to-compliance]
+examples/components/*.typ     [+14 new fixtures]
+examples/full-standards.typ   [+1 new integration fixture]
+justfile                      [+2 targets]
 ```
 
-**Core domain:** The pipeline + schema + resolve system. This is what makes folio folio — a data dictionary becomes a document via a declarative pipeline.
-
-**Supporting domains:** UI primitives (presentation), theme (styling), refs (cross-linking), audit (diagnostics), formatters (locale).
+Everything else stays untouched. The pipeline, phase orchestrators, schema, audit, state, theme, primitives, and all other components remain exactly as they are.
 
 ---
 
 ## 3. Design Patterns & Code Standards
 
-### Pattern: Data Pipeline (orchestrator + pipeline + phases)
-- **What it is:** A declarative array of records, each mapping `(phase, section_id, data_path, render_fn)`. The orchestrator iterates it; phase files filter by phase; `section-guard` controls visibility.
-- **Why:** Decouples section ordering from section rendering. Adding a section is a one-line pipeline entry + a render function. Removing is `config: (sections: (section_id: false))`. Reordering is rearranging the array.
-- **At year 3:** New PM standards or custom templates add pipeline entries without touching the engine.
-- **At year 10:** The pipeline could be loaded from an external file (YAML, TOML) for fully user-defined document structures.
+### Pattern: Token-to-Drawer Adapter (new, internal to `gantt()`)
 
-### Pattern: Resolver Chain (theme/resolver.typ)
-- **What it is:** Two-phase lookup: try `brand` dict first, fall back to `default-tokens`. Fail-visible (magenta) if neither has the path.
-- **Why:** Brand customization without forking. A consumer overrides `palette.primary` and every component that uses it changes. No prop drilling.
-- **At year 3:** Tokens scale linearly — new components just call `resolve-token` with new paths.
-- **At year 10:** Could support theme inheritance (base theme → org theme → project theme).
+- **What it is:** A pure function `build-gantty-drawer(st)` that reads folio's resolved tokens (palette, typography, geometry) and returns the dict shape `gantty.gantt` expects under its `drawer:` argument. The drawer is rebuilt on every render via `context` so brand overrides propagate.
+- **Why this pattern:** It isolates the `gantty`-shaped quirks (drawer dicts, `default-*-drawer.with(...)` calls) from folio's token system. The `gantt` component remains a thin wrapper: read state, build drawer, call `gantty.gantt`. If `gantty`'s drawer API changes, only this adapter changes — folio's tokens don't move.
+- **At year 3:** Adding a new theme variant (dark mode, high-contrast) is a token change, not a gantty change.
+- **At year 10:** If folio replaces `gantty` with another charting library (or builds its own), the swap touches only `build-gantty-drawer` and the import line. The `gantt` component signature and the data shape don't change.
 
-### Pattern: Safe Cross-References (refs.typ)
-- **What it is:** Typst labels created from entity IDs via `slugify`. References resolve via `safe-link`: if the target label exists, render a clickable link; if not, record an orphan and render `"ID?"`. Orphans are collected in state and reported in the audit dashboard.
-- **Why:** Cross-references in a data-driven document are inherently fragile — the user might reference a risk that doesn't exist yet, or a task they misspelled. Safe-link makes this a diagnostic, not a crash.
-- **At year 3:** New entity types (requirements, deliverables, etc.) just register a new label prefix. The pattern scales.
-- **At year 10:** Could support bidirectional refs ("this risk is referenced by these issues") via a query pass.
-
-### Pattern: Graceful Degradation (resolve.typ + fallback.typ)
-- **What it is:** `resolve(data, path)` traverses the dict. If the path is missing or empty, it returns a `missing("path")` content block — a red-bordered box that says what's absent.
-- **Why:** The zero-crash guarantee. A document with `(:)` compiles and shows what's missing. A document with partial data shows what's present and flags the rest.
-- **At year 3:** No change needed — the pattern is path-agnostic.
-- **At year 10:** Could evolve into a progressive disclosure system where missing sections are hidden by default and shown in "draft mode."
-
-### Standards to Enforce
-- **Naming:** snake_case for schema paths and section IDs. kebab-case for Typst function names. Leading underscore for internal helpers.
-- **Module boundaries:** Components import from `core/` and `theme/ui.typ` only. Components never import from other components. Phases import from `core/` only.
-- **Dependency direction:** `primitives/ ← theme/ui.typ ← components/ ← phases/ ← orchestrator`. Never upward.
-- **Error handling:** `resolve()` for data access (never raw `.at()`). `section-guard()` for visibility. `safe-link()` for cross-refs. No panics except for config validation (e.g., duplicate section IDs).
+### Standards reaffirmed
+- The `gantt` component keeps its shape detection: flat array → table fallback (backward compat); dict → visual via `gantty`.
+- Drawer construction lives **inside** `planning.typ` as a private `let`, not exported from `lib.typ`.
+- `compliance-label` and `link-to-compliance` follow the exact pattern of the other 10 label families. No new abstraction.
 
 ---
 
 ## 4. Component Map & Directory Structure
 
-### Proposed Directory Tree (changes marked)
+### New / modified files
 
-```
-folio/
-├── README.md
-├── MANIFEST.md
-├── SCHEMA-MAP.md                          # NEW — this document
-├── IMPLEMENTATION-PLAN.md                 # NEW — this document
-├── typst.toml                             # MODIFIED — add gantty dependency
-├── flake.nix
-├── justfile                               # MODIFIED — add new test targets
-├── LICENSE
-├── docs/
-│   └── manual.typ
-├── examples/
-│   ├── data.typ                           # MODIFIED — expanded to cover all 30 paths
-│   ├── minimal.typ                        # UNCHANGED
-│   ├── project-01.typ                     # UNCHANGED
-│   ├── project-01-audit.typ               # UNCHANGED
-│   ├── rfp.typ                            # UNCHANGED
-│   ├── thesis.typ                         # UNCHANGED
-│   ├── full-standards.typ                 # NEW — fixture that exercises all 28 sections
-│   └── components/
-│       ├── boundaries.typ                 # UNCHANGED
-│       ├── budget.typ                     # MODIFIED — use new rich shape
-│       ├── business-case.typ              # UNCHANGED
-│       ├── change-log.typ                 # UNCHANGED
-│       ├── cover.typ                      # UNCHANGED
-│       ├── gantt.typ                      # MODIFIED — use new gantt shape
-│       ├── issue-log.typ                  # UNCHANGED
-│       ├── lessons-learned.typ            # UNCHANGED
-│       ├── milestones.typ                 # UNCHANGED
-│       ├── objectives.typ                 # UNCHANGED
-│       ├── pitch.typ                      # UNCHANGED
-│       ├── risk-matrix.typ                # UNCHANGED
-│       ├── sign-off.typ                   # UNCHANGED
-│       ├── status-report.typ              # UNCHANGED
-│       ├── team.typ                       # UNCHANGED
-│       ├── acceptance.typ                 # NEW
-│       ├── assumptions-log.typ            # NEW
-│       ├── benefits-review.typ            # NEW
-│       ├── communication.typ              # NEW
-│       ├── compliance.typ                 # NEW
-│       ├── decision-log.typ               # NEW
-│       ├── deliverables-register.typ      # NEW
-│       ├── financial-closure.typ          # NEW
-│       ├── handover.typ                   # NEW
-│       ├── quality.typ                    # NEW
-│       ├── requirements.typ               # NEW
-│       ├── risk-strategy.typ              # NEW
-│       ├── stakeholders.typ               # NEW
-│       └── success-criteria.typ           # NEW
-├── src/
-│   ├── lib.typ                            # MODIFIED — export new components
-│   ├── components/
-│   │   ├── initiation.typ                 # MODIFIED — add success-criteria, stakeholders, assumptions-log
-│   │   ├── planning.typ                   # MODIFIED — add requirements, quality, communication, risk-strategy, compliance; enhance budget, gantt
-│   │   ├── execution.typ                  # MODIFIED — add decision-log, deliverables-register; enhance change-log
-│   │   └── closure.typ                    # MODIFIED — add acceptance, benefits-review, handover, financial-closure
-│   ├── core/
-│   │   ├── audit.typ                      # MODIFIED — schema grows to 30 paths
-│   │   ├── fallback.typ                   # UNCHANGED
-│   │   ├── guard.typ                      # UNCHANGED
-│   │   ├── orchestrator.typ               # UNCHANGED (pipeline-driven, already generic)
-│   │   ├── pipeline.typ                   # MODIFIED — 28 entries
-│   │   ├── refs.typ                       # MODIFIED — 6 new label families
-│   │   ├── resolve.typ                    # UNCHANGED
-│   │   ├── schema.typ                     # MODIFIED — 30 entries
-│   │   └── state.typ                      # UNCHANGED
-│   ├── phases/
-│   │   ├── initiation.typ                 # UNCHANGED (already generic, reads pipeline)
-│   │   ├── planning.typ                   # UNCHANGED
-│   │   ├── execution.typ                  # UNCHANGED
-│   │   ├── closure.typ                    # UNCHANGED
-│   │   └── custom.typ                     # UNCHANGED
-│   ├── primitives/
-│   │   ├── badge.typ                      # UNCHANGED
-│   │   ├── card.typ                       # UNCHANGED
-│   │   ├── data-table.typ                 # UNCHANGED
-│   │   ├── metric.typ                     # UNCHANGED
-│   │   └── progress-bar.typ               # UNCHANGED
-│   ├── theme/
-│   │   ├── resolver.typ                   # UNCHANGED
-│   │   ├── tokens.typ                     # UNCHANGED
-│   │   └── ui.typ                         # UNCHANGED
-│   └── utils/
-│       └── formatters.typ                 # UNCHANGED
-```
+| Path | Status | Responsibility |
+|---|---|---|
+| `typst.toml` | Modified | Declare `gantty:0.5.1` as a package dependency |
+| `src/core/refs.typ` | Modified | Add `compliance-label`, `link-to-compliance` |
+| `src/components/planning.typ` | Modified | Rewrite `gantt()` with gantty drawer integration; add `compliance-label` emission to `compliance()` |
+| `src/lib.typ` | Modified | Export `compliance-label`, `link-to-compliance` |
+| `justfile` | Modified | Add `test-full` and `test-components` targets |
+| `examples/components/success-criteria.typ` | New | Standalone fixture |
+| `examples/components/stakeholders.typ` | New | Standalone fixture |
+| `examples/components/assumptions-log.typ` | New | Standalone fixture |
+| `examples/components/requirements.typ` | New | Standalone fixture |
+| `examples/components/quality.typ` | New | Standalone fixture |
+| `examples/components/communication.typ` | New | Standalone fixture |
+| `examples/components/risk-strategy.typ` | New | Standalone fixture |
+| `examples/components/compliance.typ` | New | Standalone fixture |
+| `examples/components/decision-log.typ` | New | Standalone fixture |
+| `examples/components/deliverables-register.typ` | New | Standalone fixture |
+| `examples/components/acceptance.typ` | New | Standalone fixture |
+| `examples/components/benefits-review.typ` | New | Standalone fixture |
+| `examples/components/handover.typ` | New | Standalone fixture |
+| `examples/components/financial-closure.typ` | New | Standalone fixture |
+| `examples/full-standards.typ` | New | Integration showcase using all 28 sections |
 
-### Component Responsibilities
+### Standalone fixture pattern (applies to all 14 new fixtures)
 
-| Component File | Responsibility | Exposes | Consumes | Must NOT |
-|---|---|---|---|---|
-| `components/initiation.typ` | Render initiation-phase sections | `cover`, `pitch`, `business-case`, `objectives`, `success-criteria`, `stakeholders`, `assumptions-log` | `core/resolve`, `core/state`, `core/refs`, `theme/ui` | Import from other component files |
-| `components/planning.typ` | Render planning-phase sections | `boundaries`, `requirements`, `milestones`, `budget`, `gantt`, `quality`, `communication`, `risk-strategy`, `compliance`, `team` | `core/resolve`, `core/state`, `core/refs`, `theme/ui`, `utils/formatters`, `gantty` (for gantt only) | Import from other component files |
-| `components/execution.typ` | Render execution-phase sections | `status-report`, `risk-matrix`, `issue-log`, `change-log`, `decision-log`, `deliverables-register` | `core/resolve`, `core/state`, `core/refs`, `theme/ui` | Import from other component files |
-| `components/closure.typ` | Render closure-phase sections | `lessons-learned`, `sign-off`, `acceptance`, `benefits-review`, `handover`, `financial-closure` | `core/resolve`, `core/state`, `core/refs`, `theme/ui`, `utils/formatters` | Import from other component files |
-| `core/pipeline.typ` | Define the default section ordering | `pmbok-pipeline` (array of 28 records) | All component render functions | Contain rendering logic |
-| `core/refs.typ` | Create and resolve cross-reference labels | 11 label families + `safe-link` + `folio-orphans` | Nothing (leaf module) | Access state or resolve data |
-| `core/schema.typ` | Define the audit checklist | `folio-schema` (array of 30 path records) | Nothing (leaf module) | Contain rendering logic |
+Each fixture is the minimum viable consumer of one component. Same pattern as `examples/components/budget.typ` etc.:
+- Imports the component function and `folio-init` from `@local/folio:0.0.1`
+- Wraps with `folio-init` carrying just enough data to render
+- Calls the component with its data path
+- Closes with a one-sentence rationale describing what the fixture demonstrates
+
+The fixtures are **not** test files. They are documented usage examples and serve as compile-canaries: if a component's signature drifts, its fixture stops compiling.
 
 ---
 
 ## 5. Trade-off Analysis
 
 ```
-DECISION: External dependency for visual Gantt
+DECISION: Where to construct the gantty drawer
 OPTIONS CONSIDERED:
-  A. Zero dependencies — table-only Gantt, users import gantty themselves
-     + No dep management. Simpler packaging.
-     − Consumer has to wire gantty into extra-sections manually. Poor out-of-box experience.
-  B. Hard dependency on gantty — folio declares it in typst.toml
-     + Visual Gantt out of the box. One-line consumer experience.
-     − First external dependency. Tied to gantty's release cycle.
-  C. Soft/optional — try import, fall back to table
-     + Best of both worlds in theory.
-     − Typst doesn't have clean conditional imports. Fragile, confusing errors.
+  A. Inline in gantt() — build the drawer dict every call, in the component body.
+     + Local. No new symbols. Easy to read in one place.
+     − gantt() becomes long (60+ lines of drawer config).
+  B. Private helper in planning.typ — `let build-gantty-drawer(st) = (...)`.
+     + Component body stays short. Adapter is testable in isolation.
+     − One more name in the file.
+  C. Separate module src/theme/gantty-adapter.typ.
+     + Cleanly isolated. Theme-adjacent.
+     − Premature for one consumer. Folio doesn't have other charting libs to share with.
 CHOSEN: B
-REASON: folio is opinionated about everything else (theme, pipeline, audit). One curated
-dependency for a visual Gantt is consistent with the philosophy. gantty is actively maintained
-and Typst-native.
-REVISIT IF: gantty becomes unmaintained, or Typst adds a built-in charting API.
+REASON: Keeps gantt() readable, isolates gantty quirks, but doesn't over-engineer. If a second
+charting integration appears, promote to C without changing call sites.
+REVISIT IF: A second external chart library is added, or build-gantty-drawer exceeds 100 lines.
 ```
 
 ```
-DECISION: Budget component — backward compatibility strategy
+DECISION: Drawer style mapping — token paths used for gantty
 OPTIONS CONSIDERED:
-  A. Breaking change — new shape only, old examples updated
-     + Clean code. No branching logic in the component.
-     − Breaks any external consumer using the old (description, amount) shape.
-  B. Shape detection — if input is flat array of (description, amount), render simple table;
-     if input is dict with line_items/extra_costs, render rich table
-     + Backward compatible. Existing examples keep working unchanged.
-     − Branching logic in the component. Two code paths to maintain.
-CHOSEN: B
-REASON: v0.0.1 hasn't shipped yet, so there are no external consumers to break — but the
-existing examples ARE the test suite. Keeping them working without modification is the
-project's own constraint. Shape detection is a one-time check at the top of the function.
-REVISIT IF: After v0.1.0 ships and the old shape is deprecated.
-```
-
-```
-DECISION: Cross-reference depth
-OPTIONS CONSIDERED:
-  A. ID-based linking only — entities have IDs, refs render as clickable links, orphans detected
-     + Simple. Proven pattern in existing refs.typ. No data traversal pass needed.
-     − No computed aggregates (e.g., "total budget for REQ-01").
-  B. ID-based linking + automatic rollups — folio computes aggregates across sections
-     + Powerful. Budget shows per-requirement totals. Risk count per milestone.
-     − Complex. Requires a pre-render data traversal pass. Edge cases (circular refs, missing IDs).
-       Significantly increases implementation scope.
-CHOSEN: A (v0.0.1), B deferred to v0.1.0
-REASON: Links are the high-value, low-complexity win. Rollups are powerful but triple the
-implementation effort for cross-referencing. Ship links first, learn from real usage, then
-add rollups where they actually matter.
-REVISIT IF: Multiple consumers request rollups, or the audit dashboard needs aggregate metrics.
-```
-
-```
-DECISION: Gantt data shape — nested phases with subtasks vs. flat task list
-OPTIONS CONSIDERED:
-  A. Flat task list — (id, name, start, end, progress)
-     + Simple schema. Easy to write.
-     − No visual grouping. Loses the phase structure that makes Gantt charts readable.
-  B. Nested phases with subtasks — matches gantty's input format and 01's data shape
-     + Visual grouping by phase. Matches how project managers think. Direct gantty passthrough.
-     − Deeper nesting in the data dict. Schema is more complex.
-CHOSEN: B
-REASON: A Gantt chart without phase grouping is just a list with dates. The visual grouping
-IS the value. The nesting matches gantty's expected input, so the component is a thin
-theming wrapper, not a data transformer.
-REVISIT IF: gantty changes its input format.
-```
-
-```
-DECISION: Where to put new component functions — one file per phase vs. one file per section
-OPTIONS CONSIDERED:
-  A. One file per phase (current) — initiation.typ, planning.typ, execution.typ, closure.typ
-     + Fewer files. Clear phase grouping. Existing pattern.
-     − Files grow large (planning.typ will have 10 functions).
-  B. One file per section — pitch.typ, budget.typ, gantt.typ, requirements.typ, ...
-     + Small focused files. Easy to find a specific component.
-     − 28 files in components/. Import overhead. Breaks existing pattern.
+  A. Reuse existing tokens directly — palette.primary for bars, palette.intent.warning for milestones, etc.
+     + No new tokens. Brand overrides Just Work.
+     − Some gantty surfaces (sidebar, headers, dividers) don't have obvious folio token equivalents.
+  B. Add gantt-specific token namespace — palette.gantt.bar, palette.gantt.milestone, etc.
+     + Explicit. Each gantty surface has a named token.
+     − Pollutes the token namespace. Brand overrides need to know about gantt-specific paths.
 CHOSEN: A
-REASON: Consistency with the existing codebase. The phase files are already the pattern.
-Planning.typ with 10 functions is still manageable — each function is 20-40 lines.
-Splitting later is a non-breaking refactor if files get unwieldy.
-REVISIT IF: Any single component file exceeds 500 lines.
+REASON: Reuse is the right default. Map gantty surfaces to existing tokens:
+  - Phase headers / sidebar dividers → palette.primary (and lighter variants via .lighten())
+  - Sub-task bars → palette.intent.neutral.lighten(40%) with palette.primary stroke
+  - Milestones → palette.intent.warning
+  - Gridlines → palette.surface.border
+A consumer who wants gantt-specific brand control already has the lever via brand override of palette.primary.
+REVISIT IF: Multiple consumers report wanting gantt-only color overrides without affecting the rest of the doc.
+```
+
+```
+DECISION: Standalone fixtures — stub data or realistic data?
+OPTIONS CONSIDERED:
+  A. Minimum stubs — single-row arrays, "Demo Foo" strings, no cross-refs.
+     + Tiny files. Fast to compile. Pattern-matches existing fixtures.
+     − Doesn't show cross-refs working in isolation.
+  B. Realistic data with self-contained cross-refs — e.g., success-criteria fixture includes
+     an objective with the same OBJ-1 ID so the link resolves.
+     + Demonstrates cross-references working.
+     − Requires more data per fixture; some sections need data from multiple paths.
+CHOSEN: A for sections without cross-refs, B for sections with cross-refs
+REASON: A fixture's job is to render the component. Cross-refs that don't resolve produce orphan
+warnings, which are diagnostic noise in a fixture. For sections that emit OR follow cross-refs
+(success-criteria, assumptions-log, acceptance, benefits-review, deliverables-register, compliance,
+quality), include the referenced entity inline so links resolve. For others (handover,
+financial-closure, communication, risk-strategy), stubs are fine.
+REVISIT IF: A consumer reports a fixture that compiles but doesn't demonstrate the component's
+intended use.
 ```
 
 ---
 
 ## 6. Phased Implementation Plan
 
-### Phase 1 — Foundation: refs + schema + pipeline expansion
+### Phase A — Foundational refs + justfile
 
-**Goal:** Extend the engine to know about all 30 paths and 11 label families. No new rendering yet — but the audit dashboard reports all new paths as "Missing," and the pipeline has slots for all 28 sections.
+**Goal:** Close the trivial gaps so later phases don't trip over them. Add the missing label family and the missing CI targets.
 
 **Components to modify:**
-- `core/refs.typ` — Add 6 new label families: `req-label`, `deliverable-label`, `assumption-label`, `decision-label`, `stakeholder-label`, `objective-label`. Add corresponding `link-to-*` functions.
-- `core/schema.typ` — Expand from 16 to 30 entries.
-- `core/pipeline.typ` — Expand from 14 to 28 entries. New entries point to stub render functions that output `missing("section_id — not yet implemented")`.
-- `src/lib.typ` — Export new label/link functions from refs.
-- `typst.toml` — Add `gantty` dependency.
+- `src/core/refs.typ` — add `compliance-label(id) = label("compliance-" + slugify(id))` and `link-to-compliance(id) = safe-link(compliance-label(id), id)`.
+- `src/components/planning.typ` — `compliance()` emits `compliance-label(id)` on each row's ID cell (mirrors the pattern in `requirements()`, `decision-log()`, etc.).
+- `src/lib.typ` — export `compliance-label`, `link-to-compliance` in the refs section.
+- `justfile` — add two targets: `test-full` (compile only `examples/full-standards.typ`) and `test-components` (compile every file under `examples/components/`).
 
-**Dependencies:** None. This is the foundation.
+**Dependencies:** None.
 
 **Exit criteria:**
 ```bash
-# All existing examples compile without modification
-fd -e typ -E data.typ . examples/ -x typst compile {}
+# Existing tests still compile
+just compile
 
-# The audit dashboard on project-01-audit shows all 30 paths
-# (14 as Present/Empty, 16 new ones as Missing)
+# New justfile targets exist (will fail because target files don't exist yet — that's expected for now)
+just --list | rg 'test-full|test-components'
+
+# refs.typ has 11 label families
+rg '^#let .+-label\(id\)' src/core/refs.typ | wc -l   # → 11
+
+# lib.typ exports the new symbols
+rg 'compliance-label|link-to-compliance' src/lib.typ   # → 2 hits
+```
+
+**Risk flags:** None. Trivial additions following established patterns.
+
+---
+
+### Phase B — gantty integration
+
+**Goal:** The behavioral gap. Make the visual Gantt render via `gantty`, themed via folio tokens, when the data is in the new nested shape. Old flat shape continues to render as a table (already works).
+
+**Components to modify:**
+- `typst.toml` — add `gantty` to dependencies. [ASSUMPTION] The Typst package manifest format accepts a `[dependencies]` block or equivalent; verify against the current Typst spec before declaring.
+- `src/components/planning.typ`:
+  - Add `#import "@preview/gantty:0.5.1": gantt as gantty-render, sidebar, header, task, dividers, milestones, dependencies, field` (exact symbol list to match `01`'s usage).
+  - Add private helper `let build-gantty-drawer(st) = (...)` — constructs the drawer dict from folio tokens.
+  - Rewrite the dict branch of `gantt()` to: extract `start`, `end`, `tasks`, `milestones` from the data; call `gantty-render((start: ..., end: ..., tasks: ..., milestones: ...), drawer: build-gantty-drawer(st))`.
+  - Keep the array branch unchanged (backward compat fallback).
+
+**Drawer mapping spec (token paths):**
+- Sidebar phase labels → `palette.primary`, weight bold, size from `typography.size.md`.
+- Sidebar subtask labels → `palette.intent.neutral`, size from `typography.size.sm`.
+- Sidebar dividers → `palette.primary` (phase) and `palette.surface.border` (subtask).
+- Month/day header strokes → `palette.primary` (month) and `palette.primary.lighten(60%)` (day) with gridlines from `palette.surface.border`, dotted, thin.
+- Phase task bars → `palette.primary` fill, `palette.primary.darken(20%)` stroke, width from a fixed pt value (e.g. 16pt) since tokens don't have a "bar height" yet.
+- Subtask bars → `palette.primary.lighten(40%)` fill, `palette.primary` stroke, width 10pt.
+- Milestones → `palette.intent.warning` stroke, thickness 2pt.
+
+**Dependencies:** Phase A complete (mostly for justfile so `just compile` includes everything cleanly).
+
+**Exit criteria:**
+```bash
+# typst.toml declares the dependency
+rg 'gantty' typst.toml
+
+# project-01-audit (which has nested gantt data) compiles AND renders a visual chart
+just local
 typst compile examples/project-01-audit.typ
+# Visual inspection: gantt section shows phase bars, day headers, milestone markers, themed colors
 
-# The pipeline has 28 entries (verify by inspection)
+# Cross-refs test (which uses nested gantt) compiles
+typst compile tests/cross-refs.typ
+
+# Backward compat: a fixture with the old flat array shape still renders as a table
+# (Use any older test or write a one-shot)
+echo '#import "@local/folio:0.0.1": gantt, folio-init
+#show: body => folio-init(data: (baselines: (schedule: (gantt: ((id: "T1", name: "Old Shape", start: "2026-01-01", end: "2026-02-01", progress: "50%"),)))), body)
+#gantt("baselines.schedule.gantt")' > /tmp/test-old-gantt.typ
+typst compile /tmp/test-old-gantt.typ
+
+# Brand override changes gantty colors
+echo '#import "@local/folio:0.0.1": project-doc
+#show: project-doc(
+  data: (project: (name: "Brand Test"), baselines: (schedule: (gantt: (start: "2026-01-01", end: "2026-03-01", tasks: ((name: "P1", subtasks: ((id: "T1", name: "Task", start: "2026-01-01", end: "2026-02-01"),))))))),
+  brand: (palette: (primary: rgb("#dc2626")))
+)' > /tmp/test-brand-gantt.typ
+typst compile /tmp/test-brand-gantt.typ
+# Visual inspection: bars and headers are red, not blue
 ```
 
 **Risk flags:**
-- [LOW] Adding stub render functions to pipeline means new sections show `missing()` placeholders until their components are built. This is by design — graceful degradation.
+- [HIGH] gantty's drawer API surface. The drawer dict shape must match `gantty:0.5.1` exactly. The `01` project's working code is the reference — copy its import list and drawer structure verbatim, then replace hardcoded colors with `resolve-token` calls.
+- [MEDIUM] `typst.toml` dependency declaration syntax. Verify against the current Typst package spec; the format may be `[dependencies]` table, `dependencies = [...]`, or import-only (resolved at compile time from the `@preview` namespace). If `gantty` is consumed via `@preview` and Typst auto-resolves, no `typst.toml` change is needed beyond the import statement.
+- [LOW] Theme override propagation. Because `build-gantty-drawer(st)` runs inside a `context` block that reads `folio-state`, brand overrides should flow through automatically. Verify with the brand-override test above.
 
 ---
 
-### Phase 2 — Initiation expansion: success_criteria + stakeholders + assumptions_log
+### Phase C — Standalone component fixtures (×14)
 
-**Goal:** Three new initiation-phase components, fully rendered and cross-referenced.
+**Goal:** Round out `examples/components/` with one fixture per new component. Each fixture is short (≈10–25 lines) and follows the established pattern.
 
-**Components to modify:**
-- `components/initiation.typ` — Add `success-criteria`, `stakeholders`, `assumptions-log` functions.
-- `core/pipeline.typ` — Replace stubs with real render functions for these 3 sections.
+**Files to create (all under `examples/components/`):**
 
-**Components to create:**
-- `examples/components/success-criteria.typ` — Standalone fixture.
-- `examples/components/stakeholders.typ` — Standalone fixture.
-- `examples/components/assumptions-log.typ` — Standalone fixture.
+| File | Imports | Data shape | Cross-refs included? |
+|---|---|---|---|
+| `success-criteria.typ` | `success-criteria, folio-init` | objectives + success_criteria | yes (objective_id) |
+| `stakeholders.typ` | `stakeholders, folio-init` | stakeholders only | no |
+| `assumptions-log.typ` | `assumptions-log, folio-init` | assumptions + risk_register | yes (risk_id) |
+| `requirements.typ` | `requirements, folio-init` | requirements (multi-category) | no (emits labels only) |
+| `quality.typ` | `quality, folio-init` | quality + requirements | yes (req_id in criteria) |
+| `communication.typ` | `communication, folio-init` | communication only | no |
+| `risk-strategy.typ` | `risk-strategy, folio-init` | risk_strategy only | no |
+| `compliance.typ` | `compliance, folio-init` | compliance + requirements | yes (req_ids) |
+| `decision-log.typ` | `decision-log, folio-init` | decision_log + risk_register + issue_log | yes (prompted_by_*) |
+| `deliverables-register.typ` | `deliverables-register, folio-init` | deliverables + requirements | yes (req_ids) |
+| `acceptance.typ` | `acceptance, folio-init` | acceptance + deliverables_register | yes (deliverable_id) |
+| `benefits-review.typ` | `benefits-review, folio-init` | benefits_review + objectives | yes (objective_id) |
+| `handover.typ` | `handover, folio-init` | handover only | no |
+| `financial-closure.typ` | `financial-closure, folio-init` | financial_closure only | no |
 
-**Fixtures to modify:**
-- `examples/data.typ` — Add `initiation.success_criteria`, `initiation.stakeholders`, `initiation.assumptions_log` to the shared data dict.
+For fixtures with cross-refs included, the referenced entity must use the same ID the link points to. Without this, every fixture compile produces an orphan warning — pollutes the diagnostic baseline.
 
-**Cross-refs to implement:**
-- `success-criteria` → `link-to-objective` (objective_id field)
-- `stakeholders` → `stakeholder-label` emission
-- `assumptions-log` → `link-to-risk` (risk_id field), `assumption-label` emission
-
-**Exit criteria:**
-```bash
-# All existing examples still compile
-fd -e typ -E data.typ . examples/ -x typst compile {}
-
-# New standalone component fixtures compile
-typst compile examples/components/success-criteria.typ
-typst compile examples/components/stakeholders.typ
-typst compile examples/components/assumptions-log.typ
-
-# project-01-audit shows the 3 new sections as Present (data.typ has data)
-typst compile examples/project-01-audit.typ
-# Visual inspection: new sections render tables with correct cross-ref links
-```
-
-**Risk flags:** None. Additive only.
-
----
-
-### Phase 3 — Planning expansion: requirements + quality + communication + risk_strategy + compliance
-
-**Goal:** Five new planning-phase components. The big one is `requirements` — the richest new component, with category grouping, subtotals, and cross-ref label emission.
-
-**Components to modify:**
-- `components/planning.typ` — Add `requirements`, `quality`, `communication`, `risk-strategy`, `compliance` functions.
-- `core/pipeline.typ` — Replace stubs with real render functions.
-
-**Components to create:**
-- `examples/components/requirements.typ`
-- `examples/components/quality.typ`
-- `examples/components/communication.typ`
-- `examples/components/risk-strategy.typ`
-- `examples/components/compliance.typ`
-
-**Fixtures to modify:**
-- `examples/data.typ` — Add `baselines.requirements`, `baselines.quality`, `baselines.communication`, `baselines.risk_strategy`, `baselines.compliance`.
-
-**Cross-refs to implement:**
-- `requirements` → `req-label` emission. Budget line items will reference these in Phase 4.
-- `quality` → `link-to-req` (req_id in criteria)
-- `compliance` → `link-to-req` (req_ids), `compliance-label` emission
+**Dependencies:** Phase A (compliance-label exists, lib.typ exports it). Phase B is **not** required — the gantt fixture already exists from the original implementation.
 
 **Exit criteria:**
 ```bash
-# All examples compile
-fd -e typ -E data.typ . examples/ -x typst compile {}
+# All component fixtures compile
+just test-components
+# (or directly: fd -e typ . examples/components/ -x typst compile {})
 
-# New fixtures compile
-typst compile examples/components/requirements.typ
-typst compile examples/components/quality.typ
-typst compile examples/components/communication.typ
-typst compile examples/components/risk-strategy.typ
-typst compile examples/components/compliance.typ
+# Each new fixture produces a one-page PDF
+fd -e typ . examples/components/ -x typst compile {} && \
+  fd -e pdf . examples/components/ | wc -l   # → 14 + (existing count)
 
-# Requirements table renders with:
-#   - Category grouping
-#   - Subtotals per category
-#   - Grand total
-#   - Priority badges
-#   - req-label on each row
-# Visual inspection of examples/project-01-audit.typ
+# No orphan refs in the cross-ref-bearing fixtures
+# (Compile each and visually verify the orphan section in the audit dashboard, if used)
 ```
 
 **Risk flags:**
-- [MEDIUM] `requirements` component has the most complex rendering logic (category grouping, subtotals). Thorough visual inspection needed.
+- [LOW] Cross-ref correctness. Each fixture must internally satisfy its own links. The audit checklist in the exit criteria catches this.
 
 ---
 
-### Phase 4 — Budget + Gantt enhancement
+### Phase D — Full-standards integration showcase
 
-**Goal:** Upgrade the two existing components with richer data shapes while maintaining backward compatibility.
+**Goal:** Build the "this is what folio can do at full coverage" fixture. One file, one data dict, all 28 sections rendered, all cross-references resolving, audit dashboard reporting all 30 paths as Present.
 
-**Components to modify:**
-- `components/planning.typ` — Rewrite `budget` (shape detection + rich rendering) and `gantt` (gantty integration + theming).
+**Files to create:**
+- `examples/full-standards.typ` — consumer file. Uses `project-doc` with `config: (audit: true, toc: true)`. Imports a data dict from a sibling file.
+- `examples/data-full.typ` — exhaustive data dict covering every schema path with consistent IDs across cross-references (every `req_id` in budget points to a real `REQ-XX`; every `objective_id` in success_criteria and benefits_review points to a real `OBJ-X`; every `deliverable_id` in acceptance points to a real `D-X`; etc.).
 
-**Fixtures to modify:**
-- `examples/components/budget.typ` — Update to use the new rich shape.
-- `examples/components/gantt.typ` — Update to use the new nested shape.
-- `examples/data.typ` — Update `baselines.financials.budget` to new shape, update `baselines.schedule.gantt` to nested shape.
+**Data design rules (for `data-full.typ`):**
+- 3–5 objectives, all referenced by at least one success criterion and at least one benefits-review entry.
+- 5–8 requirements, each referenced by at least one budget line item and at least one deliverable.
+- 2–3 milestones, at least one referenced by a risk and at least one by an issue.
+- 3–4 risks, at least one with `source_assumption` pointing to a real assumption.
+- 2–3 issues, at least one with `blocks_deliverable`.
+- 2–3 deliverables, all referenced by at least one acceptance entry.
+- 1–2 compliance entries with `req_ids` pointing to real requirements.
+- All other sections populated with realistic but minimal data.
 
-**Backward compatibility verification:**
-- The old `budget` shape `((description: "X", amount: 5000),)` must still render the simple table.
-- Test with both old and new shapes.
-
-**Cross-refs to implement:**
-- `budget` line items → `link-to-req` (req_id field)
-- `gantt` tasks → `task-label` emission (already exists, but verify with new nested shape)
-
-**Exit criteria:**
-```bash
-# All existing examples compile (backward compat)
-fd -e typ -E data.typ . examples/ -x typst compile {}
-
-# Budget with old shape still works
-# Create a one-off test:
-echo '#import "@local/folio:0.0.1": budget, folio-init
-#show: body => folio-init(data: (baselines: (financials: (budget: ((description: "Old Shape", amount: 5000),)))), body)
-#budget("baselines.financials.budget")' > /tmp/test-old-budget.typ
-typst compile /tmp/test-old-budget.typ
-
-# Budget with new shape renders rich table
-typst compile examples/components/budget.typ
-# Visual inspection: category grouping, subtotals, extra costs, grand total
-
-# Gantt renders visual chart via gantty
-typst compile examples/components/gantt.typ
-# Visual inspection: phase bars, day headers, milestone markers, themed colors
-```
-
-**Risk flags:**
-- [HIGH] `gantty` integration. The theming (colors from folio tokens passed to gantty drawer config) is the tricky part. gantty's drawer API accepts style dicts — folio needs to map its tokens to gantty's expected format.
-- [MEDIUM] Budget shape detection. Must reliably distinguish old flat array from new dict shape.
-
----
-
-### Phase 5 — Execution expansion: decision_log + deliverables_register + enhanced cross-refs
-
-**Goal:** Two new execution-phase components. Enhance `change-log` with `type` and `affects_baseline` fields. Enhance `issue-log` with `blocks_deliverable`. Enhance `risk-register` with `source_assumption`.
-
-**Components to modify:**
-- `components/execution.typ` — Add `decision-log`, `deliverables-register`. Enhance `change-log`, `issue-log`, `risk-matrix` with new cross-ref fields.
-- `core/pipeline.typ` — Replace stubs.
-
-**Components to create:**
-- `examples/components/decision-log.typ`
-- `examples/components/deliverables-register.typ`
-
-**Fixtures to modify:**
-- `examples/data.typ` — Add `registers.decision_log`, `registers.deliverables_register`. Add new fields to existing risk/issue/change entries.
-
-**Cross-refs to implement:**
-- `decision-log` → `link-to-risk` (prompted_by_risk), `link-to-issue` (prompted_by_issue), `decision-label` emission
-- `deliverables-register` → `link-to-req` (req_ids), `deliverable-label` emission
-- `issue-log` → `link-to-deliverable` (blocks_deliverable) — NEW
-- `change-log` — display `type` and `affects_baseline` as metadata (no label link, just text)
-- `risk-matrix` → `link-to-assumption` (source_assumption) — NEW
+**Dependencies:** Phase A, Phase B, Phase C all complete.
 
 **Exit criteria:**
 ```bash
-# All examples compile
-fd -e typ -E data.typ . examples/ -x typst compile {}
+# The integration fixture compiles
+just test-full
+# (or: typst compile examples/full-standards.typ)
 
-# New fixtures compile
-typst compile examples/components/decision-log.typ
-typst compile examples/components/deliverables-register.typ
-
-# Cross-refs work end-to-end:
-#   - Decision log links to risks and issues
-#   - Deliverables register links to requirements
-#   - Issue log links to deliverables
-#   - Risk matrix links to assumptions
-# Verify via project-01-audit.typ: orphan section should show NO false orphans
-typst compile examples/project-01-audit.typ
-```
-
-**Risk flags:**
-- [MEDIUM] Cross-ref density is highest in this phase. Many entity types referencing each other. Orphan detection must handle all new label families correctly.
-
----
-
-### Phase 6 — Closure expansion: acceptance + benefits_review + handover + financial_closure
-
-**Goal:** Four new closure-phase components, completing the full PM standards coverage.
-
-**Components to modify:**
-- `components/closure.typ` — Add `acceptance`, `benefits-review`, `handover`, `financial-closure`.
-- `core/pipeline.typ` — Replace stubs.
-
-**Components to create:**
-- `examples/components/acceptance.typ`
-- `examples/components/benefits-review.typ`
-- `examples/components/handover.typ`
-- `examples/components/financial-closure.typ`
-
-**Fixtures to modify:**
-- `examples/data.typ` — Add `closure.acceptance`, `closure.benefits_review`, `closure.handover`, `closure.financial_closure`.
-
-**Cross-refs to implement:**
-- `acceptance` → `link-to-deliverable` (deliverable_id)
-- `benefits-review` → `link-to-objective` (objective_id)
-- `financial-closure` → references budget baseline (display comparison, no label link)
-
-**Exit criteria:**
-```bash
-# All examples compile
-fd -e typ -E data.typ . examples/ -x typst compile {}
-
-# New fixtures compile
-typst compile examples/components/acceptance.typ
-typst compile examples/components/benefits-review.typ
-typst compile examples/components/handover.typ
-typst compile examples/components/financial-closure.typ
-
-# Full pipeline renders all 28 sections when data is present
-typst compile examples/project-01-audit.typ
-# Visual inspection: all sections render, audit dashboard shows all 30 paths as Present
-```
-
-**Risk flags:** None. Pattern is well-established by this phase.
-
----
-
-### Phase 7 — Full integration: full-standards fixture + lib.typ exports + final audit
-
-**Goal:** Create the comprehensive test fixture (`full-standards.typ`) that exercises every section, every cross-reference, and every edge case. Finalize `lib.typ` exports. Update examples, README, justfile.
-
-**Components to create:**
-- `examples/full-standards.typ` — Consumer file using all 28 sections with rich cross-referencing. This is the "can folio handle a real PM document with full standards coverage?" test.
-- `examples/data-full.typ` — Complete data dict exercising all 30 schema paths with valid cross-references (every req_id, risk_id, deliverable_id, objective_id, etc. points to a real entity).
-
-**Components to modify:**
-- `src/lib.typ` — Export all new component functions, label functions, link functions.
-- `justfile` — Add `just test-full` target.
-- `README.md` — Update feature list, quickstart, section inventory.
-
-**Exit criteria:**
-```bash
-# THE FULL TEST — every example compiles
+# Full regression — every example and every test compiles
 just test
 
-# Full standards fixture compiles and renders all 28 sections
-typst compile examples/full-standards.typ
-# Visual inspection:
-#   - All 28 sections render with correct data
-#   - All cross-reference links are clickable (not orphaned)
-#   - Audit dashboard shows all 30 paths as Present
-#   - No red "missing" placeholders anywhere in the main document
-#   - Orphan references section shows "No orphan references detected"
-
-# Minimal fixture still works (zero-crash guarantee with empty data)
-typst compile examples/minimal.typ
-# Visual inspection: compiles cleanly, shows missing placeholders, no crash
-
-# Backward compatibility: old examples unchanged
-typst compile examples/project-01.typ
-typst compile examples/rfp.typ
-typst compile examples/thesis.typ
-
-# All standalone component fixtures compile
-fd -e typ . examples/components/ -x typst compile {}
+# Visual inspection of full-standards.pdf:
+#   - All 28 sections render with data (no missing placeholders in main doc body)
+#   - Audit dashboard at top shows all 30 paths as Present
+#   - Orphan References section at the bottom shows "No orphan references detected"
+#   - Visual gantt renders with phase bars, milestones, themed colors
+#   - Budget renders with category subtotals + extra costs (percentage-based) + grand total
+#   - All cross-reference links are clickable (manual click test in PDF reader)
 ```
 
 **Risk flags:**
-- [MEDIUM] `lib.typ` export surface grows significantly. Must verify no name collisions between new component functions and existing exports.
+- [MEDIUM] Data consistency at scale. With ~20+ cross-references, one mismatched ID produces an orphan. Iterate: compile, check orphans section, fix, recompile.
 
 ---
 
 ## 7. Implementation Management
 
-### Sequencing (dependency graph)
+### Sequencing
 
 ```
-Phase 1 (foundation)
+Phase A (refs + justfile)        [foundational, no deps]
     │
-    ├──► Phase 2 (initiation expansion)
-    │        │
-    │        └──► Phase 5 (execution expansion)
-    │                  │ (needs assumption labels from P2,
-    │                  │  deliverable labels from P3)
+    ├──► Phase B (gantty)        [needs A only for justfile completeness]
     │
-    ├──► Phase 3 (planning expansion)
-    │        │
-    │        ├──► Phase 4 (budget + gantt enhancement)
-    │        │        │ (budget needs req labels from P3)
-    │        │        │
-    │        └──► Phase 5 (execution expansion)
-    │                  │ (deliverables-register needs req labels from P3)
-    │
-    └──► Phase 6 (closure expansion)
-              │ (needs deliverable labels from P5,
-              │  objective labels from P2)
+    └──► Phase C (14 fixtures)   [needs A for compliance-label]
               │
-              └──► Phase 7 (full integration)
+              ▼
+         Phase D (full-standards) [needs A, B, C]
 ```
 
-**Critical path:** Phase 1 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7.
+Phase B and Phase C are parallelizable after Phase A. Recommend completing B first because its risk is highest — landing the spike unblocks any uncertainty that would otherwise propagate into C and D.
 
-Phase 2 can run in parallel with Phase 3 (no dependency between initiation and planning components). Phase 6 depends on Phase 5 (deliverable labels) and Phase 2 (objective labels).
+### Critical path
 
-### Ownership
-Solo developer. No ownership split needed. Recommended order follows the critical path.
+A → B → D. Phase C can slip a day without affecting D's start, since D's data dict is the gating work, not the fixtures.
 
-### Breaking Changes
-- [HIGH RISK] Budget data shape change. Mitigated by shape detection (backward compat). But any consumer who reads folio's budget data directly (not through the component) will see a different structure. Documented in SCHEMA-MAP.md.
-- [HIGH RISK] Gantt data shape change. Same mitigation — shape detection. Old flat array renders table; new dict renders visual chart.
-- `typst.toml` adding `gantty` dependency. Not breaking for consumers — Typst resolves it automatically.
-- Pipeline expansion from 14 → 28 entries. Not breaking — new entries use `auto` toggle, so they only render when data is present.
+### Breaking changes
 
-### Integration Points
-- **Budget ↔ Requirements:** Budget `req_id` references must match requirement `id` values. No validation at compile time (runtime orphan detection via refs). [MEDIUM RISK]
-- **gantty ↔ folio theming:** gantty's drawer styles must be mapped from folio tokens. This is a one-time integration in the `gantt` component. [HIGH RISK — needs spike]
+None. All work is additive. Backward compat for the gantt component is preserved via shape detection (already implemented).
+
+### Integration points
+
+- `gantty:0.5.1` API surface. If the imported symbol names differ from `01`'s usage (`default-tasks-drawer`, etc.), the spike in Phase B catches this on the first compile.
+- `typst.toml` dependency declaration. Verify the current Typst spec before declaring; if `@preview` packages are auto-resolved, no manifest change is needed.
 
 ---
 
 ## 8. Validation & Testing Strategy
 
-### Testing Model
+### Test surfaces
 
-folio's correctness is empirical, not unit-tested. From the manifest:
-
-> 1. **Compile** — every fixture must compile cleanly. A failed compile is a regression.
-> 2. **Inspect** — a human (or a model with vision) reviews the rendered PDF.
-> 3. **Snapshot** — once accepted, a snapshot is captured.
-
-### Test Matrix
-
-| Layer | Test Type | What it verifies | How |
+| Layer | Test Type | Verifies | How |
 |---|---|---|---|
-| Schema | Compile test | All 30 paths recognized by audit | `typst compile examples/project-01-audit.typ` — audit dashboard lists all paths |
-| Pipeline | Compile test | All 28 sections render when data present | `typst compile examples/full-standards.typ` — no missing placeholders |
-| Components | Compile test | Each component renders independently | `fd -e typ . examples/components/ -x typst compile {}` — all 28 fixtures compile |
-| Cross-refs | Compile test + inspection | Links resolve, orphans detected | `typst compile examples/full-standards.typ` — orphan section empty; all links clickable |
-| Backward compat | Compile test | Old examples unchanged | `typst compile examples/{minimal,project-01,rfp,thesis}.typ` |
-| Zero-crash | Compile test | Empty data compiles | `typst compile examples/minimal.typ` |
-| Budget compat | Compile test | Old shape still works | One-off fixture with `(description, amount)` flat array |
-| Gantt compat | Compile test | Old shape still works | One-off fixture with flat task list [ASSUMPTION: old gantt shape needs compat too] |
-| Theming | Inspection | Brand overrides propagate to all new components | Fixture with custom `brand: (palette: (primary: rgb("#ff0000")))` — visual check |
+| refs.typ | Compile + grep | `compliance-label` exists and exports | `rg 'compliance-label' src/{core/refs,lib}.typ` returns hits in both |
+| gantt component | Compile + visual | Visual chart renders for nested data | `typst compile tests/cross-refs.typ`, inspect PDF |
+| gantt backward compat | Compile + visual | Old flat shape still renders as table | Manual fixture in `/tmp` |
+| Brand propagation | Compile + visual | gantty drawer reflects brand override | `/tmp/test-brand-gantt.typ` |
+| Component fixtures | Compile | All 14 new fixtures produce PDFs | `just test-components` |
+| Integration | Compile + visual | All 28 sections render, all xrefs resolve, no orphans | `just test-full` + audit dashboard inspection |
+| Full regression | Compile | Nothing broke | `just test` |
 
-### CLI Test Commands (justfile targets)
+### Per-phase exit gates
 
-```just
-# Compile all examples (existing target, enhanced)
-[group('CI')]
-compile:
-    fd -e typ -E data.typ -E data-full.typ . examples/ -x typst compile {}
+Each phase has a self-contained `Exit criteria` block above with exact commands. A phase is not done until every command in its block returns success and (where applicable) visual inspection of the rendered PDF matches expectations.
 
-# Full regression suite
-[group('CI')]
-test: clean compile list
-    @echo "✓ All fixtures compiled"
-    fd -uu -e pdf -t f -X rm -f
+### CLI command index
 
-# Compile the full-standards fixture specifically (slow, all 28 sections)
-[group('CI')]
-test-full:
-    typst compile examples/full-standards.typ
-    @echo "✓ Full standards fixture compiled"
-
-# Compile all standalone component fixtures
-[group('CI')]
-test-components:
-    fd -e typ . examples/components/ -x typst compile {}
-    @echo "✓ All component fixtures compiled"
+```bash
+just compile           # All examples + tests compile (existing)
+just test              # Clean + compile + list, removes PDFs after (existing)
+just test-components   # All examples/components/ fixtures compile (NEW)
+just test-full         # examples/full-standards.typ compiles (NEW)
+just local             # Sync src/ to ~/.local/share/typst/packages/local/folio/0.0.1 (existing)
 ```
 
-### Per-Phase Validation Checklist
+### Architecture fitness functions (re-asserted)
 
-Every phase in the implementation plan includes explicit `Exit criteria` with exact CLI commands. The pattern is always:
-
-1. `fd -e typ -E data.typ . examples/ -x typst compile {}` — backward compat
-2. `typst compile examples/components/NEW-COMPONENT.typ` — new fixture compiles
-3. `typst compile examples/project-01-audit.typ` — audit dashboard correct
-4. Visual inspection of rendered PDF — correct layout, theming, cross-refs
-
-A phase is not done until all four pass.
-
-### Architecture Fitness Functions
-
-- **No cross-component imports:** Components must only import from `core/` and `theme/`. Verified by grepping: `rg 'import.*components/' src/components/` should return only self-references within each file.
-- **No upward dependencies:** `rg 'import.*phases/' src/components/` should return nothing. `rg 'import.*orchestrator' src/components/` should return nothing.
-- **Public API completeness:** Every component function in `components/*.typ` must be exported in `lib.typ`. Verified by comparing function counts.
-- **Schema-pipeline alignment:** Every entry in `schema.typ` must have a corresponding pipeline entry (or be a meta path like `project.name`). Every pipeline entry must have a schema entry. Verified by inspection.
+- No upward imports: `rg 'import.*phases' src/components/` → empty.
+- No cross-component imports: `rg 'import.*components/' src/components/` → only self-references within each phase file.
+- Schema/pipeline alignment: every entry in `schema.typ` (excluding pure meta paths) has a matching pipeline entry. Verified by inspection.
 
 ---
 
 ## 9. Open Questions & Risks
 
-1. **gantty theming integration.** The exact mapping from folio tokens to gantty drawer styles needs a spike. gantty's drawer API accepts nested dicts with `stroke`, `fill`, `width` — folio needs to construct these from `resolve-token` calls. Recommend: build the gantt component first as a standalone experiment before integrating into the phase.
+1. **Typst dependency declaration syntax.** Confirm whether `gantty:0.5.1` requires an explicit `typst.toml` entry or is auto-resolved via the `@preview` namespace. If auto-resolved, the Phase B `typst.toml` change reduces to a no-op or a comment.
 
-2. **Budget extra_costs percentage computation.** The schema says `percentage: 0.10` means "10% of line_items subtotal." This requires computing the subtotal first, then the percentage, then adding to grand total. The computation must happen inside the component, not in the consumer's data. Verify this doesn't conflict with Typst's evaluation model (it shouldn't — it's pure arithmetic on the data dict).
+2. **gantty drawer API stability.** `01`'s `gantt.typ` is the working reference. If `gantty` releases a 0.6+ with breaking drawer changes, `build-gantty-drawer` must track. Pin to `0.5.1` explicitly to defer.
 
-3. **Orphan detection at scale.** With 11 label families and 20+ cross-reference relationships, the orphan detection system in `refs.typ` could produce noisy output. Consider grouping orphans by entity type in the audit dashboard, and possibly adding a severity level (orphaned risk ref is more important than orphaned assumption ref).
+3. **Bar height in tokens.** The current token system has no "bar height" or "row height" path. Phase B uses fixed pt values (16pt for phase bars, 10pt for subtasks). [REVISIT] in v0.1.0 — add `geometry.gantt.bar-height` and similar if multiple consumers want this control.
 
-4. **`full-standards.typ` data size.** A data dict with all 30 paths populated, including arrays of requirements, risks, issues, deliverables, etc., could be large. Consider splitting into `data-full.typ` as a separate file from the existing `data.typ` to avoid bloating the shared fixture.
+4. **Orphan policy for compliance entries.** Phase A adds `compliance-label` emission, but no other entity in the cross-ref graph currently links *to* a compliance entry. The label is forward-looking — once `requirements` or `risk_register` gain a `compliance_id` reference (post-v0.0.1), the link infrastructure is ready. Until then, compliance-label is a no-op cost.
 
-5. **Component file size.** `components/planning.typ` will have 10 render functions after Phase 3. If any function exceeds ~50 lines (likely for `requirements` and `budget`), consider extracting helpers within the file rather than splitting into separate files. Revisit the one-file-per-phase decision if the file exceeds 500 lines.
-
-6. [REVISIT] **Gantt backward compatibility.** The current gantt shape is a flat array `((id, name, start, end, progress), ...)`. The new shape is a nested dict `(start, end, tasks: ((name, subtasks: (...)), ...), milestones: (...))`. Shape detection can distinguish these (array vs. dict), but the old table rendering must be preserved for consumers using the flat shape. Confirm this is desired or if breaking the old gantt shape is acceptable since v0.0.1 hasn't shipped.
+5. **Visual regression baseline.** PDFs aren't pixel-snapshotted. Visual changes to the gantt chart between v0.0.1 patches will not be caught automatically. [REVISIT] when a snapshot tool for Typst PDFs becomes practical.

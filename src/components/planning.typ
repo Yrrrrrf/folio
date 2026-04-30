@@ -2,7 +2,9 @@
 #import "../core/state.typ": folio-state
 #import "../theme/ui.typ": card, data-table, badge, metric
 #import "../utils/formatters.typ": format-money, format-date
-#import "../core/refs.typ": task-label, milestone-label, req-label, link-to-req
+#import "../theme/resolver.typ": resolve-token
+#import "../core/refs.typ": task-label, milestone-label, req-label, link-to-req, compliance-label
+#import "@preview/gantty:0.5.1" as gantty
 
 #let boundaries(data-path) = context {
   let st = folio-state.get()
@@ -186,6 +188,56 @@
   ]
 }
 
+// Internal helper to build the gantty drawer from folio tokens
+#let _build-gantty-drawer(st) = {
+  let primary = resolve-token(st, "palette.primary")
+  let neutral = resolve-token(st, "palette.intent.neutral")
+  let border = resolve-token(st, "palette.surface.border")
+  let warning = resolve-token(st, "palette.intent.warning")
+  let md-size = resolve-token(st, "typography.size.md")
+  let sm-size = resolve-token(st, "typography.size.sm")
+
+  (
+    field: gantty.field.default-field-drawer,
+    dependencies: gantty.dependencies.default-dependencies-drawer,
+    sidebar: gantty.sidebar.default-sidebar-drawer.with(
+      padding: 15pt,
+      spacing: 12pt,
+      formatters: (
+        fase => align(right, text(weight: "bold", size: md-size, smallcaps(fase.name))),
+        act => align(right, text(size: sm-size, fill: neutral, act.name)),
+      ),
+      dividers: (
+        (stroke: (paint: primary, thickness: 1.5pt)),
+        (stroke: (paint: border, thickness: 0.5pt)),
+      ),
+      stroke: (paint: primary, thickness: 1pt),
+    ),
+    headers: gantty.header.default-headers-drawer.with(headers: (
+      gantty.header.default-month-header(
+        table-style: (stroke: (paint: primary, thickness: 1.5pt)),
+      ),
+      gantty.header.default-day-header(
+        table-style: (stroke: (paint: primary.lighten(60%), thickness: 0.5pt)),
+        gridlines-style: (stroke: (paint: border, thickness: 0.2pt, dash: "dotted")),
+      ),
+    )),
+    tasks: gantty.task.default-tasks-drawer.with(
+      styles: (
+        (uncompleted: (style: (fill: primary, stroke: primary.darken(20%)), width: 16pt)),
+        (uncompleted: (style: (fill: primary.lighten(40%), stroke: primary), width: 10pt)),
+      ),
+    ),
+    dividers: gantty.dividers.default-dividers-drawer.with(styles: (
+      (stroke: (paint: primary, thickness: 1pt)),
+      (stroke: (paint: border, thickness: 0.4pt)),
+    )),
+    milestones: gantty.milestones.default-milestones-drawer.with(
+      style: (stroke: (paint: warning, thickness: 2pt)),
+    ),
+  )
+}
+
 // Gantt: supports both old flat array and new nested (start, end, tasks, milestones) shape.
 #let gantt(data-path) = context {
   let st = folio-state.get()
@@ -220,39 +272,15 @@
   let phases = raw.at("tasks", default: ())
   let ms-markers = raw.at("milestones", default: ())
 
-  card(title: "Schedule Overview")[
-    *Project period:* #format-date(proj-start) — #format-date(proj-end)
-  ]
-
-  for ph in phases {
-    card(title: ph.at("name", default: "Phase"))[
-      #data-table(
-        columns: (1fr, auto, auto),
-        headers: ("Task", "Start", "End"),
-        rows: ph.at("subtasks", default: ()).map(t => {
-          let tid = t.at("id", default: t.at("name", default: "-"))
-          (
-            [#t.at("name", default: "-")#task-label(tid)],
-            format-date(t.at("start", default: "")),
-            format-date(t.at("end", default: ""))
-          )
-        }).flatten()
-      )
-    ]
-  }
-
-  if ms-markers.len() > 0 {
-    card(title: "Milestones")[
-      #data-table(
-        columns: (1fr, auto),
-        headers: ("Milestone", "Date"),
-        rows: ms-markers.map(m => (
-          m.at("name", default: "-"),
-          format-date(m.at("date", default: ""))
-        )).flatten()
-      )
-    ]
-  }
+  gantty.gantt(
+    (
+      start: proj-start,
+      end: proj-end,
+      tasks: phases,
+      milestones: ms-markers,
+    ),
+    drawer: _build-gantty-drawer(st)
+  )
 }
 
 #let team(data-path) = context {
@@ -385,8 +413,9 @@
         let req-ids = c.at("req_ids", default: ())
         if type(req-ids) == str { req-ids = (req-ids,) }
         let audit-date = c.at("audit_date", default: none)
+        let cid = c.at("id", default: "-")
         (
-          c.at("id", default: "-"),
+          [#cid#compliance-label(cid)],
           [*#c.at("regulation", default: "-")*#if audit-date != none { [\ Audit: #format-date(audit-date)] }],
           c.at("jurisdiction", default: "—"),
           if req-ids.len() > 0 { req-ids.map(link-to-req).join(", ") } else { "—" },

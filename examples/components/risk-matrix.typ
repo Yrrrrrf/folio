@@ -6,19 +6,24 @@
       risk_register: (
         (
           id: "R1",
-          description: "Demo Risk",
-          mitigation: "Demo Mitigation",
-          probability: "Low",
-          impact: "Low",
-          status: "Open",
-          affects_wbs: ("T1",),
+          description: "Supply chain delays",
+          mitigation: "Secondary vendor sourced",
+          probability: "High",
+          impact: "Medium",
+          status: "Monitoring",
+          affects_wbs: ("T1", "T2"),
+          blocks_milestone: ("M1",),
+          source_assumption: "A-1",
         ),
       ),
     ),
+    initiation: (
+      assumptions_log: ((id: "A-1", description: "Demo Assumption"),)
+    )
   ),
   body,
 )
 
 #risk-matrix("registers.risk_register")
 
-This is a demonstration of the `risk-matrix` component. It renders completely independently based solely on the data provided to the `folio-init` state container.
+This is a demonstration of the `risk-matrix` component, showcasing enhanced cross-references to tasks, milestones, and assumptions.
