@@ -40,7 +40,7 @@
       out_of_scope: ("Public-facing mobile app", "Camera surveillance")
     ),
     requirements: (
-      (id: "REQ-01", description: "Acoustic sensor node hardware",     category: "Hardware",  priority: "high",   qty: 500, unit: "units",  unit_cost: 240),
+      (id: "REQ-01", description: "Acoustic sensor node hardware",     category: "Hardware",  priority: "high",   qty: 500, unit: "units",  unit_cost: 240, compliance_ids: ("COMP-2",)),
       (id: "REQ-02", description: "Tamper-proof enclosures",           category: "Hardware",  priority: "medium", qty: 500, unit: "units",  unit_cost: 0),
       (id: "REQ-03", description: "Installation labor (on-site)",      category: "Services",  priority: "high",   qty: 1,   unit: "project", unit_cost: 85000),
       (id: "REQ-04", description: "Acoustic ML model license",         category: "Software",  priority: "high",   qty: 1,   unit: "license", unit_cost: 30000),
@@ -145,7 +145,7 @@
 
   registers: (
     risk_register: (
-      (id: "R1", description: "Supply chain delays for chips",    mitigation: "Bulk order placed in Phase 1",  probability: "Low",    impact: "High",   status: "Closed"),
+      (id: "R1", description: "Supply chain delays for chips",    mitigation: "Bulk order placed in Phase 1",  probability: "Low",    impact: "High",   status: "Closed", compliance_ids: ("COMP-1",)),
       (id: "R2", description: "Municipal API spec not finalized", mitigation: "Escalated to city liaison",     probability: "Medium", impact: "High",   status: "Open",   source_assumption: "A-3"),
       (id: "R3", description: "Vandalism of sensor nodes",        mitigation: "Tamper-proof enclosures",       probability: "Medium", impact: "Low",    status: "Open",   affects_wbs: ("T4",), blocks_milestone: ("M2",)),
     ),

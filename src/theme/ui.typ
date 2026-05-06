@@ -2,6 +2,7 @@
 #import "../primitives/data-table.typ": data-table as p-data-table
 #import "../primitives/badge.typ": badge as p-badge
 #import "../primitives/metric.typ": metric as p-metric
+#import "../primitives/progress-bar.typ": progress-bar as p-progress-bar
 #import "../core/state.typ": folio-state
 #import "resolver.typ": resolve-spacing, resolve-token
 

@@ -3,7 +3,7 @@
 #import "../theme/ui.typ": card, data-table, badge, metric
 #import "../utils/formatters.typ": format-money, format-date
 #import "../theme/resolver.typ": resolve-token
-#import "../core/refs.typ": task-label, milestone-label, req-label, link-to-req, compliance-label
+#import "../core/refs.typ": task-label, milestone-label, req-label, link-to-req, compliance-label, link-to-compliance
 #import "@preview/gantty:0.5.1" as gantty
 
 #let boundaries(data-path) = context {
@@ -49,9 +49,14 @@
         headers: ("ID", "Description", "Qty", "Unit", "Unit Cost", "Priority"),
         rows: cat-reqs.map(r => {
           let rid = r.at("id", default: "-")
+          let c-ids = r.at("compliance_ids", default: ())
+          if type(c-ids) == str { c-ids = (c-ids,) }
           (
             [#rid#req-label(rid)],
-            r.at("description", default: "-"),
+            [
+              #r.at("description", default: "-")
+              #c-ids.map(id => [ #link-to-compliance(id)]).join()
+            ],
             str(r.at("qty", default: 1)),
             r.at("unit", default: "—"),
             if r.at("unit_cost", default: 0) > 0 { format-money(r.at("unit_cost", default: 0)) } else { "—" },
@@ -196,13 +201,18 @@
   let warning = resolve-token(st, "palette.intent.warning")
   let md-size = resolve-token(st, "typography.size.md")
   let sm-size = resolve-token(st, "typography.size.sm")
+  
+  let bar-h = resolve-token(st, "geometry.gantt.bar-height")
+  let sub-bar-h = resolve-token(st, "geometry.gantt.subtask-bar-height")
+  let side-pad = resolve-token(st, "geometry.gantt.sidebar-padding")
+  let side-spacing = resolve-token(st, "geometry.gantt.sidebar-spacing")
 
   (
     field: gantty.field.default-field-drawer,
     dependencies: gantty.dependencies.default-dependencies-drawer,
     sidebar: gantty.sidebar.default-sidebar-drawer.with(
-      padding: 15pt,
-      spacing: 12pt,
+      padding: side-pad,
+      spacing: side-spacing,
       formatters: (
         fase => align(right, text(weight: "bold", size: md-size, smallcaps(fase.name))),
         act => align(right, text(size: sm-size, fill: neutral, act.name)),
@@ -224,8 +234,8 @@
     )),
     tasks: gantty.task.default-tasks-drawer.with(
       styles: (
-        (uncompleted: (style: (fill: primary, stroke: primary.darken(20%)), width: 16pt)),
-        (uncompleted: (style: (fill: primary.lighten(40%), stroke: primary), width: 10pt)),
+        (uncompleted: (style: (fill: primary, stroke: primary.darken(20%)), width: bar-h)),
+        (uncompleted: (style: (fill: primary.lighten(40%), stroke: primary), width: sub-bar-h)),
       ),
     ),
     dividers: gantty.dividers.default-dividers-drawer.with(styles: (

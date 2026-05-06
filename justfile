@@ -5,9 +5,24 @@ VERSION := `rg version typst.toml | cut -d'"' -f2`
 
 [doc("Clean, compile & list all PDF files")]
 [group('Dev')]
-test: clean compile list
+test: audit-style clean compile list
     @echo "✓ Test completed"
     @fd -uu -e pdf -t f -X rm -f
+
+[doc("Audit for hardcoded visual literals")]
+[group('Dev')]
+audit-style:
+    #!/usr/bin/env bash
+    echo "→ Auditing for hardcoded literals in components/ and primitives/..."
+    # Flags rgb, luma, and basic named colors
+    # We use a broad match for common color names used as literals
+    VIOLATIONS=$(rg -n "(rgb\(|luma\(|\b(white|black|red|green|blue|yellow|cyan|magenta|orange|purple|gray|grey|navy|aqua|teal|maroon|fuchsia|silver|olive|lime)\b)" src/components/ src/primitives/)
+    if [ -n "$VIOLATIONS" ]; then
+        echo "🔴 Style audit failed! Hardcoded literals found:"
+        echo "$VIOLATIONS"
+        exit 1
+    fi
+    echo "✓ Style audit passed"
 
 [doc("List all PDF files")]
 [group('CI')]
@@ -35,6 +50,11 @@ compile:
 test-full:
     typst compile examples/full-standards.typ
 
+[doc("Compile branding demo only")]
+[group('Dev')]
+test-brand:
+    typst compile examples/branding-demo.typ
+
 [doc("Compile every component fixture individually")]
 [group('Dev')]
 test-components:
@@ -50,6 +70,7 @@ local:
     mkdir -p "$TARGET"
     rsync -rL \
         --include='src/' --include='src/**' \
+        --include='brand-packs/' --include='brand-packs/**' \
         --include='typst.toml' \
         --exclude='*' \
         "{{ justfile_directory() }}/" "$TARGET/"

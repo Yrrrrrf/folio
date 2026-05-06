@@ -4,20 +4,38 @@
   data: (:),
   config: (:),
   brand: (:),
+  preset-tokens: (:),
 ))
 
 #let folio-init(data: (:), config: (:), brand: (:), body) = {
+  let brand-preset = brand.at("preset", default: none)
+  let user-brand = brand
+  if brand-preset != none {
+    let _ = user-brand.remove("preset")
+  }
+
+  let preset-tokens = if brand-preset == "academic" {
+    import "../theme/brand-packs/academic.typ": brand
+    brand
+  } else if brand-preset == "corporate" {
+    import "../theme/brand-packs/corporate.typ": brand
+    brand
+  } else {
+    (:)
+  }
+
   folio-state.update(old => {
     (
       data: data,
       config: config,
-      brand: brand,
+      brand: user-brand,
+      preset-tokens: preset-tokens,
     )
   })
 
   context {
     let st = folio-state.get()
-    let font = resolve-token(st, "typography.family")
+    let font = resolve-token(st, "typography.font.body")
     let size = resolve-token(st, "typography.size.body")
     let margin = resolve-token(st, "geometry.page-margin")
     let paper = resolve-token(st, "geometry.paper")

@@ -4,7 +4,7 @@
 #import "../core/refs.typ": (
   risk-label, issue-label, change-label, decision-label, deliverable-label,
   link-to-task, link-to-milestone, link-to-risk, link-to-issue, link-to-req,
-  link-to-deliverable, link-to-assumption
+  link-to-deliverable, link-to-assumption, link-to-compliance
 )
 
 #let status-report(data-path) = context {
@@ -65,7 +65,14 @@
 
         (
           [#r.at("id", default: "-")#risk-label(r.at("id", default: "-"))],
-          r.at("description", default: "-"),
+          [
+            #r.at("description", default: "-")
+            #{
+              let c-ids = r.at("compliance_ids", default: ())
+              if type(c-ids) == str { c-ids = (c-ids,) }
+              c-ids.map(id => [ #link-to-compliance(id)]).join()
+            }
+          ],
           mitigation,
           r.at("probability", default: "-"),
           r.at("impact", default: "-"),
