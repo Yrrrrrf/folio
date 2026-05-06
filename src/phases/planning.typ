@@ -2,7 +2,9 @@
 #import "../core/guard.typ": section-guard
 #import "../core/state.typ": folio-state
 #import "../core/resolve.typ": get-title, nonempty
-#import "../components/planning.typ": boundaries, budget, gantt, milestones, team, requirements, quality, communication, risk-strategy, compliance
+#import "../components/planning.typ": (
+  boundaries, budget, communication, compliance, gantt, milestones, quality, requirements, risk-strategy, team,
+)
 
 #let planning(pipeline: pmbok-pipeline) = context {
   let st = folio-state.get()
@@ -17,7 +19,8 @@
 
   if renderable-sections.len() == 0 { return }
 
-  heading(level: 1)[Phase 2: #get-title(data, "phases.planning.title", "Planning")]
+  pagebreak()
+  heading(level: 1)[#get-title(data, "phases.planning.title", "Planning")]
 
   for (phase, section_id, data_path, render_fn) in renderable-sections {
     let resolved-toggle = st.config.at("sections", default: (:)).at(section_id, default: auto)

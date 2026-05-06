@@ -2,7 +2,9 @@
 #import "../core/guard.typ": section-guard
 #import "../core/state.typ": folio-state
 #import "../core/resolve.typ": get-title, nonempty
-#import "../components/initiation.typ": business-case, cover, objectives, pitch, success-criteria, stakeholders, assumptions-log
+#import "../components/initiation.typ": (
+  assumptions-log, business-case, cover, objectives, pitch, stakeholders, success-criteria,
+)
 
 #let initiation(pipeline: pmbok-pipeline) = context {
   let st = folio-state.get()
@@ -17,7 +19,8 @@
 
   if renderable-sections.len() == 0 { return }
 
-  heading(level: 1)[Phase 1: #get-title(data, "phases.initiation.title", "Initiation")]
+  pagebreak()
+  heading(level: 1)[#get-title(data, "phases.initiation.title", "Initiation")]
 
   for (phase, section_id, data_path, render_fn) in renderable-sections {
     let resolved-toggle = st.config.at("sections", default: (:)).at(section_id, default: auto)
