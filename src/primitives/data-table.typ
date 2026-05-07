@@ -1,27 +1,18 @@
-#import "../theme/resolver.typ": resolve-token, resolve-spacing
-#import "../core/state.typ": folio-state
-
+/// Raw data-table primitive — takes explicit parameters only, no state access.
+/// ui.typ resolves tokens and passes them here.
 #let data-table(
-  columns: auto, 
-  headers: (), 
+  columns: auto,
+  headers: (),
   rows: (),
-  border-color: none,
-  bg-header: none,
-  pad: none,
-  header-size: none,
+  border-color: rgb("#e2e8f0"),
+  bg-header: rgb("#f8fafc"),
+  pad: 0.75em,
+  header-size: 0.85em,
   alternating-rows: true
-) = context {
-  let st = folio-state.get()
-  
-  let border-color = if border-color != none { border-color } else { resolve-token(st, "palette.surface.border") }
-  let bg-header = if bg-header != none { bg-header } else { resolve-token(st, "palette.surface.card") }
-  let bg-alt = resolve-token(st, "palette.surface.alt")
-  let pad = if pad != none { pad } else { resolve-token(st, "geometry.table.cell-padding") }
-  let header-size = if header-size != none { header-size } else { resolve-token(st, "typography.size.sm") }
-  let stroke-width = resolve-token(st, "geometry.stroke-width.thin")
-  let rad = resolve-token(st, "geometry.radius.table")
-
-  // For rounded corners on tables, we wrap in a block/rect
+) = {
+  let bg-alt = border-color.lighten(50%)
+  let stroke-width = 0.5pt
+  let rad = 4pt
   block(
     radius: rad,
     clip: true,

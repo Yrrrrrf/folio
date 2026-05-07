@@ -1,28 +1,18 @@
-#import "../theme/resolver.typ": resolve-token, resolve-spacing
-#import "../core/state.typ": folio-state
-
+/// Raw badge primitive — takes explicit parameters only, no state access.
+/// ui.typ resolves tokens and passes them here.
 #let badge(
-  body, 
-  base-color: none,
+  body,
+  base-color: rgb("#64748b"),
   bg-color: none,
-  pad-h: none,
-  pad-v: none,
-  rad: none,
-  text-size: none
-) = context {
-  let st = folio-state.get()
-  
-  let base-color = if base-color != none { base-color } else { resolve-token(st, "palette.intent.neutral") }
-  let bg-color = if bg-color != none { bg-color } else { base-color.lighten(85%) }
-  let pad-h = if pad-h != none { pad-h } else { resolve-spacing(st, multiplier: 0.5) }
-  let pad-v = if pad-v != none { pad-v } else { resolve-spacing(st, multiplier: 0.25) }
-  let rad = if rad != none { rad } else { resolve-token(st, "geometry.radius.badge") }
-  let text-size = if text-size != none { text-size } else { resolve-token(st, "typography.size.sm") }
-  let stroke-width = resolve-token(st, "geometry.stroke-width.thin")
-
+  pad-h: 0.5em,
+  pad-v: 0.25em,
+  rad: 4pt,
+  text-size: 0.85em
+) = {
+  let bg = if bg-color != none { bg-color } else { base-color.lighten(85%) }
   rect(
-    fill: bg-color,
-    stroke: stroke-width + base-color,
+    fill: bg,
+    stroke: 0.5pt + base-color,
     radius: rad,
     inset: (x: pad-h, y: pad-v),
     outset: 0pt,

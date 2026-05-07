@@ -25,7 +25,7 @@
 #import "primitives/progress-bar.typ": progress-bar as raw-progress-bar
 
 // 6. Formatters
-#import "utils/formatters.typ": format-date, format-money
+#import "utils/formatters.typ": format-date, format-money, format-percent
 
 // 7. Refs — existing
 #import "core/refs.typ": (
@@ -43,3 +43,14 @@
 #import "core/fallback.typ": missing
 #import "core/guard.typ": section-guard
 #import "theme/resolver.typ": resolve-spacing, resolve-token
+
+// 9. Compute layer (Phase 1 — Schema & Compute Foundation)
+#import "compute.typ": (
+  sum-costs, sum-budget-lines, sum-extra-costs,
+  calc-budget, calc-requirements,
+  find-orphans, audit-missing, audit-summary,
+  compute-context,
+)
+
+// 10. Validators
+#import "utils/validators.typ": orphan-check, missing-fields, audit-builder

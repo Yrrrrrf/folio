@@ -5,6 +5,7 @@
 #import "../theme/resolver.typ": resolve-token
 #import "../core/refs.typ": task-label, milestone-label, req-label, link-to-req, compliance-label, link-to-compliance
 #import "@preview/gantty:0.5.1" as gantty
+#import "../compute.typ" as compute
 
 #let boundaries(data-path) = context {
   let st = folio-state.get()
@@ -13,12 +14,20 @@
 
   let scope = resolve(data, data-path)
   if type(scope) == dictionary {
-    card(title: "In Scope")[
-      #list(..scope.at("in_scope", default: ()))
-    ]
-    card(title: "Out of Scope")[
-      #list(..scope.at("out_of_scope", default: ()))
-    ]
+    let in-items = scope.at("in_scope", default: ())
+    if type(in-items) == str { in-items = (in-items,) }
+    if type(in-items) == array and in-items.len() > 0 {
+      card(title: "In Scope")[
+        #list(..in-items)
+      ]
+    }
+    let out-items = scope.at("out_of_scope", default: ())
+    if type(out-items) == str { out-items = (out-items,) }
+    if type(out-items) == array and out-items.len() > 0 {
+      card(title: "Out of Scope")[
+        #list(..out-items)
+      ]
+    }
   } else {
     [#scope]
   }
@@ -95,42 +104,24 @@
   }
 }
 
-// Budget: supports both old flat (description, amount) and new rich (line_items, extra_costs) shape.
+// Budget: new rich (line_items, extra_costs) dict shape only.
 #let budget(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   heading(level: 2)[#get-title(data, data-path, "Budget Details")]
 
   let raw = resolve(data, data-path)
-
-  // Shape detection: old flat array vs. new dict shape
-  if type(raw) == array {
-    // Backward-compatible: flat (description, amount) array
-    data-table(
-      columns: (1fr, auto),
-      headers: ("Item", "Allocated Funds"),
-      rows: raw.map(i => (
-        i.at("description", default: "-"),
-        format-money(i.at("amount", default: 0))
-      )).flatten()
-    )
-    return
-  }
-
   if type(raw) != dictionary { [#raw]; return }
 
-  // Rich shape: line_items grouped by category + extra_costs
   let line-items = raw.at("line_items", default: ())
   let extra-costs = raw.at("extra_costs", default: ())
 
   let categories = line-items.map(i => i.at("category", default: "General")).dedup()
-  let line-subtotal = line-items.fold(0.0, (acc, i) => {
-    acc + float(i.at("qty", default: 1)) * float(i.at("unit_cost", default: 0))
-  })
+  let sub = compute.line-subtotal(line-items)
 
   for cat in categories {
     let cat-items = line-items.filter(i => i.at("category", default: "General") == cat)
-    let cat-total = cat-items.fold(0.0, (acc, i) => acc + float(i.at("qty", default: 1)) * float(i.at("unit_cost", default: 0)))
+    let cat-total = compute.line-subtotal(cat-items)
 
     card(title: cat)[
       #data-table(
@@ -154,41 +145,25 @@
   }
 
   if extra-costs.len() > 0 {
+    let show-extras = extra-costs.map(e => {
+      let amt = if e.at("percentage", default: none) != none {
+        sub * float(e.at("percentage", default: 0))
+      } else { float(e.at("cost", default: 0)) }
+      (e.at("description", default: "-"), format-money(amt))
+    }).flatten()
     card(title: "Additional Costs")[
-      #data-table(
-        columns: (1fr, auto),
-        headers: ("Description", "Amount"),
-        rows: extra-costs.map(e => {
-          let amt = if e.at("percentage", default: none) != none {
-            line-subtotal * float(e.at("percentage", default: 0))
-          } else {
-            float(e.at("cost", default: 0))
-          }
-          (
-            e.at("description", default: "-"),
-            format-money(amt)
-          )
-        }).flatten()
-      )
+      #data-table(columns: (1fr, auto), headers: ("Description", "Amount"), rows: show-extras)
     ]
   }
 
-  let extras-total = extra-costs.fold(0.0, (acc, e) => {
-    if e.at("percentage", default: none) != none {
-      acc + line-subtotal * float(e.at("percentage", default: 0))
-    } else {
-      acc + float(e.at("cost", default: 0))
-    }
-  })
-  let grand-total = line-subtotal + extras-total
-
+  let ext = compute.extras-total(extra-costs, sub)
+  let grand = sub + ext
   card[
     #stack(
-      dir: ltr,
-      spacing: 3em,
-      metric("Line Items Subtotal", format-money(line-subtotal)),
-      metric("Additional Costs", format-money(extras-total)),
-      metric("Grand Total", format-money(grand-total), intent: "success")
+      dir: ltr, spacing: 3em,
+      metric("Line Items Subtotal", format-money(sub)),
+      metric("Additional Costs", format-money(ext)),
+      metric("Grand Total", format-money(grand), intent: "success")
     )
   ]
 }
@@ -248,46 +223,21 @@
   )
 }
 
-// Gantt: supports both old flat array and new nested (start, end, tasks, milestones) shape.
+// Gantt: nested (start, end, tasks, milestones) dict shape only.
 #let gantt(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
   heading(level: 2)[#get-title(data, data-path, "Gantt Chart")]
 
   let raw = resolve(data, data-path)
-
-  // Old flat array: (id, name, start, end, progress)
-  if type(raw) == array {
-    data-table(
-      columns: (1fr, auto, auto, auto),
-      headers: ("Task", "Start", "End", "Progress"),
-      rows: raw.map(t => {
-        let tid = t.at("id", default: t.at("name", default: "-"))
-        (
-          [#t.at("name", default: "-")#task-label(tid)],
-          format-date(t.at("start", default: "")),
-          format-date(t.at("end", default: "")),
-          t.at("progress", default: "0%")
-        )
-      }).flatten()
-    )
-    return
-  }
-
-  // New nested dict shape: (start, end, tasks: [(name, subtasks: [...])], milestones: [...])
   if type(raw) != dictionary { [#raw]; return }
-
-  let proj-start = raw.at("start", default: "")
-  let proj-end = raw.at("end", default: "")
-  let phases = raw.at("tasks", default: ())
-  let ms-markers = raw.at("milestones", default: ())
 
   gantty.gantt(
     (
-      start: proj-start,
-      end: proj-end,
-      tasks: phases,
-      milestones: ms-markers,
+      start: raw.at("start", default: ""),
+      end: raw.at("end", default: ""),
+      tasks: raw.at("tasks", default: ()),
+      milestones: raw.at("milestones", default: ()),
     ),
     drawer: _build-gantty-drawer(st)
   )

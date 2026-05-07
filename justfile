@@ -13,10 +13,13 @@ test: audit-style clean compile list
 [group('Dev')]
 audit-style:
     #!/usr/bin/env bash
-    echo "→ Auditing for hardcoded literals in components/ and primitives/..."
-    # Flags rgb, luma, and basic named colors
-    # We use a broad match for common color names used as literals
-    VIOLATIONS=$(rg -n "(rgb\(|luma\(|\b(white|black|red|green|blue|yellow|cyan|magenta|orange|purple|gray|grey|navy|aqua|teal|maroon|fuchsia|silver|olive|lime)\b)" src/components/ src/primitives/)
+    echo "→ Auditing for hardcoded color literals..."
+    VIOLATIONS=$(rg -n \
+        "(rgb\(|luma\(|\b(white|black|red|green|blue|yellow|cyan|magenta|orange|purple|gray|grey|navy|aqua|teal|maroon|fuchsia|silver|olive|lime)\b)" \
+        src/components/ \
+        src/theme/ui.typ \
+        src/core/ \
+        --glob '!**/brand-packs/**' 2>/dev/null || true)
     if [ -n "$VIOLATIONS" ]; then
         echo "🔴 Style audit failed! Hardcoded literals found:"
         echo "$VIOLATIONS"
@@ -70,7 +73,6 @@ local:
     mkdir -p "$TARGET"
     rsync -rL \
         --include='src/' --include='src/**' \
-        --include='brand-packs/' --include='brand-packs/**' \
         --include='typst.toml' \
         --exclude='*' \
         "{{ justfile_directory() }}/" "$TARGET/"

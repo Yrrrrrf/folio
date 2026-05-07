@@ -75,3 +75,31 @@
   
   return month-name + " " + d + ", " + y
 }
+
+/// Formatter for percentage values.
+/// Signature: format-percent(value: int|float, decimals: int) -> content
+#let format-percent(value, decimals: 1) = context {
+  let st = folio-state.get()
+
+  // Try override from config
+  let override = st.config.at("format-percent", default: none)
+  if type(override) == function {
+    return override(value)
+  }
+
+  // Handle string input (e.g., "85%" or "45.5%")
+  if type(value) == str {
+    let cleaned = value.replace("%", "").trim()
+    if cleaned.match(regex("^-?\\d+\\.?\\d*$")) != none {
+      return cleaned + "%"
+    }
+    return missing("Invalid Percent: " + value)
+  }
+
+  if type(value) != int and type(value) != float {
+    return missing("Invalid Percent: " + str(value))
+  }
+
+  let rounded = calc.round(float(value), digits: decimals)
+  return str(rounded) + "%"
+}

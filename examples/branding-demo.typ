@@ -11,9 +11,14 @@
     card(title: "Sample Card")[
       This is a card with some content. It should respect the brand's radius and colors.
     ],
-    badge("Success", intent: "success"),
-    badge("Warning", intent: "warning"),
-    badge("Danger", intent: "danger"),
+    stack(
+      dir: ltr,
+      spacing: 0.5em,
+      badge("Success", intent: "success"),
+      badge("Warning", intent: "warning"),
+      badge("Danger", intent: "danger"),
+      badge("Neutral", intent: "neutral"),
+    ),
     data-table(
       headers: ("Task", "Status", "Owner"),
       rows: (
@@ -22,12 +27,26 @@
         ("Test", badge("Pending", intent: "neutral"), "Charlie"),
       ),
     ),
-    metric("Grand Total", "$125,000", intent: "success"),
+    stack(
+      dir: ltr,
+      spacing: 2em,
+      metric("Grand Total", "$125,000", intent: "success"),
+      metric("Budget Spend", "65%"),
+    ),
     progress-bar(65, intent: "primary"),
   )
 }
 
-== Corporate (Default)
+== 1. Minimal (Typst defaults)
+#folio-init(brand: (preset: "minimal"))[
+  #demo-content()
+]
+
+#v(4em)
+#line(length: 100%, stroke: 0.5pt + luma(200))
+#v(2em)
+
+== 2. Corporate (Default)
 #folio-init(brand: (preset: "corporate"))[
   #demo-content()
 ]
@@ -36,7 +55,7 @@
 #line(length: 100%, stroke: 0.5pt + luma(200))
 #v(2em)
 
-== Academic
+== 3. Academic (01-inspired classic)
 #folio-init(brand: (preset: "academic"))[
   #demo-content()
 ]
@@ -45,7 +64,16 @@
 #line(length: 100%, stroke: 0.5pt + luma(200))
 #v(2em)
 
-== Academic + Override (Red)
+== 4. Corporate + User Override (Teal)
+#folio-init(brand: (preset: "corporate", palette: (primary: rgb("#0d9488"))))[
+  #demo-content()
+]
+
+#v(4em)
+#line(length: 100%, stroke: 0.5pt + luma(200))
+#v(2em)
+
+== 5. Academic + User Override (Deep Red)
 #folio-init(brand: (preset: "academic", palette: (primary: rgb("#7a1f1f"))))[
   #demo-content()
 ]

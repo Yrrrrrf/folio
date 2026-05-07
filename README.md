@@ -34,7 +34,8 @@ Plus support for **Custom Sections** at any insertion point.
 
 - **The Data is the Document**: All content lives in a single dictionary.
 - **Graceful Failure**: Missing fields show as red placeholders, not build errors.
-- **Branding**: Multiple visual presets (`corporate`, `academic`) and deep token overrides. See [Styling Guide](docs/styling.md).
+<!-- todo: Add the syling guide! :) -->
+<!-- - **Branding**: Multiple visual presets (`corporate`, `academic`) and deep token overrides. See [Styling Guide](docs/styling.md). -->
 - **Audit System**: Diagnostic dashboard for data completeness and orphan references.
 - **Extensible**: Inject custom sections at named insertion points.
 
@@ -49,7 +50,7 @@ folio supports a multi-layered branding system. You can use built-in presets or 
 )
 ```
 
-See [docs/styling.md](docs/styling.md) for the full reference on presets and available tokens.
+<!-- See [docs/styling.md](docs/styling.md) for the full reference on presets and available tokens. -->
 
 ## Audit System
 

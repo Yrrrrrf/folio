@@ -14,6 +14,7 @@
   ),
   palette: (
     primary: rgb("#2563eb"),
+    text: rgb("#0f172a"),
     intent: (
       success: rgb("#16a34a"),
       danger: rgb("#dc2626"),

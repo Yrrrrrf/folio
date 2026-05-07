@@ -14,14 +14,16 @@
     let _ = user-brand.remove("preset")
   }
 
-  let preset-tokens = if brand-preset == "academic" {
-    import "../theme/brand-packs/academic.typ": brand
-    brand
+  let preset-tokens = if brand-preset == none {
+    (:)  // no preset: falls back to default-tokens (corporate) in resolver
+  } else if brand-preset == "academic" {
+    import "../theme/brand-packs/academic.typ": brand; brand
   } else if brand-preset == "corporate" {
-    import "../theme/brand-packs/corporate.typ": brand
-    brand
+    import "../theme/brand-packs/corporate.typ": brand; brand
+  } else if brand-preset == "minimal" {
+    import "../theme/brand-packs/minimal.typ": brand; brand
   } else {
-    (:)
+    panic("Unknown brand preset: '" + brand-preset + "'. Valid values: academic, corporate, minimal.")
   }
 
   folio-state.update(old => {

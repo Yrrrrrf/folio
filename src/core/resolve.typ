@@ -1,63 +1,44 @@
+/// folio resolve utilities
+/// _walk, resolve, nonempty, get-title
 #import "fallback.typ": missing
 
-#let resolve(data, path, fallback-name: none) = {
-  let current = data
-  let parts = path.split(".")
-  let found = true
-  
-  for p in parts {
-    if type(current) == dictionary and p in current {
-      current = current.at(p)
-    } else {
-      found = false
-      break
-    }
-  }
-  
-  if not found or current == none or current == "" {
-    let name = fallback-name
-    if name == none {
-      name = path
-    }
-    return missing(name)
-  }
-  
-  return current
-}
-
-#let nonempty(data, path) = {
-  let current = data
-  let parts = path.split(".")
-  let found = true
-  
-  for p in parts {
-    if type(current) == dictionary and p in current {
-      current = current.at(p)
-    } else {
-      found = false
-      break
-    }
-  }
-  
-  if not found { return false }
-  if current == none { return false }
-  if current == "" { return false }
-  if type(current) == array and current.len() == 0 { return false }
-  if type(current) == dictionary and current.pairs().len() == 0 { return false }
-  return true
-}
-
-#let get-title(data, path, default-title) = {
+/// Private: walk a dot-separated path through a nested dict.
+/// Returns (found: bool, value: any)
+#let _walk(data, path) = {
   let current = data
   for p in path.split(".") {
     if type(current) == dictionary and p in current {
       current = current.at(p)
     } else {
-      return default-title
+      return (found: false, value: none)
     }
   }
-  if type(current) == dictionary and "title" in current {
-    return current.title
+  (found: true, value: current)
+}
+
+/// Resolve a dot-path from data, returning missing() placeholder on failure.
+#let resolve(data, path, fallback-name: none) = {
+  let r = _walk(data, path)
+  if not r.found or r.value == none or r.value == "" {
+    return missing(if fallback-name != none { fallback-name } else { path })
   }
-  return default-title
+  r.value
+}
+
+/// Return true if data has a non-empty value at the given dot-path.
+#let nonempty(data, path) = {
+  let r = _walk(data, path)
+  if not r.found or r.value == none or r.value == "" { return false }
+  if type(r.value) == array and r.value.len() == 0 { return false }
+  if type(r.value) == dictionary and r.value.pairs().len() == 0 { return false }
+  true
+}
+
+/// Get a title string from data at path, falling back to default-title.
+#let get-title(data, path, default-title) = {
+  let r = _walk(data, path)
+  if not r.found { return default-title }
+  if type(r.value) == str { return r.value }
+  if type(r.value) == dictionary and "title" in r.value { return r.value.title }
+  default-title
 }

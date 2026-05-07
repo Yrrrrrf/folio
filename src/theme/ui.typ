@@ -51,7 +51,7 @@
   let val-color = if intent != none {
     resolve-token(st, "palette.intent." + intent)
   } else {
-    black
+    resolve-token(st, "palette.text")
   }
   p-metric(
     label,

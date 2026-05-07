@@ -1,29 +1,13 @@
+#import "../core/phase-runner.typ": render-phase
 #import "../core/pipeline.typ": pmbok-pipeline
-#import "../core/guard.typ": section-guard
-#import "../core/state.typ": folio-state
-#import "../core/resolve.typ": get-title, nonempty
-#import "../components/execution.typ": (
-  change-log, decision-log, deliverables-register, issue-log, risk-matrix, status-report,
-)
+#import "../components/execution.typ": status-report, risk-matrix, issue-log, change-log, decision-log, deliverables-register
 
-#let execution(pipeline: pmbok-pipeline) = context {
-  let st = folio-state.get()
-  let data = st.at("data", default: (:))
+#let execution(pipeline: pmbok-pipeline) = render-phase(pipeline, "execution", "Execution")
 
-  // Filter sections that will actually render
-  let renderable-sections = pipeline.filter(p => {
-    if p.phase != "execution" { return false }
-    let toggle = st.config.at("sections", default: (:)).at(p.section_id, default: auto)
-    return toggle == true or (toggle == auto and nonempty(data, p.data_path))
-  })
-
-  if renderable-sections.len() == 0 { return }
-
-  pagebreak()
-  heading(level: 1)[#get-title(data, "phases.execution.title", "Execution")]
-
-  for (phase, section_id, data_path, render_fn) in renderable-sections {
-    let resolved-toggle = st.config.at("sections", default: (:)).at(section_id, default: auto)
-    section-guard(resolved-toggle, data_path, render_fn)
-  }
-}
+// Re-export section fns for lib.typ
+#let status-report = status-report
+#let risk-matrix = risk-matrix
+#let issue-log = issue-log
+#let change-log = change-log
+#let decision-log = decision-log
+#let deliverables-register = deliverables-register

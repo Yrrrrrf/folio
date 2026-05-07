@@ -55,8 +55,9 @@
         current-pipeline.insert(idx + 1, new-record)
       } else {
         // Append to the end of its phase if no anchor
-        let last-in-phase = current-pipeline.enumerate().filter(e => e.at(1).phase == phase).last()
-        if last-in-phase != none {
+        let phase-entries = current-pipeline.enumerate().filter(e => e.at(1).phase == phase)
+        if phase-entries.len() > 0 {
+          let last-in-phase = phase-entries.last()
           current-pipeline.insert(last-in-phase.at(0) + 1, new-record)
         } else {
           current-pipeline.push(new-record)

@@ -1,23 +1,14 @@
-#import "../theme/resolver.typ": resolve-token, resolve-spacing
-#import "../core/state.typ": folio-state
-
+/// Raw metric primitive — takes explicit parameters only, no state access.
+/// ui.typ resolves tokens and passes them here.
 #let metric(
-  label, 
-  value, 
-  val-color: none,
-  pad: none,
-  label-size: none,
-  label-color: none,
-  val-size: none
-) = context {
-  let st = folio-state.get()
-  
-  let val-color = if val-color != none { val-color } else { resolve-token(st, "palette.primary") }
-  let label-color = if label-color != none { label-color } else { resolve-token(st, "palette.intent.neutral") }
-  let pad = if pad != none { pad } else { resolve-spacing(st, multiplier: 0.5) }
-  let label-size = if label-size != none { label-size } else { resolve-token(st, "typography.size.sm") }
-  let val-size = if val-size != none { val-size } else { resolve-token(st, "typography.size.xl") }
-
+  label,
+  value,
+  val-color: rgb("#2563eb"),
+  pad: 0.5em,
+  label-size: 0.85em,
+  label-color: rgb("#64748b"),
+  val-size: 1.5em
+) = {
   block(
     stack(
       dir: ttb,
