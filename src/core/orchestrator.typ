@@ -44,23 +44,23 @@
       }
       
       let new-record = (phase: phase, section_id: id, data_path: data-path, render_fn: render)
-      
+
       if before != none {
         let idx = current-pipeline.position(p => p.section_id == before)
         if idx == none { panic("Anchor section_id not found for 'before': " + before) }
-        current-pipeline.insert(idx, new-record)
+        current-pipeline = current-pipeline.slice(0, idx) + (new-record,) + current-pipeline.slice(idx)
       } else if after != none {
         let idx = current-pipeline.position(p => p.section_id == after)
         if idx == none { panic("Anchor section_id not found for 'after': " + after) }
-        current-pipeline.insert(idx + 1, new-record)
+        current-pipeline = current-pipeline.slice(0, idx + 1) + (new-record,) + current-pipeline.slice(idx + 1)
       } else {
         // Append to the end of its phase if no anchor
         let phase-entries = current-pipeline.enumerate().filter(e => e.at(1).phase == phase)
         if phase-entries.len() > 0 {
-          let last-in-phase = phase-entries.last()
-          current-pipeline.insert(last-in-phase.at(0) + 1, new-record)
+          let insert-at = phase-entries.last().at(0) + 1
+          current-pipeline = current-pipeline.slice(0, insert-at) + (new-record,) + current-pipeline.slice(insert-at)
         } else {
-          current-pipeline.push(new-record)
+          current-pipeline = current-pipeline + (new-record,)
         }
       }
     }

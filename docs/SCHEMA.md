@@ -60,7 +60,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Type:** `string`
 - **Severity:** `critical`
 - **Phase:** `meta`
-- **Status:** Existing
 - **Rendered by:** `cover()`, page headers
 - **Cross-refs:** None
 - **Shape:**
@@ -72,7 +71,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Type:** `string`
 - **Severity:** `important`
 - **Phase:** `meta`
-- **Status:** Existing
 - **Rendered by:** `cover()`
 - **Cross-refs:** None
 - **Shape:**
@@ -89,7 +87,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `critical`
 - **Phase:** `initiation`
 - **Pipeline ID:** `pitch`
-- **Status:** Existing
 - **Rendered by:** `pitch(data-path)` — card with elevator description
 - **Cross-refs:** None
 - **Shape:**
@@ -102,7 +99,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `important`
 - **Phase:** `initiation`
 - **Pipeline ID:** `business_case`
-- **Status:** Existing
 - **Rendered by:** `business-case(data-path)` — card with business justification
 - **Cross-refs:** None
 - **Shape:**
@@ -115,7 +111,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `initiation`
 - **Pipeline ID:** `objectives`
-- **Status:** Existing
 - **Rendered by:** `objectives(data-path)` — table with ID, description, priority badge
 - **Cross-refs:**
   - → `closure.benefits_review` (original objectives vs. actual outcomes)
@@ -133,7 +128,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `initiation`
 - **Pipeline ID:** `success_criteria`
-- **Status:** **New**
 - **Rendered by:** `success-criteria(data-path)` — table with type, criterion, measurement, target
 - **Cross-refs:**
   - → `initiation.objectives` via `objective_id` (which objective this criterion measures)
@@ -158,7 +152,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `important`
 - **Phase:** `initiation`
 - **Pipeline ID:** `stakeholders`
-- **Status:** **New**
 - **Rendered by:** `stakeholders(data-path)` — table with name, role, organization, interest, influence
 - **Cross-refs:**
   - → `closure.sign_off` (signers are stakeholders)
@@ -185,7 +178,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `initiation`
 - **Pipeline ID:** `assumptions_log`
-- **Status:** **New**
 - **Rendered by:** `assumptions-log(data-path)` — table with ID, assumption, status, linked risk
 - **Cross-refs:**
   - → `registers.risk_register` via `risk_id` (invalidated assumption becomes a risk)
@@ -213,7 +205,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `important`
 - **Phase:** `planning`
 - **Pipeline ID:** `boundaries`
-- **Status:** Existing
 - **Rendered by:** `boundaries(data-path)` — two cards: in-scope, out-of-scope
 - **Cross-refs:** None
 - **Shape:**
@@ -229,7 +220,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `important`
 - **Phase:** `planning`
 - **Pipeline ID:** `requirements`
-- **Status:** **New**
 - **Rendered by:** `requirements(data-path)` — table grouped by category with ID, description, qty, unit, unit_cost, subtotal, priority badge. Category subtotals. Grand total row.
 - **Cross-refs:**
   - → `baselines.financials.budget` (budget line items reference `req_id`)
@@ -258,7 +248,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `planning`
 - **Pipeline ID:** `milestones`
-- **Status:** Existing
 - **Rendered by:** `milestones(data-path)` — table with date, title, status badge
 - **Cross-refs:**
   - ← `registers.risk_register` via `blocks_milestone`
@@ -277,7 +266,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `important`
 - **Phase:** `planning`
 - **Pipeline ID:** `gantt`
-- **Status:** **Enhanced** — visual rendering via `gantty`
 - **Rendered by:** `gantt(data-path)` — full visual Gantt chart with phase groupings, day headers, milestone markers. Themed via tokens.
 - **Cross-refs:**
   - ← `registers.risk_register` via `affects_wbs`
@@ -312,7 +300,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `important`
 - **Phase:** `planning`
 - **Pipeline ID:** `budget`
-- **Status:** **Enhanced** — supports line items with qty/unit_cost/category, extra costs, category subtotals
 - **Rendered by:** `budget(data-path)` — table grouped by category with subtotals, extra costs section, grand total summary box. Themed via tokens.
 - **Cross-refs:**
   - ← `baselines.requirements` via `req_id` (cost of fulfilling a requirement)
@@ -349,7 +336,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `planning`
 - **Pipeline ID:** `quality`
-- **Status:** **New**
 - **Rendered by:** `quality(data-path)` — cards for standards, acceptance procedures, testing strategy
 - **Cross-refs:**
   - → `baselines.requirements` via `req_id` (quality criteria per requirement)
@@ -372,7 +358,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `planning`
 - **Pipeline ID:** `communication`
-- **Status:** **New**
 - **Rendered by:** `communication(data-path)` — table: what, audience, frequency, channel, owner
 - **Cross-refs:**
   - → `governance.team` (audience members come from team)
@@ -395,7 +380,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `planning`
 - **Pipeline ID:** `risk_strategy`
-- **Status:** **New**
 - **Rendered by:** `risk-strategy(data-path)` — cards describing approach, categories, scoring, tolerance
 - **Cross-refs:**
   - → `registers.risk_register` (defines the framework the register uses)
@@ -415,7 +399,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `planning`
 - **Pipeline ID:** `compliance`
-- **Status:** **New**
 - **Rendered by:** `compliance(data-path)` — table: regulation, jurisdiction, req_id links, audit schedule
 - **Cross-refs:**
   - → `baselines.requirements` via `req_id` (which requirements satisfy this regulation)
@@ -440,7 +423,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `important`
 - **Phase:** `meta`
 - **Pipeline ID:** `team`
-- **Status:** Existing
 - **Rendered by:** `team(data-path)` — table with role, name, contact
 - **Cross-refs:**
   - ← `baselines.communication` (audience)
@@ -462,7 +444,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `execution`
 - **Pipeline ID:** `status_report`
-- **Status:** Existing
 - **Rendered by:** `status-report(data-path)` — metrics (health, spend, variance) + executive summary card
 - **Cross-refs:** None
 - **Shape:**
@@ -480,7 +461,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `important`
 - **Phase:** `execution`
 - **Pipeline ID:** `risk_matrix`
-- **Status:** Existing, **enhanced** cross-refs
 - **Rendered by:** `risk-matrix(data-path)` — table with ID, risk, mitigation, probability, impact, status badge, cross-ref links
 - **Cross-refs:**
   - → `baselines.schedule.gantt` via `affects_wbs` (links to tasks)
@@ -510,7 +490,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `execution`
 - **Pipeline ID:** `issue_log`
-- **Status:** Existing, **enhanced** cross-refs
 - **Rendered by:** `issue-log(data-path)` — table with ID, issue, owner, status badge, cross-ref links
 - **Cross-refs:**
   - → `registers.risk_register` via `affects_risk`
@@ -538,7 +517,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `execution`
 - **Pipeline ID:** `change_log`
-- **Status:** Existing, **enhanced** cross-refs
 - **Rendered by:** `change-log(data-path)` — table with ID, description, type, impact, status badge
 - **Cross-refs:**
   - → baselines via `affects_baseline` (NEW — which baseline changed)
@@ -562,7 +540,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `execution`
 - **Pipeline ID:** `decision_log`
-- **Status:** **New**
 - **Rendered by:** `decision-log(data-path)` — table with ID, decision, date, maker, rationale
 - **Cross-refs:**
   - → `registers.risk_register` via `prompted_by_risk` (optional)
@@ -590,7 +567,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `execution`
 - **Pipeline ID:** `deliverables_register`
-- **Status:** **New**
 - **Rendered by:** `deliverables-register(data-path)` — table with ID, description, owner, due date, status badge, req links
 - **Cross-refs:**
   - → `baselines.requirements` via `req_ids` (which requirements this deliverable fulfills)
@@ -621,7 +597,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `closure`
 - **Pipeline ID:** `lessons_learned`
-- **Status:** Existing
 - **Rendered by:** `lessons-learned(data-path)` — table with category, issue, recommendation
 - **Cross-refs:** None
 - **Shape:**
@@ -637,7 +612,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `important`
 - **Phase:** `closure`
 - **Pipeline ID:** `sign_off`
-- **Status:** Existing
 - **Rendered by:** `sign-off(data-path)` — table with stakeholder, role, signature line
 - **Cross-refs:**
   - ← `initiation.stakeholders` (signers come from stakeholder register)
@@ -654,7 +628,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `closure`
 - **Pipeline ID:** `acceptance`
-- **Status:** **New**
 - **Rendered by:** `acceptance(data-path)` — table with deliverable link, acceptance date, signer, outstanding issues
 - **Cross-refs:**
   - → `registers.deliverables_register` via `deliverable_id` (which deliverable)
@@ -676,7 +649,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `closure`
 - **Pipeline ID:** `benefits_review`
-- **Status:** **New**
 - **Rendered by:** `benefits-review(data-path)` — table with objective link, claimed benefit, actual outcome, variance
 - **Cross-refs:**
   - → `initiation.objectives` via `objective_id` (original claims)
@@ -699,7 +671,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `closure`
 - **Pipeline ID:** `handover`
-- **Status:** **New**
 - **Rendered by:** `handover(data-path)` — cards for documentation, training, support arrangements
 - **Cross-refs:** None (standalone)
 - **Shape:**
@@ -717,7 +688,6 @@ Each referenceable entity type gets a label family. Labels are Typst labels crea
 - **Severity:** `recommended`
 - **Phase:** `closure`
 - **Pipeline ID:** `financial_closure`
-- **Status:** **New**
 - **Rendered by:** `financial-closure(data-path)` — summary: final cost vs. budget baseline, variance, outstanding items
 - **Cross-refs:**
   - → `baselines.financials.budget` (baseline comparison)

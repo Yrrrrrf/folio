@@ -1,6 +1,7 @@
 #import "../core/resolve.typ": resolve, get-title
 #import "../core/state.typ": folio-state
 #import "../theme/ui.typ": card, data-table, badge
+#import "../theme/resolver.typ": resolve-token
 #import "../core/refs.typ": objective-label, stakeholder-label, assumption-label, link-to-objective, link-to-risk
 
 #let cover() = context {
@@ -11,9 +12,9 @@
   let desc = resolve(data, "project.description")
 
   align(center + horizon)[
-    #text(size: 3em, weight: "bold")[#name]
+    #text(size: resolve-token(st, "typography.size.xl"), weight: "bold")[#name]
     #v(1em)
-    #text(size: 1.5em, style: "italic")[#desc]
+    #text(size: resolve-token(st, "typography.size.lg"), style: "italic")[#desc]
   ]
 }
 

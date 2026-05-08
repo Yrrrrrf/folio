@@ -109,3 +109,22 @@ A friend asks you to format their thesis project, their startup MVP plan, or the
 …and that's the entire consumer file. Whatever's in `project` renders correctly. Whatever's missing shows as a red placeholder pointing at the right path. They don't need to know what PMBOK is — the structure is right because folio is right.
 
 **When that works for any project, not just project 01, folio v0.0.1 ships.**
+---
+
+## Schema Decisions
+
+### Decision: Requirements and Budget are separate arrays
+
+folio uses two distinct arrays:
+- `baselines.requirements` — **what** must be delivered (functional/quality specifications)
+- `baselines.financials.budget.line_items` — **how much** financial allocation per work item
+
+These serve different stakeholder audiences, render in different sections, and update at different cadences. A regulatory requirement has no cost; a budget line item may cover multiple requirements or no requirements at all.
+
+**The `req_id` field on budget line items is the traceability link.** It declares "this budget line funds requirement X" — it is not a derivation source. The budget figure is authoritative for financial reporting; the requirement is authoritative for scope acceptance.
+
+**SSOT principle applies within each domain.** Each requirement is written once in `baselines.requirements`. Each budget item is written once in `baselines.financials.budget.line_items`. The `req_id` link is the single place where the two domains intersect.
+
+**Cost drift detection:** `find-orphans()` checks that every `req_id` on a budget item resolves to a real requirement. A future `audit-cost-drift()` function (v0.1.0) will additionally warn when a budget item's unit cost differs from the linked requirement's `unit_cost` field — surfacing accidental inconsistency without making it a hard error.
+
+**Revisit condition:** If a project type emerges where every requirement maps 1:1 to a budget line item and users repeatedly write the same item twice, an optional `use-requirements-as-budget: true` config flag (not a schema change) could derive budget automatically. This is deferred to v0.1.0.

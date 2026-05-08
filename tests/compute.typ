@@ -2,7 +2,7 @@
 // Verifies compute.typ works correctly in isolation from the rendering pipeline.
 #import "@local/folio:0.0.1": (
   folio-init, compute-context, find-orphans, audit-missing, audit-summary,
-  calc-budget, calc-requirements, sum-costs, sum-budget-lines,
+  calc-budget, calc-requirements, sum-costs, line-subtotal,
   card, data-table, badge, metric,
 )
 #import "fixtures/full-data-dict.typ": full-project-data

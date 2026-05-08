@@ -64,11 +64,16 @@
   )
 }
 
-#let progress-bar(percentage, intent: "primary") = context {
+#let progress-bar(percentage, intent: none) = context {
   let st = folio-state.get()
+  let fill-color = if intent != none {
+    resolve-token(st, "palette.intent." + intent)
+  } else {
+    resolve-token(st, "palette.primary")
+  }
   p-progress-bar(
     percentage,
-    fill-color: resolve-token(st, "palette.intent." + intent),
+    fill-color: fill-color,
     bg-color: resolve-token(st, "palette.surface.border"),
     h: resolve-spacing(st, multiplier: 0.5),
     rad: resolve-token(st, "geometry.radius.sm"),

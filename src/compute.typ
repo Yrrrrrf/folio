@@ -40,16 +40,12 @@
 /// Sum qty × unit_cost for a generic array of items (requirements, etc.)
 #let sum-costs(items) = line-subtotal(items)
 
-/// Full budget summary from the budget dict (handles both flat and rich shapes).
+/// Full budget summary from the budget dict (dict shape only).
 /// Returns: (line-subtotal: float, extra-total: float, grand-total: float)
 #let calc-budget(data) = {
   let financials = data.at("baselines", default: (:)).at("financials", default: (:))
   let budget = financials.at("budget", default: (:))
 
-  if type(budget) == array {
-    let total = budget.fold(0.0, (acc, i) => acc + float(i.at("amount", default: 0)))
-    return (line-subtotal: total, extra-total: 0.0, grand-total: total)
-  }
   if type(budget) != dictionary {
     return (line-subtotal: 0.0, extra-total: 0.0, grand-total: 0.0)
   }
@@ -271,6 +267,4 @@
   )
 }
 
-// Keep old aliases for backward compatibility with any consumers
-#let sum-budget-lines = line-subtotal
-#let sum-extra-costs  = extras-total
+
