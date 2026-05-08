@@ -14,3 +14,18 @@ exclude = ["docs/**", "examples/**", "tests/**", "*.pdf"]
 
 [dependencies]
 gantty = "0.5.1"
+
+[tool.typst]
+exclude = [
+    "examples/",
+    "tests/",
+    "docs/",
+    "scripts/",
+    "docs/manual.pdf",
+    "README.md",
+    "LICENSE",
+    "flake.nix",
+    "justfile",
+    ".git/",
+    ".github/",
+]
