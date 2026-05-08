@@ -22,15 +22,17 @@
           name = "folio";
 
           packages = with pkgs; [
-            typst      # document compiler
-            just       # task runner
-            fd         # fast file finder (used in justfile)
+            typst # document compiler
+            just # task runner
+            fd # fast file finder (used in justfile)
+            sd # find-and-replace (used in justfile)
           ];
 
           shellHook = ''
             echo "    $(typst --version)"
             echo "    $(just --version)"
             echo "    $(fd --version)"
+            echo "    $(sd --version)"
           '';
         };
       }
