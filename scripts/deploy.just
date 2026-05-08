@@ -13,10 +13,13 @@ deploy:
     rm -rf "$TARGET"
     mkdir -p "$TARGET"
     rsync -rL \
-        --include='src/'       --include='src/**'  \
+        --include='LICENSE' \
+        --include='README.md' \
         --include='typst.toml' \
-        --include='README.md'  \
-        --include='LICENSE'    \
+        --include='src/' --include='src/**' \
+        --include='examples/' --include='examples/**' \
+        --include='tests/' --include='tests/**' \
+        --include='docs/' --include='docs/**' \
         --exclude='*' \
         "{{ justfile_directory() }}/" "$TARGET/"
     echo "✓ folio v{{ VERSION }} deployed to $TARGET"
