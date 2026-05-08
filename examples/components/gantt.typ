@@ -11,15 +11,35 @@
             (
               name: "Phase 1: Research",
               subtasks: (
-                (id: "T1", name: "User Interviews", start: "2026-01-01", end: "2026-01-15"),
-                (id: "T2", name: "Market Analysis", start: "2026-01-10", end: "2026-01-25"),
+                (
+                  id: "T1",
+                  name: "User Interviews",
+                  start: "2026-01-01",
+                  end: "2026-01-15",
+                ),
+                (
+                  id: "T2",
+                  name: "Market Analysis",
+                  start: "2026-01-10",
+                  end: "2026-01-25",
+                ),
               ),
             ),
             (
               name: "Phase 2: Design",
               subtasks: (
-                (id: "T3", name: "Wireframing", start: "2026-01-25", end: "2026-02-05"),
-                (id: "T4", name: "Prototyping", start: "2026-02-01", end: "2026-02-15"),
+                (
+                  id: "T3",
+                  name: "Wireframing",
+                  start: "2026-01-25",
+                  end: "2026-02-05",
+                ),
+                (
+                  id: "T4",
+                  name: "Prototyping",
+                  start: "2026-02-01",
+                  end: "2026-02-15",
+                ),
               ),
             ),
           ),

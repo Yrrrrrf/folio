@@ -3,7 +3,13 @@
 #show: body => folio-init(
   data: (
     closure: (
-      lessons_learned: ((category: "Demo Category", issue: "Demo Issue", recommendation: "Demo Recommendation"),),
+      lessons_learned: (
+        (
+          category: "Demo Category",
+          issue: "Demo Issue",
+          recommendation: "Demo Recommendation",
+        ),
+      ),
     ),
   ),
   body,

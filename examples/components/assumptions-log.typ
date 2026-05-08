@@ -4,7 +4,13 @@
   data: (
     initiation: (
       assumptions_log: (
-        (id: "A-1", description: "Demo Assumption", type: "assumption", status: "Open", risk_id: "R1"),
+        (
+          id: "A-1",
+          description: "Demo Assumption",
+          type: "assumption",
+          status: "Open",
+          risk_id: "R1",
+        ),
       ),
     ),
     registers: (

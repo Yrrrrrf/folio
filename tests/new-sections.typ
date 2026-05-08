@@ -1,8 +1,10 @@
 // Test: all new sections render from populated data (Phases 2–6)
 // Each section is exercised with a minimal but complete data payload.
 #import "../src/lib.typ": (
-  acceptance, assumptions-log, benefits-review, budget, communication, compliance, decision-log, deliverables-register,
-  financial-closure, folio-init, gantt, handover, quality, requirements, risk-strategy, stakeholders, success-criteria,
+  acceptance, assumptions-log, benefits-review, budget, communication,
+  compliance, decision-log, deliverables-register, financial-closure,
+  folio-init, gantt, handover, quality, requirements, risk-strategy,
+  stakeholders, success-criteria,
 )
 
 #show: body => folio-init(
@@ -20,16 +22,52 @@
           target: "10",
           objective_id: "OBJ-1",
         ),
-        (id: "SC-2", type: "benefit", criterion: "Revenue uplift", measurement: "MoM growth", target: "+5%"),
+        (
+          id: "SC-2",
+          type: "benefit",
+          criterion: "Revenue uplift",
+          measurement: "MoM growth",
+          target: "+5%",
+        ),
       ),
       stakeholders: (
-        (id: "SH-1", name: "Alice", role: "Sponsor", interest: "high", influence: "high", engagement: "Weekly sync"),
-        (id: "SH-2", name: "Bob", role: "End User", interest: "medium", influence: "low", organization: "Ops Dept"),
+        (
+          id: "SH-1",
+          name: "Alice",
+          role: "Sponsor",
+          interest: "high",
+          influence: "high",
+          engagement: "Weekly sync",
+        ),
+        (
+          id: "SH-2",
+          name: "Bob",
+          role: "End User",
+          interest: "medium",
+          influence: "low",
+          organization: "Ops Dept",
+        ),
       ),
       assumptions_log: (
-        (id: "A-1", type: "assumption", description: "Cloud infra available", status: "Validated"),
-        (id: "A-2", type: "dependency", description: "Legal sign-off by May", status: "Open"),
-        (id: "A-3", type: "constraint", description: "Budget capped at $50k", status: "Invalidated", risk_id: "R1"),
+        (
+          id: "A-1",
+          type: "assumption",
+          description: "Cloud infra available",
+          status: "Validated",
+        ),
+        (
+          id: "A-2",
+          type: "dependency",
+          description: "Legal sign-off by May",
+          status: "Open",
+        ),
+        (
+          id: "A-3",
+          type: "constraint",
+          description: "Budget capped at $50k",
+          status: "Invalidated",
+          risk_id: "R1",
+        ),
       ),
     ),
     baselines: (
@@ -67,7 +105,11 @@
         acceptance_procedure: "All P0 bugs resolved before release.",
         testing_strategy: "CI pipeline with 80% coverage gate.",
         criteria: (
-          (req_id: "REQ-01", criterion: "API response < 200ms", method: "Load test (k6)"),
+          (
+            req_id: "REQ-01",
+            criterion: "API response < 200ms",
+            method: "Load test (k6)",
+          ),
         ),
       ),
       communication: (
@@ -78,7 +120,13 @@
           channel: "Video call",
           owner: "PM",
         ),
-        (what: "Status email", audience: "Sponsor", frequency: "Weekly", channel: "Email", owner: "PM"),
+        (
+          what: "Status email",
+          audience: "Sponsor",
+          frequency: "Weekly",
+          channel: "Email",
+          owner: "PM",
+        ),
       ),
       risk_strategy: (
         approach: "Risk-first planning. All High risks need mitigation before sprint start.",
@@ -96,7 +144,13 @@
           status: "Compliant",
           audit_date: "2026-01-15",
         ),
-        (id: "COMP-2", regulation: "SOC 2 Type I", jurisdiction: "US", req_ids: (), status: "Pending"),
+        (
+          id: "COMP-2",
+          regulation: "SOC 2 Type I",
+          jurisdiction: "US",
+          req_ids: (),
+          status: "Pending",
+        ),
       ),
       financials: (
         budget: (
@@ -142,15 +196,35 @@
             (
               name: "Backend",
               subtasks: (
-                (id: "T1", name: "API design", start: "2026-05-01", end: "2026-05-15"),
-                (id: "T2", name: "API build", start: "2026-05-15", end: "2026-07-01"),
+                (
+                  id: "T1",
+                  name: "API design",
+                  start: "2026-05-01",
+                  end: "2026-05-15",
+                ),
+                (
+                  id: "T2",
+                  name: "API build",
+                  start: "2026-05-15",
+                  end: "2026-07-01",
+                ),
               ),
             ),
             (
               name: "Frontend",
               subtasks: (
-                (id: "T3", name: "UI wireframes", start: "2026-06-01", end: "2026-06-15"),
-                (id: "T4", name: "UI build", start: "2026-06-15", end: "2026-08-01"),
+                (
+                  id: "T3",
+                  name: "UI wireframes",
+                  start: "2026-06-01",
+                  end: "2026-06-15",
+                ),
+                (
+                  id: "T4",
+                  name: "UI build",
+                  start: "2026-06-15",
+                  end: "2026-08-01",
+                ),
               ),
             ),
           ),
@@ -211,7 +285,12 @@
     ),
     closure: (
       acceptance: (
-        (deliverable_id: "D1", accepted_by: "Alice", acceptance_date: "2026-07-03", outstanding_issues: "None"),
+        (
+          deliverable_id: "D1",
+          accepted_by: "Alice",
+          acceptance_date: "2026-07-03",
+          outstanding_issues: "None",
+        ),
       ),
       benefits_review: (
         (
@@ -223,7 +302,11 @@
         ),
       ),
       handover: (
-        documentation: ("API reference v1.0", "Deployment runbook", "User guide v1.0"),
+        documentation: (
+          "API reference v1.0",
+          "Deployment runbook",
+          "User guide v1.0",
+        ),
         training: "1-day onboarding workshop for Ops team.",
         support: "90-day hypercare with 4h SLA.",
         transfer_date: "2026-10-01",

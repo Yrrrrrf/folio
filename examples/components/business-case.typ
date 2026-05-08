@@ -2,7 +2,9 @@
 
 #show: body => folio-init(
   data: (
-    initiation: (business_case: "This is a standalone business case component demonstration."),
+    initiation: (
+      business_case: "This is a standalone business case component demonstration.",
+    ),
   ),
   body,
 )

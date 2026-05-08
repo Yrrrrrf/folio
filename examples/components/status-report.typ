@@ -2,7 +2,14 @@
 
 #show: body => folio-init(
   data: (
-    execution: (status: (health: "Good", spend: "50%", variance: "0", summary: "Demo status summary.")),
+    execution: (
+      status: (
+        health: "Good",
+        spend: "50%",
+        variance: "0",
+        summary: "Demo status summary.",
+      ),
+    ),
   ),
   body,
 )

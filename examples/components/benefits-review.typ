@@ -4,7 +4,12 @@
   data: (
     closure: (
       benefits_review: (
-        (objective_id: "OBJ-1", claimed: "Demo Benefit", actual: "Observed Benefit", variance: "0%"),
+        (
+          objective_id: "OBJ-1",
+          claimed: "Demo Benefit",
+          actual: "Observed Benefit",
+          variance: "0%",
+        ),
       ),
     ),
     initiation: (

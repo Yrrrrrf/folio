@@ -2,7 +2,10 @@
 
 #show: body => folio-init(
   data: (
-    project: (name: "Component Demo", description: "Standalone component demonstration"),
+    project: (
+      name: "Component Demo",
+      description: "Standalone component demonstration",
+    ),
   ),
   body,
 )

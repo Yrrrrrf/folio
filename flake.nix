@@ -23,6 +23,7 @@
 
           packages = with pkgs; [
             typst # document compiler
+            typstyle # code formatter
             just # task runner
             fd # fast file finder (used in justfile)
             sd # find-and-replace (used in justfile)
@@ -30,6 +31,7 @@
 
           shellHook = ''
             echo "    $(typst --version)"
+            echo "    $(typstyle --version)"
             echo "    $(just --version)"
             echo "    $(fd --version)"
             echo "    $(sd --version)"

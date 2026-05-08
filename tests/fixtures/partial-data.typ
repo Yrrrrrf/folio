@@ -13,8 +13,16 @@
       pitch: "A project with incomplete data to test graceful degradation.",
       business_case: "Validates that folio handles partial schemas correctly.",
       objectives: (
-        (id: "OBJ-1", description: "Demonstrate partial rendering", priority: "high"),
-        (id: "OBJ-2", description: "Verify audit catches gaps", priority: "neutral"),
+        (
+          id: "OBJ-1",
+          description: "Demonstrate partial rendering",
+          priority: "high",
+        ),
+        (
+          id: "OBJ-2",
+          description: "Verify audit catches gaps",
+          priority: "neutral",
+        ),
       ),
     ),
     baselines: (
@@ -24,7 +32,12 @@
       ),
       schedule: (
         milestones: (
-          (id: "M1", date: "2026-06-01", title: "Partial Test Complete", status: "Pending"),
+          (
+            id: "M1",
+            date: "2026-06-01",
+            title: "Partial Test Complete",
+            status: "Pending",
+          ),
         ),
       ),
     ),

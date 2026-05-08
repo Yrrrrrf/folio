@@ -27,10 +27,26 @@
       pitch: "Upgrade the 1972-built community centre to modern seismic and energy standards while retaining the original façade. Estimated 20-year asset life extension.",
       business_case: "The council faces a binary choice: invest in refurbishment at ~$1.8M or demolish and rebuild at ~$4.5M. Refurbishment preserves a heritage asset, reduces embodied carbon by 60%, and keeps the facility operational for the neighbourhood during works.",
       objectives: (
-        (id: "OBJ-1", description: "Complete structural remediation to NZS 3101 compliance", priority: "high"),
-        (id: "OBJ-2", description: "Achieve 7.5-star NatHERS energy rating", priority: "high"),
-        (id: "OBJ-3", description: "Maintain 70% facility operation throughout works", priority: "high"),
-        (id: "OBJ-4", description: "Deliver within approved $1.82M budget", priority: "neutral"),
+        (
+          id: "OBJ-1",
+          description: "Complete structural remediation to NZS 3101 compliance",
+          priority: "high",
+        ),
+        (
+          id: "OBJ-2",
+          description: "Achieve 7.5-star NatHERS energy rating",
+          priority: "high",
+        ),
+        (
+          id: "OBJ-3",
+          description: "Maintain 70% facility operation throughout works",
+          priority: "high",
+        ),
+        (
+          id: "OBJ-4",
+          description: "Deliver within approved $1.82M budget",
+          priority: "neutral",
+        ),
       ),
       success_criteria: (
         (
@@ -115,7 +131,12 @@
           description: "Ground conditions match 2024 geotechnical report",
           status: "Validated",
         ),
-        (id: "A-2", type: "constraint", description: "Heritage façade cannot be altered or clad", status: "Validated"),
+        (
+          id: "A-2",
+          type: "constraint",
+          description: "Heritage façade cannot be altered or clad",
+          status: "Validated",
+        ),
         (
           id: "A-3",
           type: "assumption",
@@ -265,12 +286,42 @@
       ),
       schedule: (
         milestones: (
-          (id: "M1", date: "2026-08-01", title: "Asbestos clearance certificate", status: "Pending"),
-          (id: "M2", date: "2026-09-15", title: "Structural works — practical completion", status: "Pending"),
-          (id: "M3", date: "2026-12-01", title: "Envelope complete (roof + façade)", status: "Pending"),
-          (id: "M4", date: "2027-02-15", title: "M&E services commissioned", status: "Pending"),
-          (id: "M5", date: "2027-05-01", title: "Interior fit-out complete", status: "Pending"),
-          (id: "M6", date: "2027-06-30", title: "Practical completion — project", status: "Pending"),
+          (
+            id: "M1",
+            date: "2026-08-01",
+            title: "Asbestos clearance certificate",
+            status: "Pending",
+          ),
+          (
+            id: "M2",
+            date: "2026-09-15",
+            title: "Structural works — practical completion",
+            status: "Pending",
+          ),
+          (
+            id: "M3",
+            date: "2026-12-01",
+            title: "Envelope complete (roof + façade)",
+            status: "Pending",
+          ),
+          (
+            id: "M4",
+            date: "2027-02-15",
+            title: "M&E services commissioned",
+            status: "Pending",
+          ),
+          (
+            id: "M5",
+            date: "2027-05-01",
+            title: "Interior fit-out complete",
+            status: "Pending",
+          ),
+          (
+            id: "M6",
+            date: "2027-06-30",
+            title: "Practical completion — project",
+            status: "Pending",
+          ),
         ),
         gantt: (
           start: "2026-07-01",
@@ -279,43 +330,103 @@
             (
               name: "Preliminary",
               subtasks: (
-                (id: "T1", name: "Asbestos removal", start: "2026-07-01", end: "2026-08-01"),
-                (id: "T2", name: "Site establishment", start: "2026-07-15", end: "2026-08-01"),
+                (
+                  id: "T1",
+                  name: "Asbestos removal",
+                  start: "2026-07-01",
+                  end: "2026-08-01",
+                ),
+                (
+                  id: "T2",
+                  name: "Site establishment",
+                  start: "2026-07-15",
+                  end: "2026-08-01",
+                ),
               ),
             ),
             (
               name: "Structural",
               subtasks: (
-                (id: "T3", name: "Base isolation install", start: "2026-08-01", end: "2026-09-01"),
-                (id: "T4", name: "Steel moment frames", start: "2026-08-15", end: "2026-09-15"),
+                (
+                  id: "T3",
+                  name: "Base isolation install",
+                  start: "2026-08-01",
+                  end: "2026-09-01",
+                ),
+                (
+                  id: "T4",
+                  name: "Steel moment frames",
+                  start: "2026-08-15",
+                  end: "2026-09-15",
+                ),
               ),
             ),
             (
               name: "Envelope",
               subtasks: (
-                (id: "T5", name: "Roof replacement", start: "2026-09-15", end: "2026-11-01"),
-                (id: "T6", name: "Façade works", start: "2026-10-01", end: "2026-12-01"),
+                (
+                  id: "T5",
+                  name: "Roof replacement",
+                  start: "2026-09-15",
+                  end: "2026-11-01",
+                ),
+                (
+                  id: "T6",
+                  name: "Façade works",
+                  start: "2026-10-01",
+                  end: "2026-12-01",
+                ),
               ),
             ),
             (
               name: "Services",
               subtasks: (
-                (id: "T7", name: "HVAC installation", start: "2026-12-01", end: "2027-02-01"),
-                (id: "T8", name: "Electrical upgrade", start: "2026-12-15", end: "2027-02-15"),
+                (
+                  id: "T7",
+                  name: "HVAC installation",
+                  start: "2026-12-01",
+                  end: "2027-02-01",
+                ),
+                (
+                  id: "T8",
+                  name: "Electrical upgrade",
+                  start: "2026-12-15",
+                  end: "2027-02-15",
+                ),
               ),
             ),
             (
               name: "Interior & External",
               subtasks: (
-                (id: "T9", name: "Interior fit-out", start: "2027-02-15", end: "2027-05-01"),
-                (id: "T10", name: "DDA ramp + car park", start: "2027-04-01", end: "2027-06-01"),
+                (
+                  id: "T9",
+                  name: "Interior fit-out",
+                  start: "2027-02-15",
+                  end: "2027-05-01",
+                ),
+                (
+                  id: "T10",
+                  name: "DDA ramp + car park",
+                  start: "2027-04-01",
+                  end: "2027-06-01",
+                ),
               ),
             ),
             (
               name: "Commissioning",
               subtasks: (
-                (id: "T11", name: "Services commissioning", start: "2027-05-01", end: "2027-06-01"),
-                (id: "T12", name: "Defects rectification", start: "2027-06-01", end: "2027-06-30"),
+                (
+                  id: "T11",
+                  name: "Services commissioning",
+                  start: "2027-05-01",
+                  end: "2027-06-01",
+                ),
+                (
+                  id: "T12",
+                  name: "Defects rectification",
+                  start: "2027-06-01",
+                  end: "2027-06-30",
+                ),
               ),
             ),
           ),
@@ -439,8 +550,14 @@
             ),
           ),
           extra_costs: (
-            (description: "Contractor margin + prelims (12%)", percentage: 0.12),
-            (description: "Contingency — unforeseen conditions (8%)", percentage: 0.08),
+            (
+              description: "Contractor margin + prelims (12%)",
+              percentage: 0.12,
+            ),
+            (
+              description: "Contingency — unforeseen conditions (8%)",
+              percentage: 0.08,
+            ),
             (description: "Consultant fees (PM, QS, Engineers)", cost: 95000),
           ),
         ),
@@ -455,9 +572,21 @@
         acceptance_procedure: "Hold-point inspections at each milestone. BCA consent authority sign-off required at structural, envelope, and services stages.",
         testing_strategy: "Seismic IEP assessment post-structural works. HVAC commissioning report. Air-tightness blower-door test.",
         criteria: (
-          (req_id: "REQ-01", criterion: "IEP score ≥ 67% NBS", method: "Peer-reviewed IEP assessment"),
-          (req_id: "REQ-03", criterion: "Air-tightness < 3 ACH @ 50Pa", method: "Blower-door test"),
-          (req_id: "REQ-05", criterion: "HVAC commissioned to spec", method: "Commissioning report"),
+          (
+            req_id: "REQ-01",
+            criterion: "IEP score ≥ 67% NBS",
+            method: "Peer-reviewed IEP assessment",
+          ),
+          (
+            req_id: "REQ-03",
+            criterion: "Air-tightness < 3 ACH @ 50Pa",
+            method: "Blower-door test",
+          ),
+          (
+            req_id: "REQ-05",
+            criterion: "HVAC commissioned to spec",
+            method: "Commissioning report",
+          ),
         ),
       ),
       communication: (
@@ -492,7 +621,13 @@
       ),
       risk_strategy: (
         approach: "Construction risk managed under AS/NZS 4360. Contractor holds site-specific risk register reviewed weekly in progress meetings.",
-        categories: ("Ground conditions", "Heritage fabric", "Weather / programme", "Regulatory", "Cost escalation"),
+        categories: (
+          "Ground conditions",
+          "Heritage fabric",
+          "Weather / programme",
+          "Regulatory",
+          "Cost escalation",
+        ),
         scoring: "5×5 likelihood × consequence matrix",
         tolerance: "No High risks unmitigated before works commence in that zone.",
         escalation_threshold: "Any Very High risk paused immediately; reported to council within 24h.",
@@ -532,11 +667,31 @@
     ),
     governance: (
       team: (
-        (role: "Project Manager", name: "Sarah Kim", email: "s.kim@councilpm.nz"),
-        (role: "Head Contractor", name: "Dave Structural Ltd", email: "d.structural@works.nz"),
-        (role: "Structural Engineer", name: "Ana Ferreira PE", email: "a.ferreira@structeng.nz"),
-        (role: "Quantity Surveyor", name: "Tom Walsh MNZIQS", email: "t.walsh@qs.nz"),
-        (role: "Heritage Architect", name: "Lena Park", email: "l.park@heritage-arch.nz"),
+        (
+          role: "Project Manager",
+          name: "Sarah Kim",
+          email: "s.kim@councilpm.nz",
+        ),
+        (
+          role: "Head Contractor",
+          name: "Dave Structural Ltd",
+          email: "d.structural@works.nz",
+        ),
+        (
+          role: "Structural Engineer",
+          name: "Ana Ferreira PE",
+          email: "a.ferreira@structeng.nz",
+        ),
+        (
+          role: "Quantity Surveyor",
+          name: "Tom Walsh MNZIQS",
+          email: "t.walsh@qs.nz",
+        ),
+        (
+          role: "Heritage Architect",
+          name: "Lena Park",
+          email: "l.park@heritage-arch.nz",
+        ),
       ),
     ),
     execution: (

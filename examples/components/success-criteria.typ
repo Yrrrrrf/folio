@@ -3,7 +3,9 @@
 #show: body => folio-init(
   data: (
     initiation: (
-      objectives: ((id: "OBJ-1", description: "Demo Objective", priority: "high"),),
+      objectives: (
+        (id: "OBJ-1", description: "Demo Objective", priority: "high"),
+      ),
       success_criteria: (
         (
           id: "SC-1",

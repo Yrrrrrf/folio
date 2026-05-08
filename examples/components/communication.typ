@@ -4,7 +4,13 @@
   data: (
     baselines: (
       communication: (
-        (what: "Demo Report", audience: "Stakeholders", frequency: "Weekly", channel: "Email", owner: "PM"),
+        (
+          what: "Demo Report",
+          audience: "Stakeholders",
+          frequency: "Weekly",
+          channel: "Email",
+          owner: "PM",
+        ),
       ),
     ),
   ),

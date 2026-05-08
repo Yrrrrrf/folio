@@ -10,7 +10,11 @@
 #align(center + horizon)[
   #text(size: 3em, weight: "bold")[folio]
   #v(0.5em)
-  #text(size: 1.5em, style: "italic", fill: luma(100))[Reference Manual — v0.0.1]
+  #text(
+    size: 1.5em,
+    style: "italic",
+    fill: luma(100),
+  )[Reference Manual — v0.0.1]
   #v(2em)
   #text(size: 1em)[A PMBOK-aligned project document generator for Typst.]
 ]
@@ -44,9 +48,14 @@ Three brand presets are available out of the box:
   inset: 0.75em,
   fill: (col, row) => if row == 0 { luma(240) } else { none },
   [*Preset*], [*Character*], [*Best For*],
-  [`"minimal"`], [Serif, no rounded corners, grayscale], [Thesis, academic submissions],
+  [`"minimal"`],
+  [Serif, no rounded corners, grayscale],
+  [Thesis, academic submissions],
+
   [`"corporate"`], [Sans-serif, blue, rounded cards], [Project plans, RFPs],
-  [`"academic"`], [New Computer Modern, deep blue, formal spacing], [Academic project briefs],
+  [`"academic"`],
+  [New Computer Modern, deep blue, formal spacing],
+  [Academic project briefs],
 )
 
 = Sections
@@ -58,11 +67,17 @@ Sections are skipped automatically when data is missing (`auto` mode) or can be 
 
 Three example documents are provided:
 
-#card(title: "examples/full-standards.typ")[Full pipeline — all sections, corporate brand, audit dashboard enabled.]
+#card(
+  title: "examples/full-standards.typ",
+)[Full pipeline — all sections, corporate brand, audit dashboard enabled.]
 #v(0.5em)
-#card(title: "examples/thesis.typ")[Academic brand, initiation + planning phases only.]
+#card(
+  title: "examples/thesis.typ",
+)[Academic brand, initiation + planning phases only.]
 #v(0.5em)
-#card(title: "examples/hardware.typ")[Corporate navy brand, full budget, risks, compliance, custom safety section.]
+#card(
+  title: "examples/hardware.typ",
+)[Corporate navy brand, full budget, risks, compliance, custom safety section.]
 
 = Further Reading
 

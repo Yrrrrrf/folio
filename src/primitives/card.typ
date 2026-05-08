@@ -7,7 +7,7 @@
   border-color: rgb("#e2e8f0"),
   pad: 1em,
   rad: 8pt,
-  title-size: 1.1em
+  title-size: 1.1em,
 ) = {
   let stroke-width = 0.75pt
   rect(
@@ -22,6 +22,6 @@
         v(pad * 0.5)
       }
       body
-    }
+    },
   )
 }

@@ -1,8 +1,15 @@
 #import "../core/phase-runner.typ": render-phase
 #import "../core/pipeline.typ": pmbok-pipeline
-#import "../components/closure.typ": lessons-learned, sign-off, acceptance, benefits-review, handover, financial-closure
+#import "../components/closure.typ": (
+  acceptance, benefits-review, financial-closure, handover, lessons-learned,
+  sign-off,
+)
 
-#let closure(pipeline: pmbok-pipeline) = render-phase(pipeline, "closure", "Closure")
+#let closure(pipeline: pmbok-pipeline) = render-phase(
+  pipeline,
+  "closure",
+  "Closure",
+)
 
 // Re-export section fns for lib.typ
 #let lessons-learned = lessons-learned

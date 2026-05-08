@@ -4,7 +4,10 @@
 
 #show: project-doc(
   data: (
-    project: (name: "Cross-Ref Test", description: "Verifying all label/link families"),
+    project: (
+      name: "Cross-Ref Test",
+      description: "Verifying all label/link families",
+    ),
     initiation: (
       pitch: "Testing that every cross-reference resolves to a real label in the document.",
       objectives: (
@@ -21,11 +24,28 @@
         ),
       ),
       stakeholders: (
-        (id: "SH-1", name: "Test Runner", role: "QA", interest: "high", influence: "high"),
+        (
+          id: "SH-1",
+          name: "Test Runner",
+          role: "QA",
+          interest: "high",
+          influence: "high",
+        ),
       ),
       assumptions_log: (
-        (id: "A-1", type: "assumption", description: "Typst compiler is deterministic", status: "Validated"),
-        (id: "A-2", type: "dependency", description: "Package installed locally", status: "Open", risk_id: "R1"),
+        (
+          id: "A-1",
+          type: "assumption",
+          description: "Typst compiler is deterministic",
+          status: "Validated",
+        ),
+        (
+          id: "A-2",
+          type: "dependency",
+          description: "Package installed locally",
+          status: "Open",
+          risk_id: "R1",
+        ),
       ),
     ),
     baselines: (
@@ -46,7 +66,12 @@
       ),
       schedule: (
         milestones: (
-          (id: "M1", date: "2026-05-01", title: "Cross-refs green", status: "Pending"),
+          (
+            id: "M1",
+            date: "2026-05-01",
+            title: "Cross-refs green",
+            status: "Pending",
+          ),
         ),
         gantt: (
           start: "2026-04-01",
@@ -55,7 +80,12 @@
             (
               name: "Implementation",
               subtasks: (
-                (id: "T1", name: "Add label families", start: "2026-04-01", end: "2026-04-15"),
+                (
+                  id: "T1",
+                  name: "Add label families",
+                  start: "2026-04-01",
+                  end: "2026-04-15",
+                ),
               ),
             ),
           ),
@@ -67,7 +97,13 @@
         ),
       ),
       communication: (
-        (what: "Test results", audience: "Dev team", frequency: "Per PR", channel: "CI report", owner: "CI"),
+        (
+          what: "Test results",
+          audience: "Dev team",
+          frequency: "Per PR",
+          channel: "CI report",
+          owner: "CI",
+        ),
       ),
     ),
     governance: (
@@ -76,7 +112,12 @@
       ),
     ),
     execution: (
-      status: (health: "Good", spend: "10%", variance: "0d", summary: "Cross-ref test in progress."),
+      status: (
+        health: "Good",
+        spend: "10%",
+        variance: "0d",
+        summary: "Cross-ref test in progress.",
+      ),
     ),
     registers: (
       risk_register: (
@@ -91,7 +132,13 @@
         ),
       ),
       issue_log: (
-        (id: "I1", description: "Orphan ref detected", owner: "CI", status: "Open", blocks_deliverable: ("D1",)),
+        (
+          id: "I1",
+          description: "Orphan ref detected",
+          owner: "CI",
+          status: "Open",
+          blocks_deliverable: ("D1",),
+        ),
       ),
       change_log: (
         (
@@ -133,10 +180,20 @@
         ),
       ),
       acceptance: (
-        (deliverable_id: "D1", accepted_by: "QA Lead", acceptance_date: "2026-05-02", outstanding_issues: "None"),
+        (
+          deliverable_id: "D1",
+          accepted_by: "QA Lead",
+          acceptance_date: "2026-05-02",
+          outstanding_issues: "None",
+        ),
       ),
       benefits_review: (
-        (objective_id: "OBJ-1", claimed: "Zero orphan references", actual: "Zero orphan references", variance: "0%"),
+        (
+          objective_id: "OBJ-1",
+          claimed: "Zero orphan references",
+          actual: "Zero orphan references",
+          variance: "0%",
+        ),
       ),
       handover: (
         documentation: ("Cross-ref guide",),

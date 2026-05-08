@@ -6,9 +6,30 @@
       financials: (
         budget: (
           line_items: (
-            (id: "B1", description: "Design Software", category: "Software", qty: 2, unit: "licenses", unit_cost: 500),
-            (id: "B2", description: "Workstations", category: "Hardware", qty: 3, unit: "units", unit_cost: 2500),
-            (id: "B3", description: "Initial Setup", category: "Services", qty: 1, unit: "lump sum", unit_cost: 1500),
+            (
+              id: "B1",
+              description: "Design Software",
+              category: "Software",
+              qty: 2,
+              unit: "licenses",
+              unit_cost: 500,
+            ),
+            (
+              id: "B2",
+              description: "Workstations",
+              category: "Hardware",
+              qty: 3,
+              unit: "units",
+              unit_cost: 2500,
+            ),
+            (
+              id: "B3",
+              description: "Initial Setup",
+              category: "Services",
+              qty: 1,
+              unit: "lump sum",
+              unit_cost: 1500,
+            ),
           ),
           extra_costs: (
             (description: "Contingency (10%)", percentage: 0.1),

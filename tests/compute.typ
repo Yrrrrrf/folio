@@ -1,8 +1,9 @@
 // Test: compute layer functions (cost aggregation, orphan detection, audit)
 // Verifies compute.typ works correctly in isolation from the rendering pipeline.
 #import "../src/lib.typ": (
-  audit-missing, audit-summary, badge, calc-budget, calc-requirements, card, compute-context, data-table, find-orphans,
-  folio-init, line-subtotal, metric, sum-costs,
+  audit-missing, audit-summary, badge, calc-budget, calc-requirements, card,
+  compute-context, data-table, find-orphans, folio-init, line-subtotal, metric,
+  sum-costs,
 )
 #import "fixtures/full-data-dict.typ": full-project-data
 
@@ -68,8 +69,14 @@
   #stack(
     dir: ltr,
     spacing: 2em,
-    metric("Critical", [#summary.critical.present P / #summary.critical.empty E / #summary.critical.missing M]),
-    metric("Important", [#summary.important.present P / #summary.important.empty E / #summary.important.missing M]),
+    metric(
+      "Critical",
+      [#summary.critical.present P / #summary.critical.empty E / #summary.critical.missing M],
+    ),
+    metric(
+      "Important",
+      [#summary.important.present P / #summary.important.empty E / #summary.important.missing M],
+    ),
     metric(
       "Recommended",
       [#summary.recommended.present P / #summary.recommended.empty E / #summary.recommended.missing M],
@@ -84,10 +91,14 @@
     rows: audit
       .map(r => (
         r.path,
-        badge(r.severity, intent: if r.severity == "critical" { "danger" } else if r.severity == "important" {
+        badge(r.severity, intent: if r.severity == "critical" {
+          "danger"
+        } else if r.severity == "important" {
           "warning"
         } else { "neutral" }),
-        badge(r.status, intent: if r.status == "Present" { "success" } else if r.status == "Empty" { "warning" } else {
+        badge(r.status, intent: if r.status == "Present" {
+          "success"
+        } else if r.status == "Empty" { "warning" } else {
           "danger"
         }),
         r.phase,

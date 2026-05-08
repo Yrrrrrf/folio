@@ -2,7 +2,9 @@
 
 #show: body => folio-init(
   data: (
-    baselines: (scope: (in_scope: ("Feature A",), out_of_scope: ("Feature B",))),
+    baselines: (
+      scope: (in_scope: ("Feature A",), out_of_scope: ("Feature B",)),
+    ),
   ),
   body,
 )

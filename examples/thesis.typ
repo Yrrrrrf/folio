@@ -21,8 +21,18 @@
     ),
     schedule: (
       milestones: (
-        (id: "M1", date: "2026-05-15", title: "Proposal Defense", status: "Done"),
-        (id: "M2", date: "2026-11-01", title: "Draft Submission", status: "Pending"),
+        (
+          id: "M1",
+          date: "2026-05-15",
+          title: "Proposal Defense",
+          status: "Done",
+        ),
+        (
+          id: "M2",
+          date: "2026-11-01",
+          title: "Draft Submission",
+          status: "Pending",
+        ),
       ),
     ),
   ),

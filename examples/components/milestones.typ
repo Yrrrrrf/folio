@@ -2,7 +2,18 @@
 
 #show: body => folio-init(
   data: (
-    baselines: (schedule: (milestones: ((id: "M1", date: "2026-01-01", title: "Demo Milestone", status: "Done"),))),
+    baselines: (
+      schedule: (
+        milestones: (
+          (
+            id: "M1",
+            date: "2026-01-01",
+            title: "Demo Milestone",
+            status: "Done",
+          ),
+        ),
+      ),
+    ),
   ),
   body,
 )

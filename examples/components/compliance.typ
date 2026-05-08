@@ -4,7 +4,13 @@
   data: (
     baselines: (
       compliance: (
-        (id: "COMP-1", regulation: "Demo Reg", jurisdiction: "Demo City", status: "Compliant", req_ids: ("REQ-01",)),
+        (
+          id: "COMP-1",
+          regulation: "Demo Reg",
+          jurisdiction: "Demo City",
+          status: "Compliant",
+          req_ids: ("REQ-01",),
+        ),
       ),
       requirements: ((id: "REQ-01", description: "Demo Req"),),
     ),

@@ -19,7 +19,11 @@
   if renderable.len() == 0 { return }
 
   pagebreak()
-  heading(level: 1)[#get-title(data, "phases." + phase-id + ".title", default-title)]
+  heading(level: 1)[#get-title(
+    data,
+    "phases." + phase-id + ".title",
+    default-title,
+  )]
 
   for item in renderable {
     let toggle = sections-config.at(item.section_id, default: auto)

@@ -16,7 +16,7 @@
   ),
   palette: (
     primary: rgb("#0d47a1"), // old: azul-oscuro
-    text: rgb("#1a1a1a"),    // classic print black
+    text: rgb("#1a1a1a"), // classic print black
     intent: (
       success: rgb("#43a047"), // old: verde-exito
       danger: rgb("#e53935"), // old: rojo-error

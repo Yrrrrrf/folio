@@ -1,8 +1,15 @@
 #import "../core/phase-runner.typ": render-phase
 #import "../core/pipeline.typ": pmbok-pipeline
-#import "../components/planning.typ": boundaries, requirements, milestones, budget, gantt, quality, communication, risk-strategy, compliance, team
+#import "../components/planning.typ": (
+  boundaries, budget, communication, compliance, gantt, milestones, quality,
+  requirements, risk-strategy, team,
+)
 
-#let planning(pipeline: pmbok-pipeline) = render-phase(pipeline, "planning", "Planning")
+#let planning(pipeline: pmbok-pipeline) = render-phase(
+  pipeline,
+  "planning",
+  "Planning",
+)
 
 // Re-export section fns for lib.typ
 #let boundaries = boundaries

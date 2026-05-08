@@ -24,7 +24,9 @@
   if query(lbl).len() > 0 {
     link(lbl)[#fallback-text]
   } else {
-    folio-orphans.update(prev => prev + ((target: lbl, fallback: fallback-text),))
+    folio-orphans.update(prev => (
+      prev + ((target: lbl, fallback: fallback-text),)
+    ))
     [#fallback-text?]
   }
 }

@@ -10,7 +10,7 @@
       md: 1em,
       lg: 1.25em,
       xl: 1.5em,
-    )
+    ),
   ),
   palette: (
     primary: rgb("#2563eb"),
@@ -19,14 +19,14 @@
       success: rgb("#16a34a"),
       danger: rgb("#dc2626"),
       warning: rgb("#eab308"),
-      neutral: rgb("#64748b")
+      neutral: rgb("#64748b"),
     ),
     surface: (
       background: rgb("#ffffff"),
       card: rgb("#f8fafc"),
       border: rgb("#e2e8f0"),
       alt: rgb("#f1f5f9"),
-    )
+    ),
   ),
   geometry: (
     radius: (
@@ -54,14 +54,14 @@
       cell-padding: 0.75em,
     ),
     page-margin: 2.5cm,
-    paper: "a4"
+    paper: "a4",
   ),
   spacing: (
     base: 1em,
     density-multiplier: (
       compact: 0.5,
       comfortable: 1.0,
-      spacious: 1.5
-    )
-  )
+      spacious: 1.5,
+    ),
+  ),
 )

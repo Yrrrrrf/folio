@@ -21,15 +21,20 @@
     extra-checks: config.at("extra-checks", default: ()),
   )
 
-  show: rest => folio-init(data: data, config: resolved-config, brand: brand, rest)
+  show: rest => folio-init(
+    data: data,
+    config: resolved-config,
+    brand: brand,
+    rest,
+  )
 
   context {
     let st = folio-state.get()
-    
+
     // Process extra-sections
     let current-pipeline = pmbok-pipeline
     let extra-sections = st.config.at("extra-sections", default: ())
-    
+
     for extra in extra-sections {
       let id = extra.at("id")
       let phase = extra.at("phase")
@@ -37,28 +42,51 @@
       let render = extra.at("render")
       let before = extra.at("before", default: none)
       let after = extra.at("after", default: none)
-      
+
       // Check for ID collision
       if current-pipeline.any(p => p.section_id == id) {
         panic("Section ID collision in extra-sections: " + id)
       }
-      
-      let new-record = (phase: phase, section_id: id, data_path: data-path, render_fn: render)
+
+      let new-record = (
+        phase: phase,
+        section_id: id,
+        data_path: data-path,
+        render_fn: render,
+      )
 
       if before != none {
         let idx = current-pipeline.position(p => p.section_id == before)
-        if idx == none { panic("Anchor section_id not found for 'before': " + before) }
-        current-pipeline = current-pipeline.slice(0, idx) + (new-record,) + current-pipeline.slice(idx)
+        if idx == none {
+          panic("Anchor section_id not found for 'before': " + before)
+        }
+        current-pipeline = (
+          current-pipeline.slice(0, idx)
+            + (new-record,)
+            + current-pipeline.slice(idx)
+        )
       } else if after != none {
         let idx = current-pipeline.position(p => p.section_id == after)
-        if idx == none { panic("Anchor section_id not found for 'after': " + after) }
-        current-pipeline = current-pipeline.slice(0, idx + 1) + (new-record,) + current-pipeline.slice(idx + 1)
+        if idx == none {
+          panic("Anchor section_id not found for 'after': " + after)
+        }
+        current-pipeline = (
+          current-pipeline.slice(0, idx + 1)
+            + (new-record,)
+            + current-pipeline.slice(idx + 1)
+        )
       } else {
         // Append to the end of its phase if no anchor
-        let phase-entries = current-pipeline.enumerate().filter(e => e.at(1).phase == phase)
+        let phase-entries = current-pipeline
+          .enumerate()
+          .filter(e => e.at(1).phase == phase)
         if phase-entries.len() > 0 {
           let insert-at = phase-entries.last().at(0) + 1
-          current-pipeline = current-pipeline.slice(0, insert-at) + (new-record,) + current-pipeline.slice(insert-at)
+          current-pipeline = (
+            current-pipeline.slice(0, insert-at)
+              + (new-record,)
+              + current-pipeline.slice(insert-at)
+          )
         } else {
           current-pipeline = current-pipeline + (new-record,)
         }
@@ -69,7 +97,10 @@
       data-audit-header()
     }
 
-    if st.config.cover == true or (st.config.cover == auto and nonempty(st.data, "project.name")) {
+    if (
+      st.config.cover == true
+        or (st.config.cover == auto and nonempty(st.data, "project.name"))
+    ) {
       cover()
       pagebreak()
     }

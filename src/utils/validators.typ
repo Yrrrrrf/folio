@@ -3,7 +3,9 @@
 /// These import from the compute layer and provide convenient access
 /// for section components and audit dashboards.
 
-#import "../compute.typ": find-orphans, audit-missing, audit-summary, compute-context
+#import "../compute.typ": (
+  audit-missing, audit-summary, compute-context, find-orphans,
+)
 #import "../core/state.typ": folio-state
 
 /// Run orphan detection on the current folio state.

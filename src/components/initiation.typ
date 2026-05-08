@@ -1,8 +1,11 @@
-#import "../core/resolve.typ": resolve, get-title
+#import "../core/resolve.typ": get-title, resolve
 #import "../core/state.typ": folio-state
-#import "../theme/ui.typ": card, data-table, badge
+#import "../theme/ui.typ": badge, card, data-table
 #import "../theme/resolver.typ": resolve-token
-#import "../core/refs.typ": objective-label, stakeholder-label, assumption-label, link-to-objective, link-to-risk
+#import "../core/refs.typ": (
+  assumption-label, link-to-objective, link-to-risk, objective-label,
+  stakeholder-label,
+)
 
 #let cover() = context {
   let st = folio-state.get()
@@ -44,14 +47,20 @@
     data-table(
       columns: (auto, 1fr, auto),
       headers: ("ID", "Objective", "Priority"),
-      rows: obj-list.map(o => {
-        let oid = o.at("id", default: "-")
-        (
-          [#oid#objective-label(oid)],
-          o.at("description", default: "-"),
-          badge(o.at("priority", default: "neutral"), intent: if o.at("priority", default: "") == "high" { "danger" } else { "neutral" })
-        )
-      }).flatten()
+      rows: obj-list
+        .map(o => {
+          let oid = o.at("id", default: "-")
+          (
+            [#oid#objective-label(oid)],
+            o.at("description", default: "-"),
+            badge(o.at("priority", default: "neutral"), intent: if o.at(
+              "priority",
+              default: "",
+            )
+              == "high" { "danger" } else { "neutral" }),
+          )
+        })
+        .flatten(),
     )
   } else {
     [#obj-list]
@@ -68,16 +77,20 @@
     data-table(
       columns: (auto, auto, 1fr, auto, auto),
       headers: ("ID", "Type", "Criterion", "Measurement", "Objective"),
-      rows: criteria.map(c => {
-        let obj-id = c.at("objective_id", default: none)
-        (
-          c.at("id", default: "-"),
-          badge(c.at("type", default: "project"), intent: "neutral"),
-          c.at("criterion", default: "-"),
-          c.at("measurement", default: "-") + " → " + c.at("target", default: "-"),
-          if obj-id != none { link-to-objective(obj-id) } else { "-" }
-        )
-      }).flatten()
+      rows: criteria
+        .map(c => {
+          let obj-id = c.at("objective_id", default: none)
+          (
+            c.at("id", default: "-"),
+            badge(c.at("type", default: "project"), intent: "neutral"),
+            c.at("criterion", default: "-"),
+            c.at("measurement", default: "-")
+              + " → "
+              + c.at("target", default: "-"),
+            if obj-id != none { link-to-objective(obj-id) } else { "-" },
+          )
+        })
+        .flatten(),
     )
   } else {
     [#criteria]
@@ -93,18 +106,37 @@
   if type(shs) == array {
     data-table(
       columns: (auto, 1fr, auto, auto, auto, auto),
-      headers: ("ID", "Name / Role", "Organization", "Interest", "Influence", "Engagement"),
-      rows: shs.map(s => {
-        let sid = s.at("id", default: "-")
-        (
-          [#sid#stakeholder-label(sid)],
-          [*#s.at("name", default: "-")* — #s.at("role", default: "-")],
-          s.at("organization", default: "-"),
-          badge(s.at("interest", default: "low"), intent: if s.at("interest", default: "") == "high" { "danger" } else if s.at("interest", default: "") == "medium" { "warning" } else { "neutral" }),
-          badge(s.at("influence", default: "low"), intent: if s.at("influence", default: "") == "high" { "danger" } else if s.at("influence", default: "") == "medium" { "warning" } else { "neutral" }),
-          s.at("engagement", default: "-")
-        )
-      }).flatten()
+      headers: (
+        "ID",
+        "Name / Role",
+        "Organization",
+        "Interest",
+        "Influence",
+        "Engagement",
+      ),
+      rows: shs
+        .map(s => {
+          let sid = s.at("id", default: "-")
+          (
+            [#sid#stakeholder-label(sid)],
+            [*#s.at("name", default: "-")* — #s.at("role", default: "-")],
+            s.at("organization", default: "-"),
+            badge(s.at("interest", default: "low"), intent: if s.at(
+              "interest",
+              default: "",
+            )
+              == "high" { "danger" } else if s.at("interest", default: "")
+              == "medium" { "warning" } else { "neutral" }),
+            badge(s.at("influence", default: "low"), intent: if s.at(
+              "influence",
+              default: "",
+            )
+              == "high" { "danger" } else if s.at("influence", default: "")
+              == "medium" { "warning" } else { "neutral" }),
+            s.at("engagement", default: "-"),
+          )
+        })
+        .flatten(),
     )
   } else {
     [#shs]
@@ -121,17 +153,24 @@
     data-table(
       columns: (auto, auto, 1fr, auto, auto),
       headers: ("ID", "Type", "Description", "Status", "Risk"),
-      rows: items.map(a => {
-        let aid = a.at("id", default: "-")
-        let risk-id = a.at("risk_id", default: none)
-        (
-          [#aid#assumption-label(aid)],
-          badge(a.at("type", default: "assumption"), intent: "neutral"),
-          a.at("description", default: "-"),
-          badge(a.at("status", default: "Open"), intent: if a.at("status", default: "") == "Validated" { "success" } else if a.at("status", default: "") == "Invalidated" { "danger" } else { "neutral" }),
-          if risk-id != none { link-to-risk(risk-id) } else { "-" }
-        )
-      }).flatten()
+      rows: items
+        .map(a => {
+          let aid = a.at("id", default: "-")
+          let risk-id = a.at("risk_id", default: none)
+          (
+            [#aid#assumption-label(aid)],
+            badge(a.at("type", default: "assumption"), intent: "neutral"),
+            a.at("description", default: "-"),
+            badge(a.at("status", default: "Open"), intent: if a.at(
+              "status",
+              default: "",
+            )
+              == "Validated" { "success" } else if a.at("status", default: "")
+              == "Invalidated" { "danger" } else { "neutral" }),
+            if risk-id != none { link-to-risk(risk-id) } else { "-" },
+          )
+        })
+        .flatten(),
     )
   } else {
     [#items]

@@ -15,13 +15,25 @@
 
 // ── Section-level functions (individual PMBOK sections) ─────────────────────
 // Initiation
-#import "components/initiation.typ": cover, pitch, business-case, objectives, success-criteria, stakeholders, assumptions-log
+#import "components/initiation.typ": (
+  assumptions-log, business-case, cover, objectives, pitch, stakeholders,
+  success-criteria,
+)
 // Planning
-#import "components/planning.typ": boundaries, requirements, milestones, budget, gantt, quality, communication, risk-strategy, compliance, team
+#import "components/planning.typ": (
+  boundaries, budget, communication, compliance, gantt, milestones, quality,
+  requirements, risk-strategy, team,
+)
 // Execution
-#import "components/execution.typ": status-report, risk-matrix, issue-log, change-log, decision-log, deliverables-register
+#import "components/execution.typ": (
+  change-log, decision-log, deliverables-register, issue-log, risk-matrix,
+  status-report,
+)
 // Closure
-#import "components/closure.typ": lessons-learned, sign-off, acceptance, benefits-review, handover, financial-closure
+#import "components/closure.typ": (
+  acceptance, benefits-review, financial-closure, handover, lessons-learned,
+  sign-off,
+)
 
 // ── Themed UI primitives (token-resolved, use these in custom sections) ──────
 #import "theme/ui.typ": badge, card, data-table, metric, progress-bar
@@ -38,22 +50,19 @@
 
 // ── Cross-reference utilities ────────────────────────────────────────────────
 #import "core/refs.typ": (
-  task-label, milestone-label, risk-label, issue-label, change-label,
-  req-label, deliverable-label, assumption-label, decision-label,
-  stakeholder-label, objective-label, compliance-label,
-  link-to-task, link-to-milestone, link-to-risk, link-to-issue, link-to-change,
-  link-to-req, link-to-deliverable, link-to-assumption, link-to-decision,
-  link-to-stakeholder, link-to-objective, link-to-compliance,
+  assumption-label, change-label, compliance-label, decision-label,
+  deliverable-label, issue-label, link-to-assumption, link-to-change,
+  link-to-compliance, link-to-decision, link-to-deliverable, link-to-issue,
+  link-to-milestone, link-to-objective, link-to-req, link-to-risk,
+  link-to-stakeholder, link-to-task, milestone-label, objective-label,
+  req-label, risk-label, stakeholder-label, task-label,
 )
 
 // ── Compute layer (pure functions — data → values) ───────────────────────────
 #import "compute.typ": (
-  sum-costs,
-  line-subtotal, extras-total, grand-total,
-  calc-budget, calc-requirements,
-  find-orphans, audit-missing, audit-summary,
-  compute-context,
+  audit-missing, audit-summary, calc-budget, calc-requirements, compute-context,
+  extras-total, find-orphans, grand-total, line-subtotal, sum-costs,
 )
 
 // ── Validator convenience wrappers (context-aware compute) ───────────────────
-#import "utils/validators.typ": orphan-check, missing-fields, audit-builder
+#import "utils/validators.typ": audit-builder, missing-fields, orphan-check

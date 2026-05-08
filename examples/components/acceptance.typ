@@ -4,7 +4,12 @@
   data: (
     closure: (
       acceptance: (
-        (deliverable_id: "D1", accepted_by: "QA", acceptance_date: "2026-05-01", outstanding_issues: "None"),
+        (
+          deliverable_id: "D1",
+          accepted_by: "QA",
+          acceptance_date: "2026-05-01",
+          outstanding_issues: "None",
+        ),
       ),
     ),
     registers: (

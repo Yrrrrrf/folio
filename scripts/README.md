@@ -37,7 +37,7 @@ just swap-dev              # Restore relative dev imports
 ### Quality Checks
 
 ```bash
-just fmt                   # Format (requires typstfmt or typstyle)
+just fmt                   # Format with typstyle
 just lint                  # Lint via compile check
 just quality               # Both: fmt + lint
 ```
@@ -76,4 +76,4 @@ just publish               # Full pipeline: swap-dev → audit → test → qual
 | `compile` can't find src | Run from project root; verify `--root .` resolves |
 | `deploy` fails | Check `~/.local/share/typst/packages/local/` is writable |
 | `test-fixture` not found | Use the name without `.typ` (e.g., `just test-fixture minimal-data`) |
-| `fmt` skipped | Install `typstfmt` or `typstyle` (`cargo install typstfmt`) |
+| `fmt` fails | Ensure `typstyle` is installed (included in flake.nix dev shell) |

@@ -42,9 +42,13 @@
   let base = resolve-token(st, "spacing.base")
   if type(base) != length { base = 1em }
 
-  let density = st.at("brand", default: (:)).at("density", default: "comfortable")
+  let density = st
+    .at("brand", default: (:))
+    .at("density", default: "comfortable")
   let d-mults = resolve-token(st, "spacing.density-multiplier")
-  let d-mult = if type(d-mults) == dictionary { d-mults.at(density, default: 1.0) } else { 1.0 }
+  let d-mult = if type(d-mults) == dictionary {
+    d-mults.at(density, default: 1.0)
+  } else { 1.0 }
 
   base * d-mult * multiplier
 }

@@ -2,7 +2,11 @@
 
 #show: body => folio-init(
   data: (
-    governance: (team: ((role: "Demo Role", name: "Demo Name", email: "demo@example.com"),)),
+    governance: (
+      team: (
+        (role: "Demo Role", name: "Demo Name", email: "demo@example.com"),
+      ),
+    ),
   ),
   body,
 )

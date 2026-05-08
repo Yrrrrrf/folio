@@ -8,7 +8,7 @@
   bg-header: rgb("#f8fafc"),
   pad: 0.75em,
   header-size: 0.85em,
-  alternating-rows: true
+  alternating-rows: true,
 ) = {
   let bg-alt = border-color.lighten(50%)
   let stroke-width = 0.5pt
@@ -21,13 +21,13 @@
       columns: columns,
       stroke: stroke-width + border-color,
       fill: (col, row) => {
-        if row == 0 { bg-header }
-        else if alternating-rows and calc.odd(row) { bg-alt }
-        else { none }
+        if row == 0 { bg-header } else if alternating-rows and calc.odd(row) {
+          bg-alt
+        } else { none }
       },
       inset: pad,
       ..headers.map(h => text(weight: "bold", size: header-size)[#h]),
       ..rows.flatten()
-    )
+    ),
   )
 }
