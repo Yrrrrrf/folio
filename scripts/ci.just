@@ -5,17 +5,14 @@
 [doc("Format all Typst source files with typstyle")]
 [group('CI')]
 fmt:
-    @echo "→ Formatting with typstyle..."
     @typstyle -i . -v
     @echo "✓ Formatting complete"
 
-[doc("Lint by compiling all examples (catches errors at build time)")]
+[doc("Check formatting + compile all examples and tests")]
 [group('CI')]
 lint:
-    @echo "→ Linting (compile check)..."
-    @just compile examples
-    @just compile tests
-    @echo "✓ Lint complete (all files compile)"
+    @typstyle --check . -v
+    @echo "✓ Lint complete"
 
 [doc("Run full quality gate (format + lint)")]
 [group('CI')]
