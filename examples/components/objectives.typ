@@ -1,4 +1,4 @@
-#import "../../src/lib.typ": folio-init, objectives
+#import "@local/folio:0.0.1": folio-init, objectives
 
 #show: body => folio-init(
   data: (

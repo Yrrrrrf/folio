@@ -2,7 +2,7 @@
 /// This document provides a rendered overview of the folio library.
 /// For full documentation, see docs/SCHEMA.md, docs/BRAND.md, and docs/PIPELINE.md.
 
-#import "../src/lib.typ": badge, card, folio-init, metric
+#import "@local/folio:0.0.1": badge, card, folio-init, metric
 
 #set page(paper: "a4", margin: 2cm, numbering: "1")
 #set text(font: ("Liberation Sans", "DejaVu Sans"), size: 10pt)

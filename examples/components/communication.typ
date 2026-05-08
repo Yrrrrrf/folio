@@ -1,4 +1,4 @@
-#import "../../src/lib.typ": communication, folio-init
+#import "@local/folio:0.0.1": communication, folio-init
 
 #show: body => folio-init(
   data: (

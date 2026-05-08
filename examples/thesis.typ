@@ -1,4 +1,4 @@
-#import "../src/lib.typ": project-doc
+#import "@local/folio:0.0.1": project-doc
 
 #let thesis-data = (
   project: (

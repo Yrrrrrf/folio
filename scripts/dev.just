@@ -55,3 +55,9 @@ swap-local: (_replace-imports "local")
 [group('Dev')]
 swap-dev: (_replace-imports "dev")
     @echo "✓ Import paths restored to relative (dev mode)"
+
+# ── swap-preview ────────────────────────────────────────────────────────────────
+[doc("Swap imports to @preview/folio (for CI/linter)")]
+[group('Dev')]
+swap-preview: (_replace-imports "preview")
+    @echo "✓ All .typ files now import @preview/folio:{{ VERSION }}"

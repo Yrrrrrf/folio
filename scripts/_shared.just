@@ -3,11 +3,11 @@
 # This file contains the centralized import-replacement logic.
 # Only _replace-imports lives here; it is called by swap-local and swap-dev.
 # Users should NEVER call these directly — use swap-local / swap-dev instead.
-
 # Package identity (shared across all scripts)
-LOCAL  := env('HOME') / ".local/share/typst/packages/local"
+
+LOCAL := env('HOME') / ".local/share/typst/packages/local"
 VERSION := `rg version typst.toml | cut -d'"' -f2`
-PKG_ID  := "@local/folio:" + VERSION
+PKG_ID := "@local/folio:" + VERSION
 
 # ── _replace-imports ──────────────────────────────────────────────────────────
 # Swap all import paths in examples/, tests/, and docs/.
@@ -23,6 +23,7 @@ PKG_ID  := "@local/folio:" + VERSION
 #   Any depth:    ../../src/lib.typ, ../src/lib.typ
 #   @local form:  #import "@local/folio:0.0.1": ...
 #
+
 # Idempotent: calling the same mode twice yields the same result.
 [private]
 _replace-imports mode:
@@ -38,6 +39,13 @@ _replace-imports mode:
         fd -e typ --min-depth 2 . examples/ tests/ docs/ 2>/dev/null \
             | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "{{ PKG_ID }}"' {} 2>/dev/null || true
 
+    elif [ "{{ mode }}" = "preview" ]; then
+        echo "  → Replacing relative imports → @preview/folio:{{ VERSION }}..."
+        fd -e typ -d 1 . examples/ tests/ docs/ 2>/dev/null \
+            | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "@preview/folio:{{ VERSION }}"' {} 2>/dev/null || true
+        fd -e typ --min-depth 2 . examples/ tests/ docs/ 2>/dev/null \
+            | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "@preview/folio:{{ VERSION }}"' {} 2>/dev/null || true
+
     elif [ "{{ mode }}" = "dev" ]; then
         echo "  → Restoring relative dev imports..."
         # depth-1: rewrite to ../src/lib.typ
@@ -52,6 +60,6 @@ _replace-imports mode:
         fd -e typ --min-depth 2 . examples/ tests/ docs/ 2>/dev/null \
             | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "../../src/lib.typ"' {} 2>/dev/null || true
     else
-        echo "ERROR: _replace-imports expects 'local' or 'dev', got '{{ mode }}'"
+        echo "ERROR: _replace-imports expects 'local', 'preview', or 'dev', got '{{ mode }}'"
         exit 1
     fi

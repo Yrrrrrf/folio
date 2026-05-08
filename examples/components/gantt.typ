@@ -1,4 +1,4 @@
-#import "../../src/lib.typ": folio-init, gantt
+#import "@local/folio:0.0.1": folio-init, gantt
 
 #show: body => folio-init(
   data: (

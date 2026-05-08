@@ -1,4 +1,4 @@
-#import "../src/lib.typ": (
+#import "@local/folio:0.0.1": (
   badge, card, data-table, folio-init, metric, progress-bar,
 )
 

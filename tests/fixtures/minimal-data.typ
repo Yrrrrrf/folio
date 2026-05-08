@@ -1,7 +1,7 @@
 // Fixture: minimal-data.typ
 // Bare-minimum valid project: just project name and description.
 // Sections with data auto-render; everything else is skipped.
-#import "../../src/lib.typ": project-doc
+#import "@local/folio:0.0.1": project-doc
 
 #show: project-doc(
   data: (

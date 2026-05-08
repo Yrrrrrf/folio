@@ -37,11 +37,11 @@ manual:
 # Sequence: swap-dev → audit-style → test → quality → manual → deploy
 [doc("Full publish pipeline: swap → audit → test → quality → manual → deploy")]
 [group('Deploy')]
-publish: swap-dev audit-style test quality manual deploy
+publish: swap-preview audit-style test quality manual deploy
     #!/usr/bin/env bash
     echo ""
     echo "─── Submission Checklist ────────────────────────────────────"
-    echo "  ✓ Import paths verified (dev mode)"
+    echo "  ✓ Import paths verified (preview mode)"
     echo "  ✓ Style audit passed"
     echo "  ✓ All examples and tests compiled"
     echo "  ✓ Quality gate passed (fmt + lint)"
