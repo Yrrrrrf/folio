@@ -1,4 +1,4 @@
-#import "../src/lib.typ": compliance, folio-init
+#import "../../src/lib.typ": compliance, folio-init
 
 #show: body => folio-init(
   data: (

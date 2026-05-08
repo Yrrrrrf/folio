@@ -1,4 +1,4 @@
-#import "../src/lib.typ": folio-init, success-criteria
+#import "../../src/lib.typ": folio-init, success-criteria
 
 #show: body => folio-init(
   data: (

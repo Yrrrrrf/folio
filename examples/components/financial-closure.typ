@@ -1,4 +1,4 @@
-#import "../src/lib.typ": financial-closure, folio-init
+#import "../../src/lib.typ": financial-closure, folio-init
 
 #show: body => folio-init(
   data: (

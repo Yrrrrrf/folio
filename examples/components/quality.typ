@@ -1,4 +1,4 @@
-#import "../src/lib.typ": folio-init, quality
+#import "../../src/lib.typ": folio-init, quality
 
 #show: body => folio-init(
   data: (

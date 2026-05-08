@@ -1,4 +1,4 @@
-#import "../src/lib.typ": benefits-review, folio-init
+#import "../../src/lib.typ": benefits-review, folio-init
 
 #show: body => folio-init(
   data: (

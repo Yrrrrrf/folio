@@ -1,4 +1,4 @@
-#import "../src/lib.typ": boundaries, folio-init
+#import "../../src/lib.typ": boundaries, folio-init
 
 #show: body => folio-init(
   data: (

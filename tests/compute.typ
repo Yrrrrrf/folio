@@ -26,10 +26,10 @@
 ]
 
 #card(title: "Requirements Cost by Category")[
-  #for (cat, total) in req-result.categories {
-    [- *#cat:* #total \]
-  }
-  [- *Grand total:* #req-result.grand-total]
+  #for (cat, total) in req-result.categories [
+    - *#cat:* #total
+  ]
+  - *Grand total:* #req-result.grand-total
 ]
 
 == Orphan Detection

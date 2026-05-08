@@ -1,4 +1,4 @@
-#import "../src/lib.typ": decision-log, folio-init
+#import "../../src/lib.typ": decision-log, folio-init
 
 #show: body => folio-init(
   data: (

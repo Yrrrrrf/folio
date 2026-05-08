@@ -1,4 +1,4 @@
-#import "../src/lib.typ": deliverables-register, folio-init
+#import "../../src/lib.typ": deliverables-register, folio-init
 
 #show: body => folio-init(
   data: (

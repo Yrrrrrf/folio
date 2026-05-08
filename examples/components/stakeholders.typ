@@ -1,4 +1,4 @@
-#import "../src/lib.typ": folio-init, stakeholders
+#import "../../src/lib.typ": folio-init, stakeholders
 
 #show: body => folio-init(
   data: (

@@ -1,4 +1,4 @@
-#import "../src/lib.typ": business-case, folio-init
+#import "../../src/lib.typ": business-case, folio-init
 
 #show: body => folio-init(
   data: (

@@ -1,4 +1,4 @@
-#import "../src/lib.typ": budget, folio-init
+#import "../../src/lib.typ": budget, folio-init
 
 #show: body => folio-init(
   data: (
