@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": folio-init, sign-off
+#import "../src/lib.typ": folio-init, sign-off
 
 #show: body => folio-init(
   data: (

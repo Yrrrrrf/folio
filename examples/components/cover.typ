@@ -1,10 +1,10 @@
-#import "@local/folio:0.0.1": cover, folio-init
+#import "../src/lib.typ": cover, folio-init
 
 #show: body => folio-init(
   data: (
-    project: (name: "Component Demo", description: "Standalone component demonstration")
+    project: (name: "Component Demo", description: "Standalone component demonstration"),
   ),
-  body
+  body,
 )
 
 #cover()

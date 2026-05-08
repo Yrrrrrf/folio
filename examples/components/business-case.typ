@@ -1,10 +1,10 @@
-#import "@local/folio:0.0.1": business-case, folio-init
+#import "../src/lib.typ": business-case, folio-init
 
 #show: body => folio-init(
   data: (
-    initiation: (business_case: "This is a standalone business case component demonstration.")
+    initiation: (business_case: "This is a standalone business case component demonstration."),
   ),
-  body
+  body,
 )
 
 #business-case("initiation.business_case")

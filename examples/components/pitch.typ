@@ -1,10 +1,10 @@
-#import "@local/folio:0.0.1": pitch, folio-init
+#import "../src/lib.typ": folio-init, pitch
 
 #show: body => folio-init(
   data: (
-    initiation: (pitch: "This is a standalone pitch component demonstration.")
+    initiation: (pitch: "This is a standalone pitch component demonstration."),
   ),
-  body
+  body,
 )
 
 #pitch("initiation.pitch")

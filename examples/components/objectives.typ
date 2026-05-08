@@ -1,10 +1,10 @@
-#import "@local/folio:0.0.1": objectives, folio-init
+#import "../src/lib.typ": folio-init, objectives
 
 #show: body => folio-init(
   data: (
-    initiation: (objectives: ((id: "OBJ-1", description: "Demo Objective", priority: "high"),))
+    initiation: (objectives: ((id: "OBJ-1", description: "Demo Objective", priority: "high"),)),
   ),
-  body
+  body,
 )
 
 #objectives("initiation.objectives")

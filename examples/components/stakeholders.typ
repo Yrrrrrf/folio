@@ -1,14 +1,21 @@
-#import "@local/folio:0.0.1": stakeholders, folio-init
+#import "../src/lib.typ": folio-init, stakeholders
 
 #show: body => folio-init(
   data: (
     initiation: (
       stakeholders: (
-        (id: "SH-1", name: "Demo Stakeholder", role: "Sponsor", organization: "Demo Org", interest: "high", influence: "high"),
-      )
-    )
+        (
+          id: "SH-1",
+          name: "Demo Stakeholder",
+          role: "Sponsor",
+          organization: "Demo Org",
+          interest: "high",
+          influence: "high",
+        ),
+      ),
+    ),
   ),
-  body
+  body,
 )
 
 #stakeholders("initiation.stakeholders")

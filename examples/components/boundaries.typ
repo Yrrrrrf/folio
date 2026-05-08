@@ -1,10 +1,10 @@
-#import "@local/folio:0.0.1": boundaries, folio-init
+#import "../src/lib.typ": boundaries, folio-init
 
 #show: body => folio-init(
   data: (
-    baselines: (scope: (in_scope: ("Feature A",), out_of_scope: ("Feature B",)))
+    baselines: (scope: (in_scope: ("Feature A",), out_of_scope: ("Feature B",))),
   ),
-  body
+  body,
 )
 
 #boundaries("baselines.scope")

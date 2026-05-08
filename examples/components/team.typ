@@ -1,10 +1,10 @@
-#import "@local/folio:0.0.1": team, folio-init
+#import "../src/lib.typ": folio-init, team
 
 #show: body => folio-init(
   data: (
-    governance: (team: ((role: "Demo Role", name: "Demo Name", email: "demo@example.com"),))
+    governance: (team: ((role: "Demo Role", name: "Demo Name", email: "demo@example.com"),)),
   ),
-  body
+  body,
 )
 
 #team("governance.team")

@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": project-doc, card
+#import "../src/lib.typ": card, project-doc
 
 #let pricing-annex(data-path) = context {
   heading(level: 2)[Pricing Annex]
@@ -12,7 +12,7 @@
 #let rfp-data = (
   project: (
     name: "Enterprise ERP Migration",
-    description: "RFP Response for Global Logistics Corp"
+    description: "RFP Response for Global Logistics Corp",
   ),
   initiation: (
     pitch: "Transition legacy SAP instances to a unified cloud-native platform.",
@@ -22,16 +22,16 @@
     financials: (
       budget: (
         (description: "Phase 1: Discovery", amount: 250000),
-        (description: "Phase 2: Migration", amount: 1250000)
-      )
-    )
+        (description: "Phase 2: Migration", amount: 1250000),
+      ),
+    ),
   ),
   custom: (
     pricing: (
       tier: "Enterprise",
-      valid_until: "2026-12-31"
-    )
-  )
+      valid_until: "2026-12-31",
+    ),
+  ),
 )
 
 #show: project-doc(
@@ -43,8 +43,8 @@
         phase: "custom",
         after: "budget",
         data-path: "custom.pricing",
-        render: pricing-annex
+        render: pricing-annex,
       ),
-    )
-  )
+    ),
+  ),
 )

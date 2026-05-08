@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": financial-closure, folio-init
+#import "../src/lib.typ": financial-closure, folio-init
 
 #show: body => folio-init(
   data: (
@@ -8,11 +8,11 @@
         budget_baseline: 50000.0,
         variance: -2000.0,
         variance_explanation: "Lower vendor costs",
-        outstanding_invoices: "None"
-      )
-    )
+        outstanding_invoices: "None",
+      ),
+    ),
   ),
-  body
+  body,
 )
 
 #financial-closure("closure.financial_closure")

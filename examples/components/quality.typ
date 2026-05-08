@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": quality, folio-init
+#import "../src/lib.typ": folio-init, quality
 
 #show: body => folio-init(
   data: (
@@ -8,12 +8,12 @@
         acceptance_procedure: "Demo Procedure",
         criteria: (
           (req_id: "REQ-01", criterion: "Demo Criterion", method: "Test"),
-        )
+        ),
       ),
-      requirements: ((id: "REQ-01", description: "Demo Req"),)
-    )
+      requirements: ((id: "REQ-01", description: "Demo Req"),),
+    ),
   ),
-  body
+  body,
 )
 
 #quality("baselines.quality")

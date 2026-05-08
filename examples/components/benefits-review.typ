@@ -1,17 +1,17 @@
-#import "@local/folio:0.0.1": benefits-review, folio-init
+#import "../src/lib.typ": benefits-review, folio-init
 
 #show: body => folio-init(
   data: (
     closure: (
       benefits_review: (
         (objective_id: "OBJ-1", claimed: "Demo Benefit", actual: "Observed Benefit", variance: "0%"),
-      )
+      ),
     ),
     initiation: (
-      objectives: ((id: "OBJ-1", description: "Demo Objective"),)
-    )
+      objectives: ((id: "OBJ-1", description: "Demo Objective"),),
+    ),
   ),
-  body
+  body,
 )
 
 #benefits-review("closure.benefits_review")

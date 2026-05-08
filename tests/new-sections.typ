@@ -1,6 +1,6 @@
 // Test: all new sections render from populated data (Phases 2–6)
 // Each section is exercised with a minimal but complete data payload.
-#import "@local/folio:0.0.1": (
+#import "../src/lib.typ": (
   acceptance, assumptions-log, benefits-review, budget, communication, compliance, decision-log, deliverables-register,
   financial-closure, folio-init, gantt, handover, quality, requirements, risk-strategy, stakeholders, success-criteria,
 )

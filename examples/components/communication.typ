@@ -1,14 +1,14 @@
-#import "@local/folio:0.0.1": communication, folio-init
+#import "../src/lib.typ": communication, folio-init
 
 #show: body => folio-init(
   data: (
     baselines: (
       communication: (
         (what: "Demo Report", audience: "Stakeholders", frequency: "Weekly", channel: "Email", owner: "PM"),
-      )
-    )
+      ),
+    ),
   ),
-  body
+  body,
 )
 
 #communication("baselines.communication")

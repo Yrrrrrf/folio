@@ -1,15 +1,22 @@
-#import "@local/folio:0.0.1": success-criteria, folio-init
+#import "../src/lib.typ": folio-init, success-criteria
 
 #show: body => folio-init(
   data: (
     initiation: (
       objectives: ((id: "OBJ-1", description: "Demo Objective", priority: "high"),),
       success_criteria: (
-        (id: "SC-1", type: "project", criterion: "Demo Criterion", measurement: "Test", target: "Success", objective_id: "OBJ-1"),
-      )
-    )
+        (
+          id: "SC-1",
+          type: "project",
+          criterion: "Demo Criterion",
+          measurement: "Test",
+          target: "Success",
+          objective_id: "OBJ-1",
+        ),
+      ),
+    ),
   ),
-  body
+  body,
 )
 
 #success-criteria("initiation.success_criteria")

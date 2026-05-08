@@ -1,10 +1,10 @@
-#import "@local/folio:0.0.1": milestones, folio-init
+#import "../src/lib.typ": folio-init, milestones
 
 #show: body => folio-init(
   data: (
-    baselines: (schedule: (milestones: ((id: "M1", date: "2026-01-01", title: "Demo Milestone", status: "Done"),)))
+    baselines: (schedule: (milestones: ((id: "M1", date: "2026-01-01", title: "Demo Milestone", status: "Done"),))),
   ),
-  body
+  body,
 )
 
 #milestones("baselines.schedule.milestones")

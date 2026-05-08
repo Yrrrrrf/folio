@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": handover, folio-init
+#import "../src/lib.typ": folio-init, handover
 
 #show: body => folio-init(
   data: (
@@ -7,11 +7,11 @@
         documentation: ("User Manual", "API Reference"),
         training: "3 sessions provided",
         support: "24/7 helpdesk",
-        transfer_date: "2026-06-01"
-      )
-    )
+        transfer_date: "2026-06-01",
+      ),
+    ),
   ),
-  body
+  body,
 )
 
 #handover("closure.handover")

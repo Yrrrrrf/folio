@@ -1,9 +1,8 @@
 // Test: compute layer functions (cost aggregation, orphan detection, audit)
 // Verifies compute.typ works correctly in isolation from the rendering pipeline.
-#import "@local/folio:0.0.1": (
-  folio-init, compute-context, find-orphans, audit-missing, audit-summary,
-  calc-budget, calc-requirements, sum-costs, line-subtotal,
-  card, data-table, badge, metric,
+#import "../src/lib.typ": (
+  audit-missing, audit-summary, badge, calc-budget, calc-requirements, card, compute-context, data-table, find-orphans,
+  folio-init, line-subtotal, metric, sum-costs,
 )
 #import "fixtures/full-data-dict.typ": full-project-data
 
@@ -20,7 +19,7 @@
 #let budget-result = calc-budget(full-project-data)
 #let req-result = calc-requirements(full-project-data)
 
-#card(title: "Budget Computation")[ 
+#card(title: "Budget Computation")[
   - *Line items subtotal:* #budget-result.line-subtotal
   - *Extra costs total:* #budget-result.extra-total
   - *Grand total:* #budget-result.grand-total
@@ -28,7 +27,7 @@
 
 #card(title: "Requirements Cost by Category")[
   #for (cat, total) in req-result.categories {
-    [- *#cat:* #total \ ]
+    [- *#cat:* #total \]
   }
   [- *Grand total:* #req-result.grand-total]
 ]
@@ -48,12 +47,14 @@
     #data-table(
       columns: (auto, auto, auto, auto),
       headers: ("Source", "Field", "Ref ID", "Expected In"),
-      rows: orphans.map(o => (
-        o.source,
-        o.field,
-        o.ref-id,
-        o.target,
-      )).flatten(),
+      rows: orphans
+        .map(o => (
+          o.source,
+          o.field,
+          o.ref-id,
+          o.target,
+        ))
+        .flatten(),
     )
   ]
 }
@@ -69,7 +70,10 @@
     spacing: 2em,
     metric("Critical", [#summary.critical.present P / #summary.critical.empty E / #summary.critical.missing M]),
     metric("Important", [#summary.important.present P / #summary.important.empty E / #summary.important.missing M]),
-    metric("Recommended", [#summary.recommended.present P / #summary.recommended.empty E / #summary.recommended.missing M]),
+    metric(
+      "Recommended",
+      [#summary.recommended.present P / #summary.recommended.empty E / #summary.recommended.missing M],
+    ),
   )
 ]
 
@@ -77,12 +81,18 @@
   #data-table(
     columns: (1fr, auto, auto, auto),
     headers: ("Path", "Severity", "Status", "Phase"),
-    rows: audit.map(r => (
-      r.path,
-      badge(r.severity, intent: if r.severity == "critical" { "danger" } else if r.severity == "important" { "warning" } else { "neutral" }),
-      badge(r.status, intent: if r.status == "Present" { "success" } else if r.status == "Empty" { "warning" } else { "danger" }),
-      r.phase,
-    )).flatten(),
+    rows: audit
+      .map(r => (
+        r.path,
+        badge(r.severity, intent: if r.severity == "critical" { "danger" } else if r.severity == "important" {
+          "warning"
+        } else { "neutral" }),
+        badge(r.status, intent: if r.status == "Present" { "success" } else if r.status == "Empty" { "warning" } else {
+          "danger"
+        }),
+        r.phase,
+      ))
+      .flatten(),
   )
 ]
 

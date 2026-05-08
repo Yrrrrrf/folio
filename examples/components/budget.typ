@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": budget, folio-init
+#import "../src/lib.typ": budget, folio-init
 
 #show: body => folio-init(
   data: (
@@ -13,12 +13,12 @@
           extra_costs: (
             (description: "Contingency (10%)", percentage: 0.1),
             (description: "Fixed Buffer", cost: 1000),
-          )
-        )
-      )
-    )
+          ),
+        ),
+      ),
+    ),
   ),
-  body
+  body,
 )
 
 #budget("baselines.financials.budget")
