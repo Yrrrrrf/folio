@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": folio-init, risk-strategy
+#import "../../src/lib.typ": folio-init, risk-strategy
 
 #show: body => folio-init(
   data: (

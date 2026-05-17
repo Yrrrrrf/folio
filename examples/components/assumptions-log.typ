@@ -1,4 +1,4 @@
-#import "@local/folio:0.0.1": assumptions-log, folio-init
+#import "../../src/lib.typ": assumptions-log, folio-init
 
 #show: body => folio-init(
   data: (

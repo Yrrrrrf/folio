@@ -6,60 +6,49 @@
 # Package identity (shared across all scripts)
 
 LOCAL := env('HOME') / ".local/share/typst/packages/local"
+PREVIEW := env('TYPST_PACKAGES_DIR', env('HOME') / "docs/typst/typst-packages") / "packages/preview"
 VERSION := `rg version typst.toml | cut -d'"' -f2`
 PKG_ID := "@local/folio:" + VERSION
 
 # ── _replace-imports ──────────────────────────────────────────────────────────
-# Swap all import paths in examples/, tests/, and docs/.
+# Rewrites import paths across examples/, tests/, docs/. Idempotent: any current
+# state (relative, @local, or @preview) can be rewritten to any target state.
 #
-# mode = "local"  → replace relative paths with @local/folio:<version>
-# mode = "dev"    → restore relative ../src/lib.typ paths
+# Regex matches all three forms:
+#   relative:  "../src/lib.typ", "../../src/lib.typ"
+#   @local:    "@local/folio:0.0.1"
+#   @preview:  "@preview/folio:0.0.1"
 #
-# The regex handles:
-#   Single-line:  #import "../src/lib.typ": project-doc
-#   Multi-line:   #import "../src/lib.typ": (
-#                   project-doc, card,
-#                 )
-#   Any depth:    ../../src/lib.typ, ../src/lib.typ
-#   @local form:  #import "@local/folio:0.0.1": ...
-#
+# Note: depth-1 ↔ depth-2 split for `dev` mode assumes max nesting is
 
-# Idempotent: calling the same mode twice yields the same result.
+# examples/components/X.typ. Deeper trees would need depth-aware logic.
 [private]
 _replace-imports mode:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    if [ "{{ mode }}" = "local" ]; then
-        echo "  → Replacing relative imports → {{ PKG_ID }}..."
-        # depth-1 files (examples/*.typ, tests/*.typ, docs/*.typ)
-        fd -e typ -d 1 . examples/ tests/ docs/ 2>/dev/null \
-            | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "{{ PKG_ID }}"' {} 2>/dev/null || true
-        # nested files (examples/components/*.typ, tests/fixtures/*.typ)
-        fd -e typ --min-depth 2 . examples/ tests/ docs/ 2>/dev/null \
-            | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "{{ PKG_ID }}"' {} 2>/dev/null || true
+    PATTERN='#import\s+"(?:(?:\.\./)+src/lib\.typ|@(?:local|preview)/folio:[^"]+)"'
 
-    elif [ "{{ mode }}" = "preview" ]; then
-        echo "  → Replacing relative imports → @preview/folio:{{ VERSION }}..."
-        fd -e typ -d 1 . examples/ tests/ docs/ 2>/dev/null \
-            | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "@preview/folio:{{ VERSION }}"' {} 2>/dev/null || true
-        fd -e typ --min-depth 2 . examples/ tests/ docs/ 2>/dev/null \
-            | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "@preview/folio:{{ VERSION }}"' {} 2>/dev/null || true
-
-    elif [ "{{ mode }}" = "dev" ]; then
-        echo "  → Restoring relative dev imports..."
-        # depth-1: rewrite to ../src/lib.typ
-        fd -e typ -d 1 . examples/ tests/ docs/ 2>/dev/null \
-            | xargs -I{} sd '#import\s+"@local/folio:[^"]+"' '#import "../src/lib.typ"' {} 2>/dev/null || true
-        # also fix any stale relative paths at depth-1 (normalize)
-        fd -e typ -d 1 . examples/ tests/ docs/ 2>/dev/null \
-            | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "../src/lib.typ"' {} 2>/dev/null || true
-        # nested: rewrite to ../../src/lib.typ
-        fd -e typ --min-depth 2 . examples/ tests/ docs/ 2>/dev/null \
-            | xargs -I{} sd '#import\s+"@local/folio:[^"]+"' '#import "../../src/lib.typ"' {} 2>/dev/null || true
-        fd -e typ --min-depth 2 . examples/ tests/ docs/ 2>/dev/null \
-            | xargs -I{} sd '#import\s+"(?:\.\./)+src/lib\.typ"' '#import "../../src/lib.typ"' {} 2>/dev/null || true
-    else
-        echo "ERROR: _replace-imports expects 'local', 'preview', or 'dev', got '{{ mode }}'"
-        exit 1
-    fi
+    case "{{ mode }}" in
+        local)
+            echo "  → Rewriting imports → {{ PKG_ID }}..."
+            fd -e typ . examples/ tests/ docs/ 2>/dev/null \
+                | xargs -I{} sd "$PATTERN" '#import "{{ PKG_ID }}"' {} 2>/dev/null || true
+            ;;
+        preview)
+            echo "  → Rewriting imports → @preview/folio:{{ VERSION }}..."
+            fd -e typ . examples/ tests/ docs/ 2>/dev/null \
+                | xargs -I{} sd "$PATTERN" '#import "@preview/folio:{{ VERSION }}"' {} 2>/dev/null || true
+            ;;
+        dev)
+            echo "  → Restoring relative dev imports..."
+            fd -e typ -d 1 . examples/ tests/ docs/ 2>/dev/null \
+                | xargs -I{} sd "$PATTERN" '#import "../src/lib.typ"' {} 2>/dev/null || true
+            fd -e typ --min-depth 2 . examples/ tests/ docs/ 2>/dev/null \
+                | xargs -I{} sd "$PATTERN" '#import "../../src/lib.typ"' {} 2>/dev/null || true
+            ;;
+        *)
+            echo "ERROR: _replace-imports expects 'local', 'preview', or 'dev', got '{{ mode }}'"
+            exit 1
+            ;;
+    esac

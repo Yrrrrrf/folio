@@ -60,4 +60,4 @@ Note: **Orphan Reference detection** requires a second compile pass for full acc
 
 ## Documentation
 
-See `docs/manual.typ` for full API reference and schema details.
+See [`docs/manual.pdf`](docs/manual.pdf) for full API reference and schema details.

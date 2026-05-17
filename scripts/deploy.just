@@ -1,53 +1,64 @@
 # ── Release Workflow ──────────────────────────────────────────────────────────
-# Safe release recipes: deploy to local typst and orchestrate full publish.
-# deploy is idempotent (just copies). publish is a composed pipeline.
+# deploy-local   → ~/.local/share/typst/packages/local/folio/<ver>   (with tests)
+# deploy-preview → <typst-packages>/packages/preview/folio/<ver>     (no tests)
+# deploy         → both
+#
+# Shared filter rules:
+#   Kept:    LICENSE, README.md, typst.toml, src/**, examples/**.typ,
+#            docs/manual.{typ,pdf}
+#   Dropped: every *.pdf except docs/manual.pdf (build artifacts),
+#            scripts/, pi-dt/, flake.*, MANIFEST.md, justfile, …
 
-# ── deploy ────────────────────────────────────────────────────────────────────
-[doc("Copy folio to local Typst packages (~/.local/share/typst/packages/local/)")]
-[group('Deploy')]
-deploy:
+# ── _deploy-to ────────────────────────────────────────────────────────────────
+# Private rsync helper. `with_tests` is "true" (include tests/) or "false".
+[private]
+_deploy-to target with_tests:
     #!/usr/bin/env bash
     set -euo pipefail
-    TARGET="{{ LOCAL }}/folio/{{ VERSION }}"
-    echo "→ Deploying folio v{{ VERSION }} to $TARGET..."
+    TARGET="{{ target }}"
+    echo "  → $TARGET"
     rm -rf "$TARGET"
     mkdir -p "$TARGET"
+
+    # Conditional tests/ filter — bash array safely expands to nothing when empty
+    TESTS_FILTER=()
+    if [ "{{ with_tests }}" = "true" ]; then
+        TESTS_FILTER+=(--include='tests/***')
+    fi
+
+    # Order matters: rsync uses first-match-wins.
+    # 1) Whitelist the one PDF we keep BEFORE the blanket *.pdf exclude.
+    # 2) Blanket *.pdf exclude strips every other build artifact.
+    # 3) Tree-includes (src, examples, [tests]) pick up everything else.
+    # 4) Final --exclude='*' drops anything not whitelisted above.
     rsync -rL \
         --include='LICENSE' \
         --include='README.md' \
         --include='typst.toml' \
-        --include='src/' --include='src/**' \
-        --include='examples/' --include='examples/**' \
-        --include='tests/' --include='tests/**' \
-        --include='docs/' --include='docs/**' \
+        --include='docs/' \
+        --include='docs/*' \
+        --include='docs/manual.pdf' \
+        --exclude='*.pdf' \
+        --include='src/***' \
+        --include='examples/***' \
+        "${TESTS_FILTER[@]}" \
         --exclude='*' \
         "{{ justfile_directory() }}/" "$TARGET/"
-    echo "✓ folio v{{ VERSION }} deployed to $TARGET"
 
-# ── manual ────────────────────────────────────────────────────────────────────
-[doc("Compile manual.pdf for registry submission")]
+# ── deploy-local ──────────────────────────────────────────────────────────────
+[doc("Copy folio to ~/.local/share/typst/packages/local/  (includes tests/)")]
 [group('Deploy')]
-manual:
-    @echo "→ Compiling manual..."
-    @typst compile --root . docs/manual.typ docs/manual.pdf
-    @echo "✓ manual.pdf compiled"
+deploy-local: (_deploy-to (LOCAL / "folio" / VERSION) "true")
+    @echo "✓ folio v{{ VERSION }} → @local/folio:{{ VERSION }}"
 
-# ── publish ───────────────────────────────────────────────────────────────────
-# Full publish pipeline — each step must pass before the next runs.
-# Sequence: swap-dev → audit-style → test → quality → manual → deploy
-[doc("Full publish pipeline: swap → audit → test → quality → manual → deploy")]
+# ── deploy-preview ────────────────────────────────────────────────────────────
+[doc("Copy folio to typst-packages/packages/preview/  (no tests, manual.pdf only)")]
 [group('Deploy')]
-publish: swap-preview audit-style test quality manual deploy
-    #!/usr/bin/env bash
-    echo ""
-    echo "─── Submission Checklist ────────────────────────────────────"
-    echo "  ✓ Import paths verified (preview mode)"
-    echo "  ✓ Style audit passed"
-    echo "  ✓ All examples and tests compiled"
-    echo "  ✓ Quality gate passed (fmt + lint)"
-    echo "  ✓ manual.pdf compiled"
-    echo "  ✓ Deployed to local Typst packages"
-    echo ""
-    echo "  When ready:"
-    echo "    git push origin main"
-    echo "─────────────────────────────────────────────────────────────"
+deploy-preview: (_deploy-to (PREVIEW / "folio" / VERSION) "false")
+    @echo "✓ folio v{{ VERSION }} → @preview/folio:{{ VERSION }}"
+
+# ── deploy ────────────────────────────────────────────────────────────────────
+[doc("Deploy to both local AND preview package directories")]
+[group('Deploy')]
+deploy: deploy-local deploy-preview
+    @echo "✓ folio v{{ VERSION }} deployed (local + preview)"
