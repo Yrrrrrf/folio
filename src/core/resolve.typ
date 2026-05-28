@@ -38,7 +38,6 @@
 #let get-title(data, path, default-title) = {
   let r = _walk(data, path)
   if not r.found { return default-title }
-  if type(r.value) == str { return r.value }
   if type(r.value) == dictionary and "title" in r.value { return r.value.title }
   default-title
 }

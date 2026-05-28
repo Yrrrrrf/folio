@@ -5,6 +5,11 @@
 # ignore lockfiles
 *.lock
 
+# All *.md files except README.md & MANIFEST.md
+*.md
+!README.md
+!MANIFEST.md
+
 # generated files
 *.pdf
 
