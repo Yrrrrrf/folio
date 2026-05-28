@@ -2,7 +2,7 @@
 /// Demonstrates: full budget with line items, risk register, compliance,
 /// deliverables, and custom section injection. Uses the corporate preset.
 
-#import "@preview/folio:0.0.1": card, project-doc
+#import "../src/lib.typ": card, project-doc
 
 // Custom section: site-safety annex
 #let site-safety(data-path) = context {

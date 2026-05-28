@@ -2,6 +2,7 @@
 #import "../core/state.typ": folio-state
 #import "../theme/ui.typ": badge, card, data-table, metric
 #import "../utils/formatters.typ": format-date, format-money
+#import "../i18n/i18n.typ": status-label, t
 #import "../theme/resolver.typ": resolve-token
 #import "../core/refs.typ": (
   compliance-label, link-to-compliance, link-to-req, milestone-label, req-label,
@@ -13,21 +14,21 @@
 #let boundaries(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Project Boundaries (Scope)")]
+  heading(level: 2)[#get-title(data, data-path, t("section-scope"))]
 
   let scope = resolve(data, data-path)
   if type(scope) == dictionary {
     let in-items = scope.at("in_scope", default: ())
     if type(in-items) == str { in-items = (in-items,) }
     if type(in-items) == array and in-items.len() > 0 {
-      card(title: "In Scope")[
+      card(title: t("card-in-scope"))[
         #list(..in-items)
       ]
     }
     let out-items = scope.at("out_of_scope", default: ())
     if type(out-items) == str { out-items = (out-items,) }
     if type(out-items) == array and out-items.len() > 0 {
-      card(title: "Out of Scope")[
+      card(title: t("card-out-of-scope"))[
         #list(..out-items)
       ]
     }
@@ -39,7 +40,7 @@
 #let requirements(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Requirements Register")]
+  heading(level: 2)[#get-title(data, data-path, t("section-requirements"))]
 
   let reqs = resolve(data, data-path)
   if type(reqs) != array {
@@ -61,7 +62,14 @@
     card(title: cat)[
       #data-table(
         columns: (auto, 1fr, auto, auto, auto, auto),
-        headers: ("ID", "Description", "Qty", "Unit", "Unit Cost", "Priority"),
+        headers: (
+          t("col-id"),
+          t("col-description"),
+          t("col-qty"),
+          t("col-unit"),
+          t("col-unit-cost"),
+          t("col-priority"),
+        ),
         rows: cat-reqs
           .map(r => {
             let rid = r.at("id", default: "-")
@@ -78,18 +86,21 @@
               if r.at("unit_cost", default: 0) > 0 {
                 format-money(r.at("unit_cost", default: 0))
               } else { "—" },
-              badge(r.at("priority", default: "medium"), intent: if r.at(
-                "priority",
-                default: "",
-              )
-                == "high" { "danger" } else if r.at("priority", default: "")
-                == "low" { "neutral" } else { "warning" }),
+              badge(
+                status-label(r.at("priority", default: "medium")),
+                intent: if r.at(
+                  "priority",
+                  default: "",
+                )
+                  == "high" { "danger" } else if r.at("priority", default: "")
+                  == "low" { "neutral" } else { "warning" },
+              ),
             )
           })
           .flatten(),
       )
       #if subtotal > 0 {
-        align(right)[*Subtotal: #format-money(subtotal)*]
+        align(right)[*#t("chrome-subtotal")#format-money(subtotal)*]
       }
     ]
   }
@@ -98,24 +109,27 @@
 #let milestones(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Milestones")]
+  heading(level: 2)[#get-title(data, data-path, t("section-milestones"))]
 
   let ms-list = resolve(data, data-path)
   if type(ms-list) == array {
     data-table(
       columns: (auto, 1fr, auto),
-      headers: ("Date", "Milestone", "Status"),
+      headers: (t("col-date"), t("col-milestone"), t("col-status")),
       rows: ms-list
         .map(m => {
           let mid = m.at("id", default: m.at("title", default: ""))
           (
             format-date(m.at("date", default: "")),
             [#m.at("title", default: "")#milestone-label(mid)],
-            badge(m.at("status", default: "Pending"), intent: if m.at(
-              "status",
-              default: "",
-            )
-              == "Done" { "success" } else { "neutral" }),
+            badge(
+              status-label(m.at("status", default: "Pending")),
+              intent: if m.at(
+                "status",
+                default: "",
+              )
+                == "Done" { "success" } else { "neutral" },
+            ),
           )
         })
         .flatten(),
@@ -129,7 +143,7 @@
 #let budget(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Budget Details")]
+  heading(level: 2)[#get-title(data, data-path, t("section-budget"))]
 
   let raw = resolve(data, data-path)
   if type(raw) != dictionary {
@@ -154,7 +168,14 @@
     card(title: cat)[
       #data-table(
         columns: (auto, 1fr, auto, auto, auto, auto),
-        headers: ("ID", "Description", "Qty", "Unit", "Unit Cost", "Total"),
+        headers: (
+          t("col-id"),
+          t("col-description"),
+          t("col-qty"),
+          t("col-unit"),
+          t("col-unit-cost"),
+          t("col-total"),
+        ),
         rows: cat-items
           .map(i => {
             let total = (
@@ -175,7 +196,7 @@
           })
           .flatten(),
       )
-      #align(right)[*Category subtotal: #format-money(cat-total)*]
+      #align(right)[*#t("chrome-category-subtotal")#format-money(cat-total)*]
     ]
   }
 
@@ -188,10 +209,10 @@
         (e.at("description", default: "-"), format-money(amt))
       })
       .flatten()
-    card(title: "Additional Costs")[
+    card(title: t("card-additional-costs"))[
       #data-table(
         columns: (1fr, auto),
-        headers: ("Description", "Amount"),
+        headers: (t("col-description"), t("col-total")),
         rows: show-extras,
       )
     ]
@@ -203,9 +224,9 @@
     #stack(
       dir: ltr,
       spacing: 3em,
-      metric("Line Items Subtotal", format-money(sub)),
-      metric("Additional Costs", format-money(ext)),
-      metric("Grand Total", format-money(grand), intent: "success"),
+      metric(t("metric-line-items-subtotal"), format-money(sub)),
+      metric(t("metric-additional-costs"), format-money(ext)),
+      metric(t("metric-grand-total"), format-money(grand), intent: "success"),
     )
   ]
 }
@@ -286,7 +307,7 @@
 #let gantt(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Gantt Chart")]
+  heading(level: 2)[#get-title(data, data-path, t("section-gantt"))]
 
   let raw = resolve(data, data-path)
   if type(raw) != dictionary {
@@ -308,13 +329,13 @@
 #let team(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Project Team")]
+  heading(level: 2)[#get-title(data, data-path, t("section-team"))]
 
   let members = resolve(data, data-path)
   if type(members) == array {
     data-table(
       columns: (auto, 1fr, auto),
-      headers: ("Role", "Name", "Contact"),
+      headers: (t("col-role"), t("col-name"), t("col-contact")),
       rows: members
         .map(m => (
           m.at("role", default: "-"),
@@ -331,7 +352,7 @@
 #let quality(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Quality Plan")]
+  heading(level: 2)[#get-title(data, data-path, t("section-quality"))]
 
   let q = resolve(data, data-path)
   if type(q) != dictionary {
@@ -341,27 +362,27 @@
 
   let standards = q.at("standards", default: ())
   if standards.len() > 0 {
-    card(title: "Standards")[
+    card(title: t("card-standards"))[
       #list(..standards)
     ]
   }
 
   let accept-proc = q.at("acceptance_procedure", default: none)
   if accept-proc != none {
-    card(title: "Acceptance Procedure")[#accept-proc]
+    card(title: t("card-acceptance-procedure"))[#accept-proc]
   }
 
   let testing = q.at("testing_strategy", default: none)
   if testing != none {
-    card(title: "Testing Strategy")[#testing]
+    card(title: t("card-testing-strategy"))[#testing]
   }
 
   let criteria = q.at("criteria", default: ())
   if type(criteria) == array and criteria.len() > 0 {
-    card(title: "Quality Criteria")[
+    card(title: t("card-quality-criteria"))[
       #data-table(
         columns: (auto, 1fr, auto),
-        headers: ("Requirement", "Criterion", "Method"),
+        headers: (t("col-requirement"), t("col-criterion"), t("col-method")),
         rows: criteria
           .map(c => (
             link-to-req(c.at("req_id", default: "-")),
@@ -377,13 +398,19 @@
 #let communication(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Communication Plan")]
+  heading(level: 2)[#get-title(data, data-path, t("section-communication"))]
 
   let comms = resolve(data, data-path)
   if type(comms) == array {
     data-table(
       columns: (1fr, auto, auto, auto, auto),
-      headers: ("What", "Audience", "Frequency", "Channel", "Owner"),
+      headers: (
+        t("col-what"),
+        t("col-audience"),
+        t("col-frequency"),
+        t("col-channel"),
+        t("col-owner"),
+      ),
       rows: comms
         .map(c => (
           c.at("what", default: "-"),
@@ -402,7 +429,7 @@
 #let risk-strategy(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Risk Management Strategy")]
+  heading(level: 2)[#get-title(data, data-path, t("section-risk-strategy"))]
 
   let rs = resolve(data, data-path)
   if type(rs) != dictionary {
@@ -411,11 +438,11 @@
   }
 
   let approach = rs.at("approach", default: none)
-  if approach != none { card(title: "Approach")[#approach] }
+  if approach != none { card(title: t("card-approach"))[#approach] }
 
   let cats = rs.at("categories", default: ())
   if cats.len() > 0 {
-    card(title: "Risk Categories")[
+    card(title: t("card-risk-categories"))[
       #list(..cats)
     ]
   }
@@ -425,10 +452,10 @@
   let threshold = rs.at("escalation_threshold", default: none)
 
   if scoring != none or tolerance != none or threshold != none {
-    card(title: "Thresholds & Scoring")[
-      #if scoring != none { [*Scoring:* #scoring \ ] }
-      #if tolerance != none { [*Tolerance:* #tolerance \ ] }
-      #if threshold != none { [*Escalation threshold:* #threshold] }
+    card(title: t("card-thresholds-scoring"))[
+      #if scoring != none { [*#t("chrome-scoring")*#scoring \ ] }
+      #if tolerance != none { [*#t("chrome-tolerance")*#tolerance \ ] }
+      #if threshold != none { [*#t("chrome-escalation")*#threshold] }
     ]
   }
 }
@@ -436,13 +463,19 @@
 #let compliance(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Compliance Register")]
+  heading(level: 2)[#get-title(data, data-path, t("section-compliance"))]
 
   let items = resolve(data, data-path)
   if type(items) == array {
     data-table(
       columns: (auto, 1fr, auto, auto, auto),
-      headers: ("ID", "Regulation", "Jurisdiction", "Requirements", "Status"),
+      headers: (
+        t("col-id"),
+        t("col-regulation"),
+        t("col-jurisdiction"),
+        t("col-requirements"),
+        t("col-status"),
+      ),
       rows: items
         .map(c => {
           let req-ids = c.at("req_ids", default: ())
@@ -456,12 +489,15 @@
             if req-ids.len() > 0 { req-ids.map(link-to-req).join(", ") } else {
               "—"
             },
-            badge(c.at("status", default: "Pending"), intent: if c.at(
-              "status",
-              default: "",
-            )
-              == "Compliant" { "success" } else if c.at("status", default: "")
-              == "Non-compliant" { "danger" } else { "neutral" }),
+            badge(
+              status-label(c.at("status", default: "Pending")),
+              intent: if c.at(
+                "status",
+                default: "",
+              )
+                == "Compliant" { "success" } else if c.at("status", default: "")
+                == "Non-compliant" { "danger" } else { "neutral" },
+            ),
           )
         })
         .flatten(),

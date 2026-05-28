@@ -1,4 +1,4 @@
-#import "@preview/folio:0.0.1": folio-init, pitch
+#import "../../src/lib.typ": folio-init, pitch
 
 #show: body => folio-init(
   data: (

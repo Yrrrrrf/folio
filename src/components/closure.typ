@@ -3,17 +3,22 @@
 #import "../theme/ui.typ": badge, card, data-table, metric
 #import "../utils/formatters.typ": format-date, format-money
 #import "../core/refs.typ": link-to-deliverable, link-to-objective
+#import "../i18n/i18n.typ": status-label, t
 
 #let lessons-learned(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Lessons Learned")]
+  heading(level: 2)[#get-title(data, data-path, t("section-lessons-learned"))]
 
   let lessons = resolve(data, data-path)
   if type(lessons) == array {
     data-table(
       columns: (auto, 1fr, 1fr),
-      headers: ("Category", "What went wrong", "Recommendation"),
+      headers: (
+        t("col-category"),
+        t("col-what-went-wrong"),
+        t("col-recommendation"),
+      ),
       rows: lessons
         .map(l => (
           l.at("category", default: "-"),
@@ -30,13 +35,13 @@
 #let sign-off(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Formal Sign-Off")]
+  heading(level: 2)[#get-title(data, data-path, t("section-sign-off"))]
 
   let stakeholders = resolve(data, data-path)
   if type(stakeholders) == array {
     data-table(
       columns: (1fr, 1fr, 1fr),
-      headers: ("Stakeholder", "Role", "Date/Signature"),
+      headers: (t("col-stakeholder"), t("col-role"), t("col-date-signature")),
       rows: stakeholders
         .map(s => (
           s.at("name", default: "-"),
@@ -53,17 +58,17 @@
 #let acceptance(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Acceptance Records")]
+  heading(level: 2)[#get-title(data, data-path, t("section-acceptance"))]
 
   let records = resolve(data, data-path)
   if type(records) == array {
     data-table(
       columns: (auto, auto, auto, 1fr),
       headers: (
-        "Deliverable",
-        "Accepted By",
-        "Acceptance Date",
-        "Outstanding Issues",
+        t("col-deliverable"),
+        t("col-accepted-by"),
+        t("col-acceptance-date"),
+        t("col-outstanding-issues"),
       ),
       rows: records
         .map(r => (
@@ -82,18 +87,18 @@
 #let benefits-review(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Benefits Review")]
+  heading(level: 2)[#get-title(data, data-path, t("section-benefits-review"))]
 
   let reviews = resolve(data, data-path)
   if type(reviews) == array {
     data-table(
       columns: (auto, 1fr, 1fr, auto, auto),
       headers: (
-        "Objective",
-        "Claimed Benefit",
-        "Actual Outcome",
-        "Variance",
-        "Root Cause",
+        t("col-objective-ref"),
+        t("col-claimed-benefit"),
+        t("col-actual-outcome"),
+        t("col-variance"),
+        t("col-root-cause"),
       ),
       rows: reviews
         .map(r => (
@@ -113,7 +118,7 @@
 #let handover(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Project Handover")]
+  heading(level: 2)[#get-title(data, data-path, t("section-handover"))]
 
   let h = resolve(data, data-path)
   if type(h) != dictionary {
@@ -123,27 +128,27 @@
 
   let docs = h.at("documentation", default: ())
   if docs.len() > 0 {
-    card(title: "Documentation Handed Over")[
+    card(title: t("card-docs-handed-over"))[
       #list(..docs)
     ]
   }
 
   let training = h.at("training", default: none)
-  if training != none { card(title: "Training")[#training] }
+  if training != none { card(title: t("card-training"))[#training] }
 
   let support = h.at("support", default: none)
-  if support != none { card(title: "Support / Warranty")[#support] }
+  if support != none { card(title: t("card-support-warranty"))[#support] }
 
   let transfer-date = h.at("transfer_date", default: none)
   if transfer-date != none {
-    card[*Transfer date:* #format-date(transfer-date)]
+    card[*#t("chrome-transfer-date")*#format-date(transfer-date)]
   }
 }
 
 #let financial-closure(data-path) = context {
   let st = folio-state.get()
   let data = st.at("data", default: (:))
-  heading(level: 2)[#get-title(data, data-path, "Financial Closure")]
+  heading(level: 2)[#get-title(data, data-path, t("section-financial-closure"))]
 
   let fc = resolve(data, data-path)
   if type(fc) != dictionary {
@@ -159,17 +164,22 @@
     #stack(
       dir: ltr,
       spacing: 3em,
-      metric("Budget Baseline", format-money(baseline)),
-      metric("Final Cost", format-money(final-cost)),
-      metric("Variance", format-money(variance), intent: if variance <= 0 {
+      metric(t("metric-budget-baseline"), format-money(baseline)),
+      metric(t("metric-final-cost"), format-money(final-cost)),
+      metric(t("metric-variance"), format-money(variance), intent: if variance
+        <= 0 {
         "success"
       } else { "danger" }),
     )
   ]
 
   let explanation = fc.at("variance_explanation", default: none)
-  if explanation != none { card(title: "Variance Explanation")[#explanation] }
+  if explanation != none {
+    card(title: t("card-variance-explanation"))[#explanation]
+  }
 
   let outstanding = fc.at("outstanding_invoices", default: none)
-  if outstanding != none { card(title: "Outstanding Invoices")[#outstanding] }
+  if outstanding != none {
+    card(title: t("card-outstanding-invoices"))[#outstanding]
+  }
 }

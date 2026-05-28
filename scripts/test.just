@@ -6,8 +6,17 @@
 # ── test-all ──────────────────────────────────────────────────────────────────
 [doc("Compile all examples + all tests")]
 [group('Test')]
-test: (compile "examples") (compile "tests")
+test: (compile "examples") (compile "tests") test-i18n
     @echo "✓ All examples and tests compiled"
+
+# ── test-i18n ─────────────────────────────────────────────────────────────────
+[doc("Compile localization fixtures to run Typst-native parity assertions")]
+[group('Test')]
+test-i18n:
+    @echo "→ Compiling i18n test fixtures..."
+    just compile tests/i18n-en.typ
+    just compile tests/i18n-es.typ
+    @echo "✓ i18n tests completed successfully"
 
 # ── test-fixture ──────────────────────────────────────────────────────────────
 [doc("Compile a single fixture by name (e.g., just test-fixture minimal-data)")]

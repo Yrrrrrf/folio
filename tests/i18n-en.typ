@@ -1,17 +1,16 @@
-// Test: cross-reference links between sections
-// Objectives → success-criteria, assumptions → risks, deliverables → requirements, etc.
+// Test: i18n English
 #import "../src/lib.typ": project-doc
 
 #show: project-doc(
   data: (
     project: (
-      name: "Cross-Ref Test",
-      description: "Verifying all label/link families",
+      name: "i18n English Test",
+      description: "Verifying English language output",
     ),
     initiation: (
-      pitch: "Testing that every cross-reference resolves to a real label in the document.",
+      pitch: "Testing that English strings are resolved correctly.",
       objectives: (
-        (id: "OBJ-1", description: "Validate all cross-refs", priority: "high"),
+        (id: "OBJ-1", description: "Validate English i18n", priority: "high"),
       ),
       success_criteria: (
         (
@@ -39,18 +38,11 @@
           description: "Typst compiler is deterministic",
           status: "Validated",
         ),
-        (
-          id: "A-2",
-          type: "dependency",
-          description: "Package installed locally",
-          status: "Open",
-          risk_id: "R1",
-        ),
       ),
     ),
     baselines: (
       scope: (
-        in_scope: ("Cross-reference validation",),
+        in_scope: ("i18n validation",),
         out_of_scope: ("Visual regression testing",),
       ),
       requirements: (
@@ -72,37 +64,6 @@
             title: "Cross-refs green",
             status: "Pending",
           ),
-        ),
-        gantt: (
-          start: "2026-04-01",
-          end: "2026-06-01",
-          tasks: (
-            (
-              name: "Implementation",
-              subtasks: (
-                (
-                  id: "T1",
-                  name: "Add label families",
-                  start: "2026-04-01",
-                  end: "2026-04-15",
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      financials: (
-        budget: (
-          (description: "CI compute", amount: 500),
-        ),
-      ),
-      communication: (
-        (
-          what: "Test results",
-          audience: "Dev team",
-          frequency: "Per PR",
-          channel: "CI report",
-          owner: "CI",
         ),
       ),
     ),
@@ -128,7 +89,6 @@
           probability: "Low",
           impact: "High",
           status: "Open",
-          source_assumption: "A-2",
         ),
       ),
       issue_log: (
@@ -137,7 +97,6 @@
           description: "Orphan ref detected",
           owner: "CI",
           status: "Open",
-          blocks_deliverable: ("D1",),
         ),
       ),
       change_log: (
@@ -209,5 +168,5 @@
       ),
     ),
   ),
-  config: (audit: true, toc: true),
+  config: (audit: true, toc: true, lang: "en"),
 )

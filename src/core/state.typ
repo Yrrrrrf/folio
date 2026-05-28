@@ -5,6 +5,7 @@
   config: (:),
   brand: (:),
   preset-tokens: (:),
+  lang: "en",
 ))
 
 #let folio-init(data: (:), config: (:), brand: (:), body) = {
@@ -39,6 +40,7 @@
       config: config,
       brand: user-brand,
       preset-tokens: preset-tokens,
+      lang: config.at("lang", default: "en"),
     )
   })
 
@@ -48,8 +50,9 @@
     let size = resolve-token(st, "typography.size.body")
     let margin = resolve-token(st, "geometry.page-margin")
     let paper = resolve-token(st, "geometry.paper")
+    let lang-code = st.at("lang", default: "en")
 
-    set text(font: font, size: size)
+    set text(font: font, size: size, lang: lang-code)
     set page(margin: margin, paper: paper, numbering: "1")
     body
   }

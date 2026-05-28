@@ -1,4 +1,4 @@
-#import "@preview/folio:0.0.1": folio-init, milestones
+#import "../../src/lib.typ": folio-init, milestones
 
 #show: body => folio-init(
   data: (

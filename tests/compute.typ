@@ -1,6 +1,6 @@
 // Test: compute layer functions (cost aggregation, orphan detection, audit)
 // Verifies compute.typ works correctly in isolation from the rendering pipeline.
-#import "@preview/folio:0.0.1": (
+#import "../src/lib.typ": (
   audit-missing, audit-summary, badge, calc-budget, calc-requirements, card,
   compute-context, data-table, find-orphans, folio-init, line-subtotal, metric,
   sum-costs,

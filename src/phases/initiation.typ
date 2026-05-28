@@ -1,5 +1,6 @@
 #import "../core/phase-runner.typ": render-phase
 #import "../core/pipeline.typ": pmbok-pipeline
+#import "../i18n/i18n.typ": t
 #import "../components/initiation.typ": (
   assumptions-log, business-case, cover, objectives, pitch, stakeholders,
   success-criteria,
@@ -8,7 +9,7 @@
 #let initiation(pipeline: pmbok-pipeline) = render-phase(
   pipeline,
   "initiation",
-  "Initiation",
+  t("phase-initiation"),
 )
 
 // Re-export section fns for lib.typ

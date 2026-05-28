@@ -1,4 +1,4 @@
-#import "@preview/folio:0.0.1": project-doc
+#import "../src/lib.typ": project-doc
 #import "data.typ": project-data
 
 #show: project-doc(

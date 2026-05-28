@@ -37,6 +37,7 @@
 
 // ── Themed UI primitives (token-resolved, use these in custom sections) ──────
 #import "theme/ui.typ": badge, card, data-table, metric, progress-bar
+#import "i18n/i18n.typ": status-label, t
 
 // ── Raw primitives (explicit params, for power users) ───────────────────────
 #import "primitives/card.typ": card as raw-card

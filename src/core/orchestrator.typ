@@ -2,6 +2,7 @@
 #import "guard.typ": section-guard
 #import "audit.typ": data-audit-header, data-audit-orphans
 #import "resolve.typ": nonempty
+#import "../i18n/i18n.typ": t
 
 #import "../phases/initiation.typ": initiation
 #import "../phases/planning.typ": planning
@@ -16,6 +17,10 @@
     audit: config.at("audit", default: false),
     cover: config.at("cover", default: auto),
     toc: config.at("toc", default: true),
+    lang: {
+      let l = config.at("lang", default: "en")
+      if l not in ("en", "es") { "en" } else { l }
+    },
     sections: config.at("sections", default: (:)),
     extra-sections: config.at("extra-sections", default: ()),
     extra-checks: config.at("extra-checks", default: ()),
@@ -106,7 +111,7 @@
     }
 
     if st.config.toc == true {
-      outline(title: "Table of Contents", indent: auto, depth: 3)
+      outline(title: t("chrome-toc-title"), indent: auto, depth: 3)
     }
 
     initiation(pipeline: current-pipeline)

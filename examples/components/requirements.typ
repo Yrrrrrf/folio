@@ -1,4 +1,4 @@
-#import "@preview/folio:0.0.1": folio-init, requirements
+#import "../../src/lib.typ": folio-init, requirements
 
 #show: body => folio-init(
   data: (
