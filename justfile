@@ -20,6 +20,7 @@ import "scripts/dev.just"
 import "scripts/ci.just"
 import "scripts/test.just"
 import "scripts/deploy.just"
+import "scripts/table-check.just"
 
 # ── default recipe ────────────────────────────────────────────────────────────
 [doc("Show all available recipes")]

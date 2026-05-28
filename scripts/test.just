@@ -6,8 +6,8 @@
 # ── test-all ──────────────────────────────────────────────────────────────────
 [doc("Compile all examples + all tests")]
 [group('Test')]
-test: (compile "examples") (compile "tests") test-i18n
-    @echo "✓ All examples and tests compiled"
+test: (compile "examples") (compile "tests") test-i18n check-tables
+    @echo "✓ All examples, tests, and table sizing checks passed"
 
 # ── test-i18n ─────────────────────────────────────────────────────────────────
 [doc("Compile localization fixtures to run Typst-native parity assertions")]

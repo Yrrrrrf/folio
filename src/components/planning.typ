@@ -61,7 +61,7 @@
 
     card(title: cat)[
       #data-table(
-        columns: (auto, 1fr, auto, auto, auto, auto),
+        kinds: ("id", "text", "num", "status", "num", "status"),
         headers: (
           t("col-id"),
           t("col-description"),
@@ -114,7 +114,7 @@
   let ms-list = resolve(data, data-path)
   if type(ms-list) == array {
     data-table(
-      columns: (auto, 1fr, auto),
+      kinds: ("date", "text", "status"),
       headers: (t("col-date"), t("col-milestone"), t("col-status")),
       rows: ms-list
         .map(m => {
@@ -167,7 +167,7 @@
 
     card(title: cat)[
       #data-table(
-        columns: (auto, 1fr, auto, auto, auto, auto),
+        kinds: ("id", "text", "num", "status", "num", "num"),
         headers: (
           t("col-id"),
           t("col-description"),
@@ -211,7 +211,7 @@
       .flatten()
     card(title: t("card-additional-costs"))[
       #data-table(
-        columns: (1fr, auto),
+        kinds: ("text", "num"),
         headers: (t("col-description"), t("col-total")),
         rows: show-extras,
       )
@@ -334,7 +334,7 @@
   let members = resolve(data, data-path)
   if type(members) == array {
     data-table(
-      columns: (auto, 1fr, auto),
+      kinds: ("status", "text", "text"),
       headers: (t("col-role"), t("col-name"), t("col-contact")),
       rows: members
         .map(m => (
@@ -381,7 +381,7 @@
   if type(criteria) == array and criteria.len() > 0 {
     card(title: t("card-quality-criteria"))[
       #data-table(
-        columns: (auto, 1fr, auto),
+        kinds: ("id", "text", "status"),
         headers: (t("col-requirement"), t("col-criterion"), t("col-method")),
         rows: criteria
           .map(c => (
@@ -403,7 +403,7 @@
   let comms = resolve(data, data-path)
   if type(comms) == array {
     data-table(
-      columns: (1fr, auto, auto, auto, auto),
+      kinds: ("text", "text", "status", "status", "text"),
       headers: (
         t("col-what"),
         t("col-audience"),
@@ -468,7 +468,7 @@
   let items = resolve(data, data-path)
   if type(items) == array {
     data-table(
-      columns: (auto, 1fr, auto, auto, auto),
+      kinds: ("id", "text", "status", "tags", "status"),
       headers: (
         t("col-id"),
         t("col-regulation"),

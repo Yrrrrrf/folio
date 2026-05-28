@@ -54,6 +54,9 @@
     ),
     table: (
       cell-padding: 0.75em, // old: inset (x: 8pt, y: 6pt)
+      min-text-col: 80pt,
+      text-weight: 3,
+      tags-weight: 2,
     ),
     page-margin: 2cm, // old: margin (x: 2cm, y: 2cm)
     paper: "a4",

@@ -13,7 +13,7 @@
   let lessons = resolve(data, data-path)
   if type(lessons) == array {
     data-table(
-      columns: (auto, 1fr, 1fr),
+      kinds: ("status", "text", "text"),
       headers: (
         t("col-category"),
         t("col-what-went-wrong"),
@@ -40,7 +40,7 @@
   let stakeholders = resolve(data, data-path)
   if type(stakeholders) == array {
     data-table(
-      columns: (1fr, 1fr, 1fr),
+      kinds: ("text", "text", "text"),
       headers: (t("col-stakeholder"), t("col-role"), t("col-date-signature")),
       rows: stakeholders
         .map(s => (
@@ -63,7 +63,7 @@
   let records = resolve(data, data-path)
   if type(records) == array {
     data-table(
-      columns: (auto, auto, auto, 1fr),
+      kinds: ("id", "text", "date", "text"),
       headers: (
         t("col-deliverable"),
         t("col-accepted-by"),
@@ -92,7 +92,7 @@
   let reviews = resolve(data, data-path)
   if type(reviews) == array {
     data-table(
-      columns: (auto, 1fr, 1fr, auto, auto),
+      kinds: ("id", "text", "text", "num", "text"),
       headers: (
         t("col-objective-ref"),
         t("col-claimed-benefit"),

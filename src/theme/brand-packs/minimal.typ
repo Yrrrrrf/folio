@@ -58,6 +58,9 @@
     ),
     table: (
       cell-padding: 0.6em,
+      min-text-col: 72pt,
+      text-weight: 2,
+      tags-weight: 1,
     ),
     page-margin: 2.5cm,
     paper: "a4",

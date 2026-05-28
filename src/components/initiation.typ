@@ -46,7 +46,7 @@
   let obj-list = resolve(data, data-path)
   if type(obj-list) == array {
     data-table(
-      columns: (auto, 1fr, auto),
+      kinds: ("id", "text", "status"),
       headers: (t("col-id"), t("col-objective"), t("col-priority")),
       rows: obj-list
         .map(o => {
@@ -79,7 +79,7 @@
   let criteria = resolve(data, data-path)
   if type(criteria) == array {
     data-table(
-      columns: (auto, auto, 1fr, auto, auto),
+      kinds: ("id", "status", "text", "text", "id"),
       headers: (
         t("col-id"),
         t("col-type"),
@@ -118,7 +118,7 @@
   let shs = resolve(data, data-path)
   if type(shs) == array {
     data-table(
-      columns: (auto, 1fr, auto, auto, auto, auto),
+      kinds: ("id", "text", "text", "status", "status", "text"),
       headers: (
         t("col-id"),
         t("col-name-role"),
@@ -170,7 +170,7 @@
   let items = resolve(data, data-path)
   if type(items) == array {
     data-table(
-      columns: (auto, auto, 1fr, auto, auto),
+      kinds: ("id", "status", "text", "status", "id"),
       headers: (
         t("col-id"),
         t("col-type"),

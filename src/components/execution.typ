@@ -48,7 +48,7 @@
   let risks = resolve(data, data-path)
   if type(risks) == array {
     data-table(
-      columns: (auto, 1fr, 1fr, auto, auto, auto),
+      kinds: ("id", "text", "text", "status", "status", "status"),
       headers: (
         t("col-id"),
         t("col-risk"),
@@ -121,7 +121,7 @@
   let issues = resolve(data, data-path)
   if type(issues) == array {
     data-table(
-      columns: (auto, 1fr, auto, auto),
+      kinds: ("id", "text", "text", "status"),
       headers: (t("col-id"), t("col-issue"), t("col-owner"), t("col-status")),
       rows: issues
         .map(i => {
@@ -180,7 +180,7 @@
   let changes = resolve(data, data-path)
   if type(changes) == array {
     data-table(
-      columns: (auto, 1fr, auto, auto, auto),
+      kinds: ("id", "text", "status", "status", "status"),
       headers: (
         t("col-id"),
         t("col-change-desc"),
@@ -219,7 +219,7 @@
   let decisions = resolve(data, data-path)
   if type(decisions) == array {
     data-table(
-      columns: (auto, 1fr, auto, auto, auto),
+      kinds: ("id", "text", "date", "text", "status"),
       headers: (
         t("col-id"),
         t("col-decision-rationale"),
@@ -273,7 +273,7 @@
   let deliverables = resolve(data, data-path)
   if type(deliverables) == array {
     data-table(
-      columns: (auto, 1fr, auto, auto, auto, auto),
+      kinds: ("id", "text", "text", "date", "tags", "status"),
       headers: (
         t("col-id"),
         t("col-description"),

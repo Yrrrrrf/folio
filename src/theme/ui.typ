@@ -4,7 +4,7 @@
 #import "../primitives/metric.typ": metric as p-metric
 #import "../primitives/progress-bar.typ": progress-bar as p-progress-bar
 #import "../core/state.typ": folio-state
-#import "resolver.typ": resolve-spacing, resolve-token
+#import "resolver.typ": resolve-columns, resolve-spacing, resolve-token
 
 #let card(body, title: none) = context {
   let st = folio-state.get()
@@ -19,16 +19,27 @@
   )
 }
 
-#let data-table(columns: auto, headers: (), rows: ()) = context {
+#let data-table(columns: auto, kinds: none, headers: (), rows: ()) = context {
   let st = folio-state.get()
+  let resolved-columns = if kinds != none {
+    let tbl-tokens = resolve-token(st, "geometry.table")
+    if type(tbl-tokens) != dictionary { tbl-tokens = (:) }
+    resolve-columns(kinds, tbl-tokens)
+  } else {
+    columns
+  }
+  let min-text-col = resolve-token(st, "geometry.table.min-text-col")
+  if type(min-text-col) != length { min-text-col = 80pt }
+
   p-data-table(
-    columns: columns,
+    columns: resolved-columns,
     headers: headers,
     rows: rows,
     border-color: resolve-token(st, "palette.surface.border"),
     bg-header: resolve-token(st, "palette.surface.card"),
     pad: resolve-spacing(st, multiplier: 0.75),
     header-size: resolve-token(st, "typography.size.sm"),
+    min-text-col: min-text-col,
   )
 }
 

@@ -52,3 +52,24 @@
 
   base * d-mult * multiplier
 }
+
+/// Map a semantic column-kind list to a Typst sizing tuple.
+/// kinds: ordered array of strings — "id", "text", "tags", "date", "num", "status"
+/// tokens: the geometry.table sub-dict from the resolved state
+///
+/// Contract:
+///   id, date, num, status  →  auto   (short, fixed-ish content)
+///   text                   →  {text-weight}fr  (flexible, heavy)
+///   tags                   →  {tags-weight}fr  (flexible, lighter)
+///
+/// Returns: an array usable as Typst table `columns:` argument
+#let resolve-columns(kinds, tokens) = {
+  let text-w = tokens.at("text-weight", default: 3)
+  let tags-w = tokens.at("tags-weight", default: 2)
+  kinds.map(k => {
+    if k == "text" { (text-w) * 1fr } else if k == "tags" {
+      (tags-w) * 1fr
+    } else { auto } // id, date, num, status
+  })
+}
+
